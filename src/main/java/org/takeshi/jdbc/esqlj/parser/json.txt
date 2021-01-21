@@ -1,0 +1,36 @@
+{
+	"type": "parsed query",
+	"fields": [
+		{
+			"type": "field",
+			"name": "ID",
+			"index": "WITHDRAWAL"
+		},
+		{
+			"type": "field",
+			"name": "PIPPO",
+			"index": "STATE_TYPE"
+		}	
+	],
+	"index": {
+		"type": "index",
+		"name": "A2E_TX_WITHDRAWAL",
+		"alias": "WITHDRAWAL",
+		"joinedIndex": {
+			"type": "index",
+			"name": "A2E_TX_STATE_TYPE",
+			"alias": "STATE_TYPE",
+			"condition": "equals",
+			"leftField": {
+				"type": "field",
+				"name": "ID_TX_STATE_TYPE",
+				"index": "STATE_TYPE"
+			},
+			"rightField": {
+				"type": "field",
+				"name": "FK_TX_STATE_TYPE",
+				"index": "WITHDRAWAL"
+			}
+		}
+	}
+}
