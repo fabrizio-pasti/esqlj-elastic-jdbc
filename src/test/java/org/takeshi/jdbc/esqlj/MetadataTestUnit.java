@@ -7,9 +7,11 @@ import static org.junit.Assert.assertThrows;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Arrays;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.takeshi.jdbc.esqlj.elastic.query.impl.FromArrayQuery;
 
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;

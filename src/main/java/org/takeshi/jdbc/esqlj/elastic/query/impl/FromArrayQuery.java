@@ -9,9 +9,9 @@ import org.takeshi.jdbc.esqlj.EsConnection;
 import org.takeshi.jdbc.esqlj.elastic.query.AbstractOneShotQuery;
 
 public class FromArrayQuery extends AbstractOneShotQuery {
-			
-	public FromArrayQuery(EsConnection connection, String source, List<List<Object>> values, String... columnsName) throws SQLException {
-		super(connection, source, columnsName);
+		
+	public FromArrayQuery(String source, List<List<Object>> values, String... columnsName) throws SQLException {
+		super(null, source, columnsName);
 		init(values);
 	}
 

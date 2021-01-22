@@ -67,14 +67,20 @@ public class IndexFieldsQuery extends AbstractOneShotQuery {
 	public void init(String index) throws SQLException {
 		List<ElasticField> fields = retrieveIndexFields(index);
 		
+		insertRow(index, new ElasticField("_id", ElasticFieldType.KEYWORD));
+		
 		fields.forEach(field -> {
-			Map<String, Object> data = new HashMap<String, Object>();
-			data.put("TABLE_NAME", index);
-			data.put("COLUMN_NAME", field.getName());
-			data.put("DATA_TYPE", field.getType().getSqlTypeCode());
-			data.put("TYPE_NAME", field.getType().getSqlType());
-			insertRowWithData(data);
+			insertRow(index, field);
 		});
+	}
+
+	private void insertRow(String index, ElasticField field) {
+		Map<String, Object> data = new HashMap<String, Object>();
+		data.put("TABLE_NAME", index);
+		data.put("COLUMN_NAME", field.getName());
+		data.put("DATA_TYPE", field.getType().getSqlTypeCode());
+		data.put("TYPE_NAME", field.getType().getSqlType());
+		insertRowWithData(data);
 	}
 	
 	

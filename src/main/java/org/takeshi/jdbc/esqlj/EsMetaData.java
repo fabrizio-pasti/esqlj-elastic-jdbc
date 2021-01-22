@@ -5,6 +5,7 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.RowIdLifetime;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.Arrays;
 
 import org.takeshi.jdbc.esqlj.elastic.metadata.MetaDataService;
@@ -650,19 +651,19 @@ public class EsMetaData implements DatabaseMetaData {
 	@Override
 	public ResultSet getSchemas() throws SQLException {
 		return new EsResultSet(
-				new FromArrayQuery(connection, "system_schemas", Arrays.asList(Arrays.asList(metaDataService.getElasticServerDetails().getClusterName())), "TABLE_SCHEM"));
+				new FromArrayQuery("system_schemas", Arrays.asList(Arrays.asList(metaDataService.getElasticServerDetails().getClusterName())), "TABLE_SCHEM"));
 	}
 
 	@Override
 	public ResultSet getCatalogs() throws SQLException {
 		return new EsResultSet(
-				new FromArrayQuery(connection, "system_catalogs", Arrays.asList(Arrays.asList("")), "TABLE_CAT"));
+				new FromArrayQuery("system_catalogs", Arrays.asList(Arrays.asList("")), "TABLE_CAT"));
 	}
 
 	@Override
 	public ResultSet getTableTypes() throws SQLException {
-		return new EsResultSet(new FromArrayQuery(connection, "system_catalogs",
-				Arrays.asList(Arrays.asList("TABLE", "VIEW")), "TABLE_TYPE"));
+		return new EsResultSet(new FromArrayQuery("system_catalogs",
+				Arrays.asList(Arrays.asList("TABLE"),Arrays.asList("VIEW")), "TABLE_TYPE"));
 	}
 
 	@Override
@@ -674,34 +675,34 @@ public class EsMetaData implements DatabaseMetaData {
 	@Override
 	public ResultSet getColumnPrivileges(String catalog, String schema, String table, String columnNamePattern)
 			throws SQLException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public ResultSet getTablePrivileges(String catalog, String schemaPattern, String tableNamePattern)
 			throws SQLException {
-		// TODO Auto-generated method stub
+		// TODO
 		return null;
 	}
 
 	@Override
 	public ResultSet getBestRowIdentifier(String catalog, String schema, String table, int scope, boolean nullable)
 			throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		return new EsResultSet(new FromArrayQuery(table,
+				Arrays.asList(
+						Arrays.asList(2, "_id", Types.VARCHAR, "VARCHAR", 0, 0, 0, 0)), "SCOPE", "COLUMN_NAME", "DATA_TYPE", "TYPE_NAME", "COLUMN_SIZE", "BUFFER_LENGTH", "DECIMAL_DIGITS", "PSEUDO_COLUMN"));
 	}
 
 	@Override
 	public ResultSet getVersionColumns(String catalog, String schema, String table) throws SQLException {
-		// TODO Auto-generated method stub
 		return null;
 	}
-
+		
 	@Override
 	public ResultSet getPrimaryKeys(String catalog, String schema, String table) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		return new EsResultSet(new FromArrayQuery(table,
+				Arrays.asList(
+						Arrays.asList(catalog, schema, table, "_id", 1, "_id")), "TABLE_CAT", "TABLE_SCHEM", "TABLE_NAME", "COLUMN_NAME", "KEY_SEQ", "PK_NAME"));
 	}
 
 	@Override

@@ -9,7 +9,7 @@ public enum ElasticFieldType {
 		DATA("date", "DATE", Types.DATE),
 		DATA_TIME("datetime", "TIMESTAMP", Types.TIMESTAMP),
 		DOUBLE("double", "DOUBLE", Types.DOUBLE),
-		GEOMETRY("geo_point", "STRUCT", Types.STRUCT),
+		GEO_POINT("geo_point", "STRUCT", Types.STRUCT),
 		INTEGER("integer", "INTEGER", Types.INTEGER),
 		KEYWORD("keyword", "VARCHAR", Types.VARCHAR),
 		LONG("long", "BIGINT", Types.BIGINT),
