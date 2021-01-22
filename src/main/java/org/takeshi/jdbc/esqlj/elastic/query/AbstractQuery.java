@@ -1,6 +1,7 @@
 package org.takeshi.jdbc.esqlj.elastic.query;
 
 import java.sql.ResultSetMetaData;
+import java.sql.RowId;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
@@ -79,6 +80,8 @@ public abstract class AbstractQuery {
 
 	public abstract ResultSetMetaData getResultSetMetaData();
 
+	public abstract RowId getRowId() throws SQLException;
+	
 	public String getSource() {
 		return source;
 	}
@@ -90,6 +93,5 @@ public abstract class AbstractQuery {
 	public QueryType getQueryType() {
 		return queryType;
 	}
-
 	
 }

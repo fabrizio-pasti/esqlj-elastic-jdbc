@@ -1,4 +1,4 @@
-package org.takeshi.jdbc.esqlj.elastic.query.data.oneshot;
+package org.takeshi.jdbc.esqlj.elastic.query.model;
 
 import java.util.ArrayList;
 import java.util.Arrays;

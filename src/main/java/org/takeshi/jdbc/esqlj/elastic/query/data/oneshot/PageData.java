@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.takeshi.jdbc.esqlj.elastic.query.data.AbstractResultSetMetaData;
+import org.takeshi.jdbc.esqlj.elastic.query.model.DataRow;
 
 public class PageData {
 

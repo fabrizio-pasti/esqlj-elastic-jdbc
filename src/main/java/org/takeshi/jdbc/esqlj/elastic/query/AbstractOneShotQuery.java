@@ -1,7 +1,9 @@
 package org.takeshi.jdbc.esqlj.elastic.query;
 
 import java.sql.ResultSetMetaData;
+import java.sql.RowId;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 import java.util.List;
 import java.util.Map;
 
@@ -159,6 +161,11 @@ public class AbstractOneShotQuery extends AbstractQuery {
 	@Override
 	public int findColumnIndex(String columnLabel) {
 		return pageData.getColumnIndex(columnLabel);
+	}
+
+	@Override
+	public RowId getRowId() throws SQLException {
+		throw new SQLFeatureNotSupportedException();
 	}
 
 }

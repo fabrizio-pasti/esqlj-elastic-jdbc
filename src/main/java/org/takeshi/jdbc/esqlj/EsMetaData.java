@@ -738,87 +738,75 @@ public class EsMetaData implements DatabaseMetaData {
 	@Override
 	public ResultSet getIndexInfo(String catalog, String schema, String table, boolean unique, boolean approximate)
 			throws SQLException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public boolean supportsResultSetType(int type) throws SQLException {
-		// TODO Auto-generated method stub
-		return false;
+		return type == ResultSet.TYPE_FORWARD_ONLY;
 	}
 
 	@Override
 	public boolean supportsResultSetConcurrency(int type, int concurrency) throws SQLException {
-		// TODO Auto-generated method stub
-		return false;
+		return concurrency == ResultSet.CONCUR_READ_ONLY;
 	}
 
 	@Override
 	public boolean ownUpdatesAreVisible(int type) throws SQLException {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean ownDeletesAreVisible(int type) throws SQLException {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean ownInsertsAreVisible(int type) throws SQLException {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean othersUpdatesAreVisible(int type) throws SQLException {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean othersDeletesAreVisible(int type) throws SQLException {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean othersInsertsAreVisible(int type) throws SQLException {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean updatesAreDetected(int type) throws SQLException {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean deletesAreDetected(int type) throws SQLException {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean insertsAreDetected(int type) throws SQLException {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean supportsBatchUpdates() throws SQLException {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public ResultSet getUDTs(String catalog, String schemaPattern, String typeNamePattern, int[] types)
 			throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		return new EsResultSet(new FromArrayQuery("system_catalogs",
+				Arrays.asList(ElasticFieldType.values()).stream().filter(t -> t.isUdt()).map(t -> new ArrayList<Object>(Arrays.asList(catalog, schemaPattern, t.getSqlType(), t.getClass().getName(), t.getSqlTypeCode(), null, null))).collect(Collectors.toList()), 
+				"TYPE_CAT", "TYPE_SCHEM", "TYPE_NAME", "CLASS_NAME", "DATA_TYPE", "REMARKS", "BASE_TYPE"));
 	}
 
 	@Override
@@ -828,155 +816,138 @@ public class EsMetaData implements DatabaseMetaData {
 
 	@Override
 	public boolean supportsSavepoints() throws SQLException {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean supportsNamedParameters() throws SQLException {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean supportsMultipleOpenResults() throws SQLException {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean supportsGetGeneratedKeys() throws SQLException {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override
 	public ResultSet getSuperTypes(String catalog, String schemaPattern, String typeNamePattern) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		return new EsResultSet(new FromArrayQuery("system_catalogs",
+				new ArrayList<List<Object>>(), "TYPE_CAT", "TYPE_SCHEM", "TYPE_NAME", "SUPERTYPE_CAT", "SUPERTYPE_SCHEM", "", "SUPERTYPE_NAME"));
 	}
 
 	@Override
 	public ResultSet getSuperTables(String catalog, String schemaPattern, String tableNamePattern) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		return new EsResultSet(new FromArrayQuery("system_catalogs",
+				new ArrayList<List<Object>>(), "TYPE_CAT", "TYPE_SCHEM", "TABLE_NAME", "SUPERTABLE_NAME"));
 	}
 
 	@Override
 	public ResultSet getAttributes(String catalog, String schemaPattern, String typeNamePattern,
 			String attributeNamePattern) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		return new EsResultSet(new FromArrayQuery("system_catalogs",
+				new ArrayList<List<Object>>(), "TYPE_CAT", "TYPE_SCHEM", "TABLE_NAME", "ATTR_NAME", "DATA_TYPE", "ATTR_TYPE_NAME", "ATTR_SIZE", "DECIMAL_DIGITS", "NUM_PREC_RADIX", "NULLABLE", "REMARKS", "ATTR_DEF", "SQL_DATA_TYPE", "SQL_DATETIME_SUB", "CHAR_OCTET_LENGTH", "ORDINAL_POSITION", "IS_NULLABLE", "SCOPE_CATALOG", "SCOPE_SCHEMA", "SCOPE_TABLE", "SOURCE_DATA_TYPE"));
 	}
 
 	@Override
 	public boolean supportsResultSetHoldability(int holdability) throws SQLException {
-		// TODO Auto-generated method stub
-		return false;
+		return holdability == ResultSet.HOLD_CURSORS_OVER_COMMIT;
 	}
 
 	@Override
 	public int getResultSetHoldability() throws SQLException {
-		// TODO Auto-generated method stub
-		return 0;
+		return ResultSet.HOLD_CURSORS_OVER_COMMIT;
 	}
 
 	@Override
 	public int getDatabaseMajorVersion() throws SQLException {
-		// TODO Auto-generated method stub
-		return 0;
+		return DRIVER_MAJOR_VERSION;
 	}
 
 	@Override
 	public int getDatabaseMinorVersion() throws SQLException {
-		// TODO Auto-generated method stub
-		return 0;
+		return DRIVER_MINOR_VERSION;
 	}
 
 	@Override
 	public int getJDBCMajorVersion() throws SQLException {
-		// TODO Auto-generated method stub
-		return 0;
+		return DRIVER_MAJOR_VERSION;
 	}
 
 	@Override
 	public int getJDBCMinorVersion() throws SQLException {
-		// TODO Auto-generated method stub
-		return 0;
+		return DRIVER_MINOR_VERSION;
 	}
 
 	@Override
 	public int getSQLStateType() throws SQLException {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
 	public boolean locatorsUpdateCopy() throws SQLException {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean supportsStatementPooling() throws SQLException {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override
 	public RowIdLifetime getRowIdLifetime() throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		return RowIdLifetime.ROWID_VALID_FOREVER;
 	}
 
 	@Override
 	public ResultSet getSchemas(String catalog, String schemaPattern) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		return new EsResultSet(new FromArrayQuery("system_catalogs",
+				new ArrayList<List<Object>>(), "TABLE_SCHEM ", "TABLE_CATALOG"));
 	}
 
 	@Override
 	public boolean supportsStoredFunctionsUsingCallSyntax() throws SQLException {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean autoCommitFailureClosesAllResultSets() throws SQLException {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public ResultSet getClientInfoProperties() throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		return new EsResultSet(new FromArrayQuery("system_catalogs",
+				new ArrayList<List<Object>>(), "NAME ", "MAX_LEN", "DEFAULT_VALUE", "DESCRIPTION"));
 	}
 
 	@Override
 	public ResultSet getFunctions(String catalog, String schemaPattern, String functionNamePattern)
 			throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		return new EsResultSet(new FromArrayQuery("system_catalogs",
+				new ArrayList<List<Object>>(), "FUNCTION_CAT", "FUNCTION_SCHEM", "FUNCTION_NAME", "REMARKS", "FUNCTION_TYPE", "SPECIFIC_NAME"));
 	}
-
+			
 	@Override
 	public ResultSet getFunctionColumns(String catalog, String schemaPattern, String functionNamePattern,
 			String columnNamePattern) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		return new EsResultSet(new FromArrayQuery("system_catalogs",
+				new ArrayList<List<Object>>(), "FUNCTION_CAT", "FUNCTION_SCHEM", "FUNCTION_NAME", "COLUMN_NAME", "FUNCTION_TYPE", "SPECIFIC_NAME", "COLUMN_TYPE", "DATA_TYPE", "TYPE_NAME", "PRECISION", "LENGTH", "SCALE", "RADIX", "NULLABLE", "REMARKS", "CHAR_OCTET_LENGTH", "ORDINAL_POSITION", "IS_NULLABLE", "SPECIFIC_NAME"));
 	}
-
+	
 	@Override
 	public ResultSet getPseudoColumns(String catalog, String schemaPattern, String tableNamePattern,
 			String columnNamePattern) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		return new EsResultSet(new FromArrayQuery("system_catalogs",
+				new ArrayList<List<Object>>(), "TABLE_CAT", "TABLE_SCHEM", "TABLE_NAME", "COLUMN_NAME", "DATA_TYPE", "COLUMN_SIZE", "DECIMAL_DIGITS", "NUM_PREC_RADIX", "COLUMN_USAGE", "REMARKS", "CHAR_OCTET_LENGTH", "IS_NULLABLE"));
 	}
 
 	@Override
 	public boolean generatedKeyAlwaysReturned() throws SQLException {
-		// TODO Auto-generated method stub
 		return false;
 	}
 

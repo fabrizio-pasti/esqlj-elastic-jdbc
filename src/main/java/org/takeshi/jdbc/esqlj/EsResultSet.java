@@ -768,7 +768,7 @@ public class EsResultSet implements ResultSet {
 
 	@Override
 	public RowId getRowId(int columnIndex) throws SQLException {
-		throw new SQLFeatureNotSupportedException();
+		return query.getRowId();
 	}
 
 	@Override

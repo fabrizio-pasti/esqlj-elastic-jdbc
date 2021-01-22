@@ -1,6 +1,7 @@
 package org.takeshi.jdbc.esqlj.elastic.query;
 
 import java.sql.ResultSetMetaData;
+import java.sql.RowId;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 
@@ -142,6 +143,12 @@ public class AbstractScrollableQuery extends AbstractQuery {
 	public boolean isBeforeFirst() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public RowId getRowId() throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 

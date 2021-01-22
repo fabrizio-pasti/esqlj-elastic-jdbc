@@ -1,4 +1,4 @@
-package org.takeshi.jdbc.esqlj.elastic.query.data.oneshot;
+package org.takeshi.jdbc.esqlj.elastic.query.data.scrollable;
 
 import java.sql.SQLException;
 import java.util.List;
