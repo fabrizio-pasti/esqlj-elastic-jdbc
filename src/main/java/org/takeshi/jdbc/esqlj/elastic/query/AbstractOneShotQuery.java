@@ -81,12 +81,12 @@ public class AbstractOneShotQuery extends AbstractQuery {
 
 	@Override
 	public int getCurrentRowIndex() throws SQLException {
-		return pageData.getCurrentRowIndex();
+		return pageData.getCurrentRowIndex() + 1;
 	}
 	
 	@Override
 	public boolean moveToRow(int rowIndex) throws SQLException {
-		pageData.moveToRow(rowIndex);
+		pageData.moveToRow(rowIndex - 1);
 		return pageData.getSize() > 0;
 	}
 
@@ -133,7 +133,7 @@ public class AbstractOneShotQuery extends AbstractQuery {
 
 	@Override
 	public <T> T getColumnValue(int columnIndex, Class<T> type) throws SQLException {
-		return pageData.getColumnValue(columnIndex, type);
+		return pageData.getColumnValue(columnIndex - 1, type);
 	}
 
 	@Override
@@ -148,7 +148,7 @@ public class AbstractOneShotQuery extends AbstractQuery {
 
 	@Override
 	public Object getColumnValue(int columnIndex) throws SQLException {
-		return pageData.getColumnValue(columnIndex);
+		return pageData.getColumnValue(columnIndex - 1);
 	}
 
 	@Override

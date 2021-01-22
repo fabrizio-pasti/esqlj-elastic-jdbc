@@ -111,7 +111,7 @@ public class IndexFieldsQuery extends AbstractOneShotQuery {
 			if(element.get("type") != null) {
 				String type = (String)element.get("type");
 				try {
-					fields.add(new ElasticField(objectName == null || objectName.length() == 0 ? key : String.format("%s.%s", objectName, key), ElasticFieldType.parseElasticType(type)));
+					fields.add(new ElasticField(objectName == null || objectName.length() == 0 ? key : String.format("%s.%s", objectName, key), ElasticFieldType.resolveByElasticType(type)));
 				} catch(Exception e) {
 					System.out.println(String.format("Type %s not supported", type));
 				}

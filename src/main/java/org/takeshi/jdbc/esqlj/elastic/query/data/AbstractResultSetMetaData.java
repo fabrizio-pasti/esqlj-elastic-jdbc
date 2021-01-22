@@ -4,12 +4,12 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.List;
 
-public class ResultSetMetaDataImpl implements ResultSetMetaData {
+public abstract class AbstractResultSetMetaData implements ResultSetMetaData {
 
 	private String source;
 	private List<String> columnsName;
 	
-	public ResultSetMetaDataImpl(String source, List<String> columnsName) {
+	public AbstractResultSetMetaData(String source, List<String> columnsName) {
 		this.source = source;
 		this.columnsName = columnsName;
 	}
@@ -66,12 +66,12 @@ public class ResultSetMetaDataImpl implements ResultSetMetaData {
 
 	@Override
 	public String getColumnLabel(int column) throws SQLException {
-		return columnsName.get(column);
+		return columnsName.get(column - 1);
 	}
 
 	@Override
 	public String getColumnName(int column) throws SQLException {
-		return columnsName.get(column);
+		return columnsName.get(column - 1);
 	}
 
 	@Override
@@ -100,16 +100,6 @@ public class ResultSetMetaDataImpl implements ResultSetMetaData {
 	}
 
 	@Override
-	public int getColumnType(int column) throws SQLException { //!!
-		return java.sql.Types.VARCHAR;
-	}
-
-	@Override
-	public String getColumnTypeName(int column) throws SQLException {
-		return "VARCHAR";
-	}
-
-	@Override
 	public boolean isReadOnly(int column) throws SQLException {
 		return false;
 	}
@@ -122,11 +112,6 @@ public class ResultSetMetaDataImpl implements ResultSetMetaData {
 	@Override
 	public boolean isDefinitelyWritable(int column) throws SQLException {
 		return true;
-	}
-
-	@Override
-	public String getColumnClassName(int column) throws SQLException { //!!
-		return "java.lang.String";
 	}
 
 }

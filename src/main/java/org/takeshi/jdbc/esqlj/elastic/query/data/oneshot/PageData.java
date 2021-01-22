@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.takeshi.jdbc.esqlj.elastic.query.data.ResultSetMetaDataImpl;
+import org.takeshi.jdbc.esqlj.elastic.query.data.AbstractResultSetMetaData;
 
 public class PageData {
 
@@ -17,6 +17,7 @@ public class PageData {
 	private PageDataState state = PageDataState.NOT_INITIALIZED;
 	private int currentIdxCurrentRow = -1;
 	private int iterationStep = 1;
+	private AbstractResultSetMetaData resultSetMetaData;
 
 	public PageData(String source, List<String> columnsName) {
 		this.source = source;
@@ -205,8 +206,11 @@ public class PageData {
 		this.iterationStep = iterationStep;
 	}
 
-	public ResultSetMetaData getResultSetMetaData() { // !! implements column type on ResultSetMetaData
-		return new ResultSetMetaDataImpl(source, columnsName);
+	public ResultSetMetaData getResultSetMetaData() {
+		if(resultSetMetaData == null) {
+			resultSetMetaData = new ResultSetMetaDataImpl(source, columnsName, dataRows);
+		}
+		return resultSetMetaData;
 	}
 
 	public int getColumnIndex(String columnLabel) {

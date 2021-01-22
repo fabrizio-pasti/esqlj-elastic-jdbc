@@ -6,12 +6,16 @@ import java.sql.ResultSet;
 import java.sql.RowIdLifetime;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.takeshi.jdbc.esqlj.elastic.metadata.MetaDataService;
 import org.takeshi.jdbc.esqlj.elastic.query.impl.FromArrayQuery;
 import org.takeshi.jdbc.esqlj.elastic.query.impl.IndexFieldsQuery;
 import org.takeshi.jdbc.esqlj.elastic.query.impl.IndicesQuery;
+import org.takeshi.jdbc.esqlj.elastic.query.model.ElasticFieldType;
 import org.takeshi.jdbc.esqlj.elastic.query.model.ElasticObjectType;
 import org.takeshi.jdbc.esqlj.support.EsConfig;
 import org.takeshi.jdbc.esqlj.support.EsConfig.ConfigurationPropertyEnum;
@@ -707,27 +711,28 @@ public class EsMetaData implements DatabaseMetaData {
 
 	@Override
 	public ResultSet getImportedKeys(String catalog, String schema, String table) throws SQLException {
-		// TODO Auto-generated method stub
+		// TODO 
 		return null;
 	}
 
 	@Override
 	public ResultSet getExportedKeys(String catalog, String schema, String table) throws SQLException {
-		// TODO Auto-generated method stub
+		// TODO 
 		return null;
 	}
 
 	@Override
 	public ResultSet getCrossReference(String parentCatalog, String parentSchema, String parentTable,
 			String foreignCatalog, String foreignSchema, String foreignTable) throws SQLException {
-		// TODO Auto-generated method stub
+		// TODO
 		return null;
 	}
 
 	@Override
 	public ResultSet getTypeInfo() throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		return new EsResultSet(new FromArrayQuery("system_catalogs",
+				Arrays.asList(ElasticFieldType.values()).stream().filter(t -> t.isConcrete()).map(t -> new ArrayList<Object>(Arrays.asList(t.getSqlType(), t.getSqlTypeCode(), t.isCaseSensitive(), t.getLiteralPrefix(), t.getLiteralSuffix(), null, t.isCaseSensitive(), 1, t.isUnsigned(), false, false, t.getSqlType(), null, null, null, null, 10))).collect(Collectors.toList()), 
+				"TYPE_NAME", "DATA_TYPE", "PRECISION", "LITERAL_SUFFIX", "CREATE_PARAMS", "NULLABLE", "CASE_SENSITIVE", "SEARCHABLE", "UNSIGNED_ATTRIBUTE", "FIXED_PREC_SCALE", "AUTO_INCREMENT", "LOCAL_TYPE_NAME", "MINIMUM_SCALE", "MAXIMUM_SCALE", "SQL_DATA_TYPE", "SQL_DATETIME_SUB", "NUM_PREC_RADIX"));
 	}
 
 	@Override

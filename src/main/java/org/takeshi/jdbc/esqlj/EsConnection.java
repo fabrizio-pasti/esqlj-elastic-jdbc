@@ -28,7 +28,7 @@ import org.takeshi.jdbc.esqlj.support.EsConfig;
 
 public class EsConnection implements Connection {
 
-	private RestHighLevelClient client;
+	private static RestHighLevelClient client;
 	private EsMetaData esMetaData;
 
 	public EsConnection() throws SQLException {
@@ -39,10 +39,13 @@ public class EsConnection implements Connection {
 		if (EsConfig.isTestMode()) {
 			return;
 		}
-		client = new RestHighLevelClient(RestClient.builder(EsConfig.getUrls().stream()
-				.map(esi -> new HttpHost(esi.getServer(), esi.getPort(), esi.getProtocol().name()))
-				.toArray(HttpHost[]::new)));
-		esMetaData = new EsMetaData(this);
+		
+		if(isClosed()) {
+			client = new RestHighLevelClient(RestClient.builder(EsConfig.getUrls().stream()
+					.map(esi -> new HttpHost(esi.getServer(), esi.getPort(), esi.getProtocol().name()))
+					.toArray(HttpHost[]::new)));
+			esMetaData = new EsMetaData(this);
+		}
 	}
 
 	@Override
@@ -107,6 +110,7 @@ public class EsConnection implements Connection {
 				return;
 			}
 			client.close();
+			client = null;
 		} catch (IOException e) {
 			throw new SQLException("Failed to close: ".concat(e.getMessage()));
 		}
@@ -114,7 +118,7 @@ public class EsConnection implements Connection {
 
 	@Override
 	public boolean isClosed() throws SQLException {
-		return !isAlive();
+		return !isOpen();
 	}
 
 	@Override
@@ -376,9 +380,9 @@ public class EsConnection implements Connection {
 		return client;
 	}
 
-	public boolean isAlive() {
+	public boolean isOpen() {
 		try {
-			return client.ping(RequestOptions.DEFAULT);
+			return client != null && client.ping(RequestOptions.DEFAULT);
 		} catch (IOException e) {
 			return false;
 		}
