@@ -1,4 +1,4 @@
-package org.takeshi.jdbc.esqlj.elastic.query;
+package org.takeshi.jdbc.esqlj.elastic.query.impl;
 
 import java.sql.ResultSetMetaData;
 import java.sql.RowId;
@@ -6,15 +6,13 @@ import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 
 import org.takeshi.jdbc.esqlj.EsConnection;
+import org.takeshi.jdbc.esqlj.elastic.query.AbstractQuery;
+import org.takeshi.jdbc.esqlj.elastic.query.QueryType;
 
-public class AbstractScrollableQuery extends AbstractQuery {
+public class ScrollableQuery extends AbstractQuery {
 
-	public AbstractScrollableQuery(EsConnection connection, String source) {
+	public ScrollableQuery(EsConnection connection, String source) {
 		super(connection, QueryType.SCROLLABLE, source);
-	}
-	
-	public AbstractScrollableQuery(EsConnection connection, String source, String... columnsName) {
-		super(connection, QueryType.SCROLLABLE, source, columnsName);
 	}
 
 	@Override
@@ -154,6 +152,4 @@ public class AbstractScrollableQuery extends AbstractQuery {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-
 }

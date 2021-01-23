@@ -130,7 +130,8 @@ public class AbstractOneShotQuery extends AbstractQuery {
 
 	@Override
 	public void close() throws SQLException {
-		 setClosed();
+		pageData = null;
+		setClosed();
 	}
 
 	@Override
