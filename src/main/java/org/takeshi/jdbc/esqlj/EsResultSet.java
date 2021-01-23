@@ -27,8 +27,8 @@ import java.util.Map;
 import org.takeshi.jdbc.esqlj.elastic.query.AbstractQuery;
 import org.takeshi.jdbc.esqlj.support.Utils;
 
-public class EsResultSet implements ResultSet {
 
+public class EsResultSet implements ResultSet {
 	private AbstractQuery query;
 	private int fetchDirection;
 
