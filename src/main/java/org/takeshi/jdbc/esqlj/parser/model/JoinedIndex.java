@@ -1,14 +1,10 @@
 package org.takeshi.jdbc.esqlj.parser.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class Index {
-	String name;
-
-	String alias;
+public class JoinedIndex {
 	
-	List<JoinedIndex> joinedIndex = new ArrayList<JoinedIndex>();
+	String name; 
+	
+	String alias;
 	
 	Condition condition = new Condition();
 
@@ -28,14 +24,6 @@ public class Index {
 		this.alias = alias;
 	}
 
-	public List<JoinedIndex> getJoinedIndex() {
-		return joinedIndex;
-	}
-
-	public void setJoinedIndex(List<JoinedIndex> joinedIndex) {
-		this.joinedIndex = joinedIndex;
-	}
-
 	public Condition getCondition() {
 		return condition;
 	}
@@ -45,5 +33,5 @@ public class Index {
 	}
 	
 	
- 
+
 }
