@@ -6,6 +6,8 @@ import java.sql.SQLException;
 import java.sql.SQLWarning;
 import java.sql.Statement;
 
+import org.takeshi.jdbc.esqlj.elastic.query.Executor;
+
 public class EsStatement implements Statement {
 
 	private EsConnection connection;
@@ -26,8 +28,7 @@ public class EsStatement implements Statement {
 
 	@Override
 	public ResultSet executeQuery(String sql) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		return new EsResultSet(Executor.execSql(connection, sql));
 	}
 
 	@Override

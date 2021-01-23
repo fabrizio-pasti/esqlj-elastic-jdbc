@@ -8,11 +8,15 @@ import java.sql.SQLFeatureNotSupportedException;
 import org.takeshi.jdbc.esqlj.EsConnection;
 import org.takeshi.jdbc.esqlj.elastic.query.AbstractQuery;
 import org.takeshi.jdbc.esqlj.elastic.query.QueryType;
+import org.takeshi.jdbc.esqlj.parser.model.ParsedQuery;
 
 public class ScrollableQuery extends AbstractQuery {
 
-	public ScrollableQuery(EsConnection connection, String source) {
-		super(connection, QueryType.SCROLLABLE, source);
+	private ParsedQuery parsedQuery;
+	
+	public ScrollableQuery(EsConnection connection, ParsedQuery query) {
+		super(connection, QueryType.SCROLLABLE, query.getIndex().getName());
+		this.parsedQuery = query;
 	}
 
 	@Override
