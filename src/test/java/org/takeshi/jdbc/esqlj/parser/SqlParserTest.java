@@ -24,6 +24,7 @@ public class SqlParserTest {
 	
 	@Test
 	public void parseFiels () throws SQLException, JSQLParserException {
+		// To do
 		String fieldValue1 = "STATE_TYPE.ID_STATE_TYPE AS ID_STATE";
 		String filedValue2 = "WITHDRAWAL.PFK_WITHDRAWAL ID_WITHDRAWAL";
 		String filedValue3 = "WITHDRAWAL.PFK_WITHDRAWAL";
