@@ -1,4 +1,4 @@
-package org.takeshi.jdbc.esqlj.elastic.query.data.oneshot;
+package org.takeshi.jdbc.esqlj.elastic.query.model;
 
 public enum PageDataState {
 	NOT_INITIALIZED,

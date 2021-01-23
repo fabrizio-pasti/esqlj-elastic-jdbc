@@ -1,4 +1,4 @@
-package org.takeshi.jdbc.esqlj.elastic.query.data.oneshot;
+package org.takeshi.jdbc.esqlj.elastic.query.data.scrollable;
 
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -29,10 +29,6 @@ public class PageData {
 	public PageData(String source, String[] columnsName) {
 		this.source = source;
 		this.columnsName = Arrays.asList(columnsName);
-	}
-
-	public PageData(String source) {
-		this.source = source;
 	}
 
 	public void push(List<Object> values) {

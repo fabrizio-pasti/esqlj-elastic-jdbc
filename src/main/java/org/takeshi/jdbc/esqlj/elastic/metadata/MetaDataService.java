@@ -2,10 +2,12 @@ package org.takeshi.jdbc.esqlj.elastic.metadata;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
 
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.client.core.MainResponse;
+import org.takeshi.jdbc.esqlj.elastic.model.ElasticField;
 
 public class MetaDataService {
 	private ElasticServerDetails elasticServerDetails;
@@ -37,4 +39,7 @@ public class MetaDataService {
 		this.elasticServerDetails = elasticServerDetails;
 	}
 
+	public List<ElasticField> getIndexFields(String index) {
+		return null;
+	}
 }

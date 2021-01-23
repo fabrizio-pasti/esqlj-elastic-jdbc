@@ -12,11 +12,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.takeshi.jdbc.esqlj.elastic.metadata.MetaDataService;
+import org.takeshi.jdbc.esqlj.elastic.model.ElasticField;
+import org.takeshi.jdbc.esqlj.elastic.model.ElasticFieldType;
+import org.takeshi.jdbc.esqlj.elastic.model.ElasticObjectType;
 import org.takeshi.jdbc.esqlj.elastic.query.impl.FromArrayQuery;
 import org.takeshi.jdbc.esqlj.elastic.query.impl.IndexFieldsQuery;
 import org.takeshi.jdbc.esqlj.elastic.query.impl.IndicesQuery;
-import org.takeshi.jdbc.esqlj.elastic.query.model.ElasticFieldType;
-import org.takeshi.jdbc.esqlj.elastic.query.model.ElasticObjectType;
 import org.takeshi.jdbc.esqlj.support.EsConfig;
 import org.takeshi.jdbc.esqlj.support.EsConfig.ConfigurationPropertyEnum;
 
@@ -949,6 +950,10 @@ public class EsMetaData implements DatabaseMetaData {
 	@Override
 	public boolean generatedKeyAlwaysReturned() throws SQLException {
 		return false;
+	}
+	
+	protected MetaDataService getMetaDataService() {
+		return metaDataService;
 	}
 
 }

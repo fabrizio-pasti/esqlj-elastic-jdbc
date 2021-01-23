@@ -9,8 +9,10 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.NClob;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLClientInfoException;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 import java.sql.SQLWarning;
 import java.sql.SQLXML;
 import java.sql.Savepoint;
@@ -29,7 +31,7 @@ import org.takeshi.jdbc.esqlj.support.EsConfig;
 public class EsConnection implements Connection {
 
 	private static RestHighLevelClient client;
-	private EsMetaData esMetaData;
+	private static EsMetaData esMetaData;
 
 	public EsConnection() throws SQLException {
 		open();
@@ -80,8 +82,7 @@ public class EsConnection implements Connection {
 
 	@Override
 	public String nativeSQL(String sql) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		throw new SQLFeatureNotSupportedException();
 	}
 
 	@Override
@@ -176,21 +177,21 @@ public class EsConnection implements Connection {
 
 	@Override
 	public Statement createStatement(int resultSetType, int resultSetConcurrency) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		if(resultSetType != ResultSet.TYPE_FORWARD_ONLY || resultSetConcurrency != ResultSet.CONCUR_READ_ONLY) {
+			throw new SQLFeatureNotSupportedException("Only TYPE_FORWARD_ONLY - CONCUR_READ_ONLY is supported");
+		}
+		return new EsStatement(this);
 	}
 
 	@Override
 	public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency)
 			throws SQLException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		throw new SQLFeatureNotSupportedException();
 	}
 
 	@Override

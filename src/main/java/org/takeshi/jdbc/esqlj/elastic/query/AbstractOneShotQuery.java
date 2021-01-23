@@ -9,7 +9,7 @@ import java.util.Map;
 
 import org.takeshi.jdbc.esqlj.EsConnection;
 import org.takeshi.jdbc.esqlj.elastic.query.data.oneshot.PageData;
-import org.takeshi.jdbc.esqlj.elastic.query.data.oneshot.PageDataState;
+import org.takeshi.jdbc.esqlj.elastic.query.model.PageDataState;
 
 public class AbstractOneShotQuery extends AbstractQuery {
 

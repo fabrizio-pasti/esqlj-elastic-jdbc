@@ -4,87 +4,121 @@ import java.sql.ResultSetMetaData;
 import java.sql.RowId;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
+import java.util.List;
+import java.util.Map;
 
 import org.takeshi.jdbc.esqlj.EsConnection;
 import org.takeshi.jdbc.esqlj.elastic.query.AbstractQuery;
 import org.takeshi.jdbc.esqlj.elastic.query.QueryType;
+import org.takeshi.jdbc.esqlj.elastic.query.data.oneshot.PageData;
+import org.takeshi.jdbc.esqlj.elastic.query.model.PageDataState;
 import org.takeshi.jdbc.esqlj.parser.model.ParsedQuery;
 
 public class ScrollableQuery extends AbstractQuery {
 
 	private ParsedQuery parsedQuery;
+	private PageData pageData;
 	
 	public ScrollableQuery(EsConnection connection, ParsedQuery query) {
 		super(connection, QueryType.SCROLLABLE, query.getIndex().getName());
 		this.parsedQuery = query;
+		pageData = new PageData(getSource());
+		fetchData();
+	}
+
+	private void fetchData() {
+		
 	}
 
 	@Override
-	public boolean next() {
-		return false;
+	public boolean next() throws SQLException {
+		switch(pageData.next()) {
+		case ITERATION_FINISHED:
+			return false;
+		case NOT_INITIALIZED:
+			throw new SQLException("Query not initialized");
+		default:
+			return true;		
+		}
+	}
+	
+	public void populate(List<List<Object>> data) {
+		pageData.populate(data);
+	}
+	
+	public void insertRow(Object... values) {
+		pageData.push(values);
+	}
+
+	public void insertRowWithData(Map<String, Object> data) {
+		pageData.pushSubsetData(data);
+	}
+
+	@Override
+	public boolean isBeforeFirst() {
+		return pageData.isBeforeFirst();
 	}
 
 	@Override
 	public boolean isFirst() {
-		// TODO Auto-generated method stub
-		return false;
+		return pageData.isFirst();
 	}
-
+	
 	@Override
 	public boolean isLast() {
-		// TODO Auto-generated method stub
-		return false;
+		return pageData.getState() == PageDataState.ITERATION_FINISHED;
 	}
 
 	@Override
-	public void reset() throws SQLFeatureNotSupportedException {
-		throw new SQLFeatureNotSupportedException(); 
-		
+	public void reset() throws SQLException {
+		pageData.reset();
 	}
 
 	@Override
 	public void finish() throws SQLException {
-		throw new SQLFeatureNotSupportedException();
+		pageData.finish();
 	}
 
 	@Override
 	public boolean moveToFirst() throws SQLException {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public int getCurrentRowIndex() throws SQLException {
-		return 0;
+		pageData.reset();
+		return pageData.getSize() > 0;
 	}
 
 	@Override
 	public boolean moveToLast() throws SQLException {
-		// TODO Auto-generated method stub
-		return false;
+		pageData.moveToLast();
+		return pageData.getSize() > 0;
 	}
 
 	@Override
+	public int getCurrentRowIndex() throws SQLException {
+		return pageData.getCurrentRowIndex() + 1;
+	}
+	
+	@Override
 	public boolean moveToRow(int rowIndex) throws SQLException {
-		// TODO Auto-generated method stub
-		return false;
+		pageData.moveToRow(rowIndex - 1);
+		return pageData.getSize() > 0;
 	}
 
 	@Override
 	public boolean isProvidingData() {
-		// TODO Auto-generated method stub
-		return false;
+		return pageData.isProvidingData();
 	}
 
 	@Override
-	public boolean moveByDelta(int rows) {
-		return false;
+	public boolean moveByDelta(int rows) throws SQLException {
+		if(!isProvidingData()) {
+			return false;
+		}
+		pageData.moveByDelta(rows);
+		return true;
 	}
 
 	@Override
 	public void setIterationStep(int iterationStep) {
-		// TODO Auto-generated method stub
-		
+		pageData.setIterationStep(iterationStep);
 	}
 
 	@Override
@@ -101,59 +135,48 @@ public class ScrollableQuery extends AbstractQuery {
 
 	@Override
 	public boolean isForwardOnly() {
-		return true;
+		return false;
 	}
 
 	@Override
 	public void close() throws SQLException {
+		pageData = null;
 		setClosed();
 	}
 
 	@Override
 	public <T> T getColumnValue(int columnIndex, Class<T> type) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		return pageData.getColumnValue(columnIndex - 1, type);
 	}
 
 	@Override
 	public <T> T getColumnValue(String columnName, Class<T> type) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		return pageData.getColumnValue(columnName, type);
 	}
 
 	@Override
 	public ResultSetMetaData getResultSetMetaData() {
-		// TODO Auto-generated method stub
-		return null;
+		return pageData.getResultSetMetaData();
 	}
 
 	@Override
 	public Object getColumnValue(int columnIndex) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		return pageData.getColumnValue(columnIndex - 1);
 	}
 
 	@Override
 	public Object getColumnValue(String columnName) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		return pageData.getColumnValue(columnName);
 	}
 
 	@Override
 	public int findColumnIndex(String columnLabel) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public boolean isBeforeFirst() {
-		// TODO Auto-generated method stub
-		return false;
+		return pageData.getColumnIndex(columnLabel);
 	}
 
 	@Override
 	public RowId getRowId() throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		throw new SQLFeatureNotSupportedException();
 	}
+
 }

@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.takeshi.jdbc.esqlj.elastic.model.ElasticFieldType;
 import org.takeshi.jdbc.esqlj.elastic.query.data.AbstractResultSetMetaData;
 import org.takeshi.jdbc.esqlj.elastic.query.model.DataRow;
-import org.takeshi.jdbc.esqlj.elastic.query.model.ElasticFieldType;
 
 public class ResultSetMetaDataImpl extends AbstractResultSetMetaData {
 

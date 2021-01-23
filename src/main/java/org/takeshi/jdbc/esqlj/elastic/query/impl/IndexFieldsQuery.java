@@ -13,9 +13,9 @@ import org.elasticsearch.client.indices.GetIndexRequest;
 import org.elasticsearch.client.indices.GetIndexResponse;
 import org.elasticsearch.cluster.metadata.MappingMetadata;
 import org.takeshi.jdbc.esqlj.EsConnection;
+import org.takeshi.jdbc.esqlj.elastic.model.ElasticField;
+import org.takeshi.jdbc.esqlj.elastic.model.ElasticFieldType;
 import org.takeshi.jdbc.esqlj.elastic.query.AbstractOneShotQuery;
-import org.takeshi.jdbc.esqlj.elastic.query.model.ElasticField;
-import org.takeshi.jdbc.esqlj.elastic.query.model.ElasticFieldType;
 
 public class IndexFieldsQuery extends AbstractOneShotQuery {
 	/**
