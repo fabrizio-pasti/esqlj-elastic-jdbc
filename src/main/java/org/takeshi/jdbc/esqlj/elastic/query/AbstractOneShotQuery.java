@@ -8,16 +8,16 @@ import java.util.List;
 import java.util.Map;
 
 import org.takeshi.jdbc.esqlj.EsConnection;
-import org.takeshi.jdbc.esqlj.elastic.query.data.oneshot.PageData;
+import org.takeshi.jdbc.esqlj.elastic.query.data.PageDataArray;
 import org.takeshi.jdbc.esqlj.elastic.query.model.PageDataState;
 
 public class AbstractOneShotQuery extends AbstractQuery {
 
-	private PageData pageData;
+	private PageDataArray pageData;
 	
 	public AbstractOneShotQuery(EsConnection connection, String source, String... columnsName) {
 		super(connection, QueryType.STATIC, source, columnsName);
-		pageData = new PageData(source, getColumnsName());
+		pageData = new PageDataArray(source, getColumnsName());
 	}
 
 	@Override

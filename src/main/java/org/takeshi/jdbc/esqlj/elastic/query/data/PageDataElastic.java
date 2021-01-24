@@ -1,4 +1,4 @@
-package org.takeshi.jdbc.esqlj.elastic.query.data.oneshot;
+package org.takeshi.jdbc.esqlj.elastic.query.data;
 
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -7,58 +7,31 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.takeshi.jdbc.esqlj.elastic.query.data.AbstractResultSetMetaData;
+import org.elasticsearch.action.search.SearchResponse;
+import org.takeshi.jdbc.esqlj.elastic.model.IndexMetaData;
 import org.takeshi.jdbc.esqlj.elastic.query.model.DataRow;
 import org.takeshi.jdbc.esqlj.elastic.query.model.PageDataState;
 
-public class PageData {
+public class PageDataElastic {
 
 	private String source;
-	private List<String> columnsName;
 	private List<DataRow> dataRows = new ArrayList<DataRow>();
 	private PageDataState state = PageDataState.NOT_INITIALIZED;
 	private int currentIdxCurrentRow = -1;
 	private int iterationStep = 1;
 	private AbstractResultSetMetaData resultSetMetaData;
+	private IndexMetaData indexMetaData;
+	
+	private boolean scrollable;
 
-	public PageData(String source, List<String> columnsName) {
-		this.source = source;
-		this.columnsName = columnsName;
+	public PageDataElastic(String source, IndexMetaData indexMetaData, boolean scrollable) {
+		this.indexMetaData = indexMetaData;
+		this.scrollable = scrollable;
 	}
 
-	public PageData(String source, String[] columnsName) {
-		this.source = source;
-		this.columnsName = Arrays.asList(columnsName);
-	}
-
-	public PageData(String source) {
-		this.source = source;
-	}
-
-	public void push(List<Object> values) {
-		dataRows.add(new DataRow(values));
-		state = PageDataState.READY_TO_ITERATE;
-	}
-
-	public void push(Object... values) {
-		dataRows.add(new DataRow(values));
-		state = PageDataState.READY_TO_ITERATE;
-	}
-
-	public void pushSubsetData(Map<String, Object> data) {
-		List<Object> columnValues = new ArrayList<Object>();
-		columnsName.stream().forEach(columnName -> {
-			if (data.containsKey(columnName)) {
-				columnValues.add(data.get(columnName));
-			} else {
-				columnValues.add(null);
-			}
-		});
-		push(columnValues);
-	}
-
-	public void populate(List<List<Object>> data) {
-		data.stream().forEach(row -> push(row));
+	public void pushData(SearchResponse searchResponse) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	public DataRow getCurrentRow() throws SQLException {
@@ -104,12 +77,12 @@ public class PageData {
 	}
 
 	public Object getColumnValue(String columnName) throws SQLException {
-		return getCurrentRow().data.get(columnsName.indexOf(columnName));
+		return getCurrentRow().data.get(indexMetaData.getFieldsName().indexOf(columnName));
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> T getColumnValue(String columnName, Class<T> clazz) throws SQLException { // todo: convert type if													// required
-		return (T) getCurrentRow().data.get(columnsName.indexOf(columnName));
+	public <T> T getColumnValue(String columnName, Class<T> clazz) throws SQLException { // todo: convert type if required													// required
+		return (T) getCurrentRow().data.get(indexMetaData.getFieldsName().indexOf(columnName));
 	}
 
 	public Object getColumnValue(int columnIndex) throws SQLException {
@@ -122,7 +95,7 @@ public class PageData {
 	}
 
 	public void setColumnValue(String columnName, Object data) throws SQLException {
-		getCurrentRow().put(columnsName.indexOf(columnName), data);
+		getCurrentRow().put(indexMetaData.getFieldsName().indexOf(columnName), data);
 	}
 
 	public PageDataState next() throws SQLException {
@@ -214,13 +187,13 @@ public class PageData {
 
 	public ResultSetMetaData getResultSetMetaData() {
 		if(resultSetMetaData == null) {
-			resultSetMetaData = new ResultSetMetaDataImpl(source, columnsName, dataRows);
+			resultSetMetaData = new ResultSetMetaDataElasticImpl(source, indexMetaData.getFieldsName(), dataRows);
 		}
 		return resultSetMetaData;
 	}
 
 	public int getColumnIndex(String columnLabel) {
-		return columnsName.indexOf(columnLabel);
+		return indexMetaData.getFieldsName().indexOf(columnLabel);
 	}
 
 	private PageDataState doNext() {
@@ -231,5 +204,8 @@ public class PageData {
 
 		return PageDataState.ITERATION_FINISHED;
 	}
+
+
+	
 
 }

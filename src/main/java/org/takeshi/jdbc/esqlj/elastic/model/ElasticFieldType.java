@@ -97,17 +97,17 @@ public enum ElasticFieldType {
 		}
 
 		public static ElasticFieldType resolveByElasticType(String elType) {
-			return Arrays.asList(ElasticFieldType.values()).stream().filter(elt -> elt.elType.equals(elType)).findFirst()
+			return Arrays.stream(ElasticFieldType.values()).filter(elt -> elt.elType.equals(elType)).findFirst()
 					.orElseGet(null);
 		}
 
 		public static ElasticFieldType resolveBySqlType(String sqlType) {
-			return Arrays.asList(ElasticFieldType.values()).stream().filter(elt -> elt.sqlType.equals(sqlType)).findFirst()
+			return Arrays.stream(ElasticFieldType.values()).filter(elt -> elt.sqlType.equals(sqlType)).findFirst()
 					.orElseGet(null);
 		}
 
 		public static ElasticFieldType resolveByValue(Object value) {
-			return Arrays.asList(ElasticFieldType.values()).stream().filter(elt -> value.getClass().equals(elt.getClazz())).findFirst()
+			return Arrays.stream(ElasticFieldType.values()).filter(elt -> value.getClass().equals(elt.getClazz())).findFirst()
 					.orElseGet(null);
 		}
 		

@@ -1,4 +1,4 @@
-package org.takeshi.jdbc.esqlj.elastic.query.data.scrollable;
+package org.takeshi.jdbc.esqlj.elastic.query.data;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -6,14 +6,13 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.takeshi.jdbc.esqlj.elastic.model.ElasticFieldType;
-import org.takeshi.jdbc.esqlj.elastic.query.data.AbstractResultSetMetaData;
 import org.takeshi.jdbc.esqlj.elastic.query.model.DataRow;
 
-public class ResultSetMetaDataImpl extends AbstractResultSetMetaData {
+public class ResultSetMetaDataArrayImpl extends AbstractResultSetMetaData {
 
 	private List<ElasticFieldType> columnTypes;
 	
-	public ResultSetMetaDataImpl(String source, List<String> columnsName, List<DataRow> dataRows) {
+	public ResultSetMetaDataArrayImpl(String source, List<String> columnsName, List<DataRow> dataRows) {
 		super(source, columnsName);
 		fetchTypes(dataRows);
 	}

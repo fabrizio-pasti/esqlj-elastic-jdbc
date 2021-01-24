@@ -1,5 +1,7 @@
 package org.takeshi.jdbc.esqlj.elastic.query;
 
+import java.sql.SQLException;
+
 import org.takeshi.jdbc.esqlj.EsConnection;
 import org.takeshi.jdbc.esqlj.elastic.query.impl.ScrollableQuery;
 import org.takeshi.jdbc.esqlj.parser.model.Field;
@@ -8,7 +10,7 @@ import org.takeshi.jdbc.esqlj.parser.model.ParsedQuery;
 
 public class Executor {
 	
-	public static ScrollableQuery execSql(EsConnection connection, String sql) {
+	public static ScrollableQuery execSql(EsConnection connection, String sql) throws SQLException {
 		return new ScrollableQuery(connection, tempQuery());
 	}
 	

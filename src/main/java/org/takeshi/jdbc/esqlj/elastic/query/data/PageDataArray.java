@@ -1,4 +1,4 @@
-package org.takeshi.jdbc.esqlj.elastic.query.data.scrollable;
+package org.takeshi.jdbc.esqlj.elastic.query.data;
 
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -7,11 +7,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.takeshi.jdbc.esqlj.elastic.query.data.AbstractResultSetMetaData;
 import org.takeshi.jdbc.esqlj.elastic.query.model.DataRow;
 import org.takeshi.jdbc.esqlj.elastic.query.model.PageDataState;
 
-public class PageData {
+public class PageDataArray {
 
 	private String source;
 	private List<String> columnsName;
@@ -21,14 +20,18 @@ public class PageData {
 	private int iterationStep = 1;
 	private AbstractResultSetMetaData resultSetMetaData;
 
-	public PageData(String source, List<String> columnsName) {
+	public PageDataArray(String source, List<String> columnsName) {
 		this.source = source;
 		this.columnsName = columnsName;
 	}
 
-	public PageData(String source, String[] columnsName) {
+	public PageDataArray(String source, String[] columnsName) {
 		this.source = source;
 		this.columnsName = Arrays.asList(columnsName);
+	}
+
+	public PageDataArray(String source) {
+		this.source = source;
 	}
 
 	public void push(List<Object> values) {
@@ -210,7 +213,7 @@ public class PageData {
 
 	public ResultSetMetaData getResultSetMetaData() {
 		if(resultSetMetaData == null) {
-			resultSetMetaData = new ResultSetMetaDataImpl(source, columnsName, dataRows);
+			resultSetMetaData = new ResultSetMetaDataArrayImpl(source, columnsName, dataRows);
 		}
 		return resultSetMetaData;
 	}

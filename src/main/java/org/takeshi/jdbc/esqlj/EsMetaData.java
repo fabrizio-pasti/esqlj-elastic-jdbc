@@ -806,7 +806,7 @@ public class EsMetaData implements DatabaseMetaData {
 	public ResultSet getUDTs(String catalog, String schemaPattern, String typeNamePattern, int[] types)
 			throws SQLException {
 		return new EsResultSet(new FromArrayQuery("system_catalogs",
-				Arrays.asList(ElasticFieldType.values()).stream().filter(t -> t.isUdt()).map(t -> new ArrayList<Object>(Arrays.asList(catalog, schemaPattern, t.getSqlType(), t.getClass().getName(), t.getSqlTypeCode(), null, null))).collect(Collectors.toList()), 
+				Arrays.stream(ElasticFieldType.values()).filter(t -> t.isUdt()).map(t -> new ArrayList<Object>(Arrays.asList(catalog, schemaPattern, t.getSqlType(), t.getClass().getName(), t.getSqlTypeCode(), null, null))).collect(Collectors.toList()), 
 				"TYPE_CAT", "TYPE_SCHEM", "TYPE_NAME", "CLASS_NAME", "DATA_TYPE", "REMARKS", "BASE_TYPE"));
 	}
 
@@ -952,7 +952,7 @@ public class EsMetaData implements DatabaseMetaData {
 		return false;
 	}
 	
-	protected MetaDataService getMetaDataService() {
+	public MetaDataService getMetaDataService() {
 		return metaDataService;
 	}
 
