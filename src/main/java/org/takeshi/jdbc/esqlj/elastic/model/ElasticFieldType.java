@@ -1,6 +1,5 @@
 package org.takeshi.jdbc.esqlj.elastic.model;
 
-import java.sql.Timestamp;
 import java.sql.Types;
 import java.time.LocalDateTime;
 import java.util.Arrays;
