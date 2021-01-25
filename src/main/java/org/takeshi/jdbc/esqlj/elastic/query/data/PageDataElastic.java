@@ -54,7 +54,7 @@ public class PageDataElastic {
 		
 		searchResponse.getHits().forEach(searchHit -> {
 			List<Object> data = new ArrayList<Object>();
-			indexMetaData.getFields().forEach(field -> {
+			indexMetaData.getFields().forEach((name, field) -> {
 				if(field.isDocField()) {
 					DocumentField docField = searchHit.field(field.getFullName());
 					if(docField != null) {

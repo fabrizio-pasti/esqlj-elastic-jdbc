@@ -46,7 +46,7 @@ public class EsResultSetMetaData implements ResultSetMetaData {
 	}
 
 	private void fetchTypesByMetaData(IndexMetaData indexMetaData) {
-		columnTypes = indexMetaData.getFields().stream().map(field -> field.getType()).collect(Collectors.toList());
+		columnTypes = indexMetaData.getFields().entrySet().stream().map(field -> field.getValue().getType()).collect(Collectors.toList());
 	}
 
 	@Override

@@ -4,8 +4,10 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import org.elasticsearch.client.RequestOptions;
@@ -65,7 +67,7 @@ public class MetaDataService {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<ElasticField> getIndexFields(String index) throws SQLException {
+	public Map<String, ElasticField> getIndexFields(String index) throws SQLException {
 		try {
 			GetFieldMappingsRequest request = new GetFieldMappingsRequest();
 			request.indices(index);
@@ -73,7 +75,7 @@ public class MetaDataService {
 			
 			GetFieldMappingsResponse response = client.indices().getFieldMapping(request, RequestOptions.DEFAULT);
 	
-			List<ElasticField> fields = new ArrayList<ElasticField>();
+			Map<String, ElasticField> fields = new TreeMap<String, ElasticField>();
 			List<String> managedFields = new ArrayList<String>();
 			
 			response.mappings().entrySet().stream().map(entry -> entry.getValue()).forEach(iMap -> {
@@ -81,7 +83,7 @@ public class MetaDataService {
 					Map<String, Object> metadataMap = metadata.sourceAsMap();
 					if(metadataMap.size() > 0 && !managedFields.stream().anyMatch(field::equals)) {
 						Map<String, Object> fieldMap = (Map<String, Object>)metadataMap.get(field.substring(field.lastIndexOf('.') + 1));
-						fields.add(new ElasticField(
+						fields.put(field, new ElasticField(
 								field, 
 								ElasticFieldType.resolveByElasticType((String)fieldMap.get("type")),
 								fieldMap.get("ignore_above") != null ? new Long((Integer)fieldMap.get("ignore_above")) : null));
@@ -90,7 +92,7 @@ public class MetaDataService {
 				});
 			});
 			
-			return fields.stream().sorted().collect(Collectors.toList());
+			return fields.entrySet().stream().sorted(Map.Entry.comparingByKey()).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,(oldValue, newValue) -> oldValue, LinkedHashMap::new));
 		} catch(IOException e) {
 			throw new SQLException(e.getMessage());
 		}

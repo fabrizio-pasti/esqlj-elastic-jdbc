@@ -22,11 +22,9 @@ public class IndexFieldsQuery extends AbstractOneShotQuery {
 	}
 
 	public void init(String index) throws SQLException {
-		List<ElasticField> fields = ((EsMetaData)getConnection().getMetaData()).getMetaDataService().getIndexFields(index);
-		
 		insertRow(index, new ElasticField("_id", ElasticFieldType.KEYWORD));
 		
-		fields.forEach(field -> {
+		((EsMetaData)getConnection().getMetaData()).getMetaDataService().getIndexFields(index).forEach((name, field) -> {
 			insertRow(index, field);
 		});
 	}

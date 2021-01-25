@@ -6,7 +6,7 @@ import java.util.Arrays;
 
 public enum ConfigurationEnum {
 
-		CFG_INCLUDE_TEXT_FIELDS_BY_DEFAULT("includeTextFieldsByDefault", Boolean.class, false),
+		CFG_INCLUDE_TEXT_FIELDS_BY_DEFAULT("includeTextFieldsByDefault", Boolean.class, true),
 		CFG_INDEX_METADATA_CACHE("indexMetaDataCache", Boolean.class, false),
 		CFG_QUERY_FETCH_SIZE("queryFetchSize", Integer.class, 100),
 		CFG_QUERY_SCROLL_TIMEOUT_MINUTES("queryScrollTimeoutMinutes", Long.class, 1L);

@@ -3,15 +3,15 @@ package org.takeshi.jdbc.esqlj.elastic.query;
 import java.sql.SQLException;
 
 import org.takeshi.jdbc.esqlj.EsConnection;
-import org.takeshi.jdbc.esqlj.elastic.query.impl.ScrollableQuery;
+import org.takeshi.jdbc.esqlj.elastic.query.impl.ElasticQuery;
 import org.takeshi.jdbc.esqlj.parser.model.Field;
 import org.takeshi.jdbc.esqlj.parser.model.Index;
 import org.takeshi.jdbc.esqlj.parser.model.ParsedQuery;
 
 public class Executor {
 	
-	public static ScrollableQuery execSql(EsConnection connection, String sql) throws SQLException {
-		return new ScrollableQuery(connection, tempQuery());
+	public static ElasticQuery execSql(EsConnection connection, String sql) throws SQLException {
+		return new ElasticQuery(connection, tempQuery(), true);
 	}
 	
 	private static ParsedQuery tempQuery( ) {

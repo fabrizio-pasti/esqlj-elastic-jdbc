@@ -20,6 +20,7 @@ import org.takeshi.jdbc.esqlj.ConfigurationEnum;
 import org.takeshi.jdbc.esqlj.EsConnection;
 import org.takeshi.jdbc.esqlj.EsMetaData;
 import org.takeshi.jdbc.esqlj.EsResultSetMetaData;
+import org.takeshi.jdbc.esqlj.elastic.model.ElasticField;
 import org.takeshi.jdbc.esqlj.elastic.model.IndexMetaData;
 import org.takeshi.jdbc.esqlj.elastic.query.AbstractQuery;
 import org.takeshi.jdbc.esqlj.elastic.query.QueryType;
@@ -27,7 +28,7 @@ import org.takeshi.jdbc.esqlj.elastic.query.data.PageDataElastic;
 import org.takeshi.jdbc.esqlj.elastic.query.model.PageDataState;
 import org.takeshi.jdbc.esqlj.parser.model.ParsedQuery;
 
-public class ScrollableQuery extends AbstractQuery {
+public class ElasticQuery extends AbstractQuery {
 
 	private ParsedQuery parsedQuery;
 	private PageDataElastic pageData;
@@ -38,11 +39,12 @@ public class ScrollableQuery extends AbstractQuery {
 	private boolean rsEmpty;
 	private boolean queryOpen = true;
 	
-	public ScrollableQuery(EsConnection connection, ParsedQuery query) throws SQLException {
+	public ElasticQuery(EsConnection connection, ParsedQuery query, boolean scrollable) throws SQLException {
 		super(connection, QueryType.SCROLLABLE, query.getIndex().getName());
 		this.parsedQuery = query;
+		this.scrollable = scrollable;
 		this.indexMetaData = ((EsMetaData)connection.getMetaData()).getMetaDataService().getIndexMetaData(getSource());
-		pageData = new PageDataElastic(getSource(), indexMetaData, true);
+
 		this.fetchSize = Configuration.getConfiguration(ConfigurationEnum.CFG_QUERY_FETCH_SIZE, Integer.class);
 		initialFetch();
 	}
@@ -53,7 +55,8 @@ public class ScrollableQuery extends AbstractQuery {
 			SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 			List<String> srcIncludeFields = Configuration.getConfiguration(ConfigurationEnum.CFG_INCLUDE_TEXT_FIELDS_BY_DEFAULT, Boolean.class) ?  new ArrayList<String>() : null;
 			
-			indexMetaData.getFields().stream().forEach(field -> {
+			pageData = new PageDataElastic(getSource(), indexMetaData, true);
+			indexMetaData.getFields().forEach((name, field) -> {
 				if(!field.isDocField()) {
 					if(srcIncludeFields != null) {
 						srcIncludeFields.add(field.getFullName());

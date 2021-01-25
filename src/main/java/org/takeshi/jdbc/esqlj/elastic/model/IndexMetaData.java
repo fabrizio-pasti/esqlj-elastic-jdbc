@@ -1,14 +1,15 @@
 package org.takeshi.jdbc.esqlj.elastic.model;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class IndexMetaData {
 	private String index;
-	private List<ElasticField> fields;
+	private Map<String, ElasticField> fields;
 	private List<String> fieldsName;
 
-	public IndexMetaData(String index, List<ElasticField> fields) {
+	public IndexMetaData(String index, Map<String, ElasticField> fields) {
 		super();
 		this.index = index;
 		this.fields = fields;
@@ -19,7 +20,7 @@ public class IndexMetaData {
 		return index;
 	}
 
-	public List<ElasticField> getFields() {
+	public Map<String, ElasticField> getFields() {
 		return fields;
 	}
 	
@@ -28,7 +29,7 @@ public class IndexMetaData {
 	}
 	
 	private void resolveFieldNames() {
-		fieldsName = fields.stream().map(field -> field.getFullName()).collect(Collectors.toList());
+		fieldsName = fields.keySet().stream().sorted().collect(Collectors.toList());
 	}
 
 }
