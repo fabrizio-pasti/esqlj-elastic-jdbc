@@ -1,37 +1,101 @@
 package org.takeshi.jdbc.esqlj.elastic.query.data;
 
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
+import java.util.TimeZone;
 
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.common.document.DocumentField;
+import org.takeshi.jdbc.esqlj.Configuration;
+import org.takeshi.jdbc.esqlj.ConfigurationEnum;
+import org.takeshi.jdbc.esqlj.elastic.model.ElasticField;
 import org.takeshi.jdbc.esqlj.elastic.model.IndexMetaData;
 import org.takeshi.jdbc.esqlj.elastic.query.model.DataRow;
 import org.takeshi.jdbc.esqlj.elastic.query.model.PageDataState;
+import org.takeshi.jdbc.esqlj.support.SimpleDateFormatThreadSafe;
 
 public class PageDataElastic {
-
-	private String source;
-	private List<DataRow> dataRows = new ArrayList<DataRow>();
+	
 	private PageDataState state = PageDataState.NOT_INITIALIZED;
 	private int currentIdxCurrentRow = -1;
 	private int iterationStep = 1;
-	private AbstractResultSetMetaData resultSetMetaData;
 	private IndexMetaData indexMetaData;
 	
+	private List<DataRow> dataRows;
 	private boolean scrollable;
+	private String scrollId;
+	private boolean retrieveTextField;
 
+	public static final SimpleDateFormatThreadSafe sdfTimestamp = new SimpleDateFormatThreadSafe("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", TimeZone.getTimeZone("UTC"));
+	
 	public PageDataElastic(String source, IndexMetaData indexMetaData, boolean scrollable) {
 		this.indexMetaData = indexMetaData;
 		this.scrollable = scrollable;
+		this.retrieveTextField = Configuration.getConfiguration(ConfigurationEnum.CFG_INCLUDE_TEXT_FIELDS_BY_DEFAULT, Boolean.class);
 	}
 
 	public void pushData(SearchResponse searchResponse) {
-		// TODO Auto-generated method stub
+		if(scrollable) {
+			scrollId = searchResponse.getScrollId();
+		}
 		
+		currentIdxCurrentRow = -1;
+		
+		if(dataRows != null) {
+			DataRow dataRow = dataRows.get(dataRows.size() - 1);
+			dataRows = new ArrayList<DataRow>();
+			dataRows.add(dataRow);
+		} else {
+			dataRows = new ArrayList<DataRow>();
+		}
+		
+		
+		searchResponse.getHits().forEach(searchHit -> {
+			List<Object> data = new ArrayList<Object>();
+			indexMetaData.getFields().forEach(field -> {
+				if(field.isDocField()) {
+					DocumentField docField = searchHit.field(field.getFullName());
+					if(docField != null) {
+						data.add(resolveType(field, docField.getValue())); // only first field value is managed
+					} else {
+						data.add(null);
+					}
+				} else if(retrieveTextField) {
+					data.add(searchResponse.getHits().getAt(0).getSourceAsMap().get(field.getFullName()));
+				} else {
+					data.add(null);
+				}
+			});
+			dataRows.add(new DataRow(data));
+		});
+				
+		state = state == PageDataState.NOT_INITIALIZED ? PageDataState.READY_TO_ITERATE : PageDataState.ITERATION_STARTED;
+	}
+	
+	private Object resolveType(ElasticField field, Object value) {
+		switch(field.getType()) {
+			case BOOLEAN:
+				if(value != null) {
+					return value;
+				}
+				return null;
+			case DATE:
+			case DATE_NANOS:
+				try {
+					return sdfTimestamp.parse((String)value);
+				} catch (ParseException e) {
+					// log error
+					return null;
+				}
+			default:
+				return value;
+		}
+	}
+
+	public String getScrollId() {
+		return scrollId;
 	}
 
 	public DataRow getCurrentRow() throws SQLException {
@@ -185,13 +249,6 @@ public class PageDataElastic {
 		this.iterationStep = iterationStep;
 	}
 
-	public ResultSetMetaData getResultSetMetaData() {
-		if(resultSetMetaData == null) {
-			resultSetMetaData = new ResultSetMetaDataElasticImpl(source, indexMetaData.getFieldsName(), dataRows);
-		}
-		return resultSetMetaData;
-	}
-
 	public int getColumnIndex(String columnLabel) {
 		return indexMetaData.getFieldsName().indexOf(columnLabel);
 	}
@@ -199,10 +256,18 @@ public class PageDataElastic {
 	private PageDataState doNext() {
 		if (dataRows.size() >= currentIdxCurrentRow) {
 			currentIdxCurrentRow += iterationStep;
-			return currentIdxCurrentRow == dataRows.size() - 1 ? PageDataState.ITERATION_FINISHED : PageDataState.ITERATION_STARTED;
+			return currentIdxCurrentRow == dataRows.size() ? PageDataState.ITERATION_FINISHED : PageDataState.ITERATION_STARTED;
 		}
 
 		return PageDataState.ITERATION_FINISHED;
+	}
+
+	public boolean oneRowLeft() {
+		return currentIdxCurrentRow == dataRows.size() - 2;
+	}
+
+	public boolean isEmpty() {
+		return dataRows.isEmpty();
 	}
 
 

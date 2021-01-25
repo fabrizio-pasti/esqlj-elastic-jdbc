@@ -31,6 +31,7 @@ import org.takeshi.jdbc.esqlj.support.Utils;
 public class EsResultSet implements ResultSet {
 	private AbstractQuery query;
 	private int fetchDirection;
+	private boolean wasNull;
 
 	public EsResultSet(AbstractQuery query) {
 		this.query = query;
@@ -55,56 +56,55 @@ public class EsResultSet implements ResultSet {
 	public void close() throws SQLException {
 		query.close();
 	}
-
+	
 	@Override
 	public boolean wasNull() throws SQLException {
-		// TODO Auto-generated method stub
-		return false;
+		return wasNull;
 	}
-
+	
 	@Override
 	public String getString(int columnIndex) throws SQLException {
-		return query.getColumnValue(columnIndex, String.class);
+		return getColumnValue(columnIndex, String.class, null);
 	}
 
 	@Override
 	public boolean getBoolean(int columnIndex) throws SQLException {
-		return query.getColumnValue(columnIndex, Boolean.class);
+		return getColumnValue(columnIndex, Boolean.class, false);
 	}
-
+	
 	@Override
 	public byte getByte(int columnIndex) throws SQLException {
-		throw new SQLFeatureNotSupportedException();
+		return getColumnValue(columnIndex, Byte.class, (byte)0);
 	}
 
 	@Override
 	public short getShort(int columnIndex) throws SQLException {
-		throw new SQLFeatureNotSupportedException();
+		return getColumnValue(columnIndex, Short.class, (short)0);
 	}
 
 	@Override
 	public int getInt(int columnIndex) throws SQLException {
-		return query.getColumnValue(columnIndex, Integer.class);
+		return getColumnValue(columnIndex, Integer.class, 0);
 	}
 
 	@Override
 	public long getLong(int columnIndex) throws SQLException {
-		return query.getColumnValue(columnIndex, Long.class);
+		return getColumnValue(columnIndex, Long.class, 0L);
 	}
 
 	@Override
 	public float getFloat(int columnIndex) throws SQLException {
-		return query.getColumnValue(columnIndex, Float.class);
+		return getColumnValue(columnIndex, Float.class, (float)0.0);
 	}
 
 	@Override
 	public double getDouble(int columnIndex) throws SQLException {
-		return query.getColumnValue(columnIndex, Double.class);
+		return getColumnValue(columnIndex, Double.class, 0.0);
 	}
 
 	@Override
 	public BigDecimal getBigDecimal(int columnIndex, int scale) throws SQLException {
-		return query.getColumnValue(columnIndex, BigDecimal.class);
+		return getColumnValue(columnIndex, BigDecimal.class, new BigDecimal(0));
 	}
 
 	@Override
@@ -114,27 +114,27 @@ public class EsResultSet implements ResultSet {
 
 	@Override
 	public Date getDate(int columnIndex) throws SQLException {
-		return query.getColumnValue(columnIndex, Date.class);
+		return getColumnValue(columnIndex, Date.class, null);
 	}
 
 	@Override
 	public Time getTime(int columnIndex) throws SQLException {
-		return query.getColumnValue(columnIndex, Time.class);
+		return getColumnValue(columnIndex, Time.class, null);
 	}
 
 	@Override
 	public Timestamp getTimestamp(int columnIndex) throws SQLException {
-		return query.getColumnValue(columnIndex, Timestamp.class);
+		return getColumnValue(columnIndex, Timestamp.class, null);
 	}
 
 	@Override
 	public InputStream getAsciiStream(int columnIndex) throws SQLException {
-		return Utils.getAsciiStreamInternal(query.getColumnValue(columnIndex, String.class));
+		return Utils.getAsciiStreamInternal(getColumnValue(columnIndex, String.class, null));
 	}
 
 	@Override
 	public InputStream getUnicodeStream(int columnIndex) throws SQLException {
-		return Utils.getAsciiStreamInternal(query.getColumnValue(columnIndex, String.class));
+		return Utils.getAsciiStreamInternal(getColumnValue(columnIndex, String.class, null));
 	}
 
 	@Override
@@ -144,51 +144,47 @@ public class EsResultSet implements ResultSet {
 
 	@Override
 	public String getString(String columnLabel) throws SQLException {
-		return query.getColumnValue(columnLabel, String.class);
+		return getColumnValue(columnLabel, String.class, null);
 	}
 
 	@Override
 	public boolean getBoolean(String columnLabel) throws SQLException {
-		return query.getColumnValue(columnLabel, Boolean.class);
+		return getColumnValue(columnLabel, Boolean.class, false);
 	}
 
 	@Override
 	public byte getByte(String columnLabel) throws SQLException {
-		throw new SQLFeatureNotSupportedException();
+		return getColumnValue(columnLabel, Byte.class, (byte)0);
 	}
 
 	@Override
 	public short getShort(String columnLabel) throws SQLException {
-		throw new SQLFeatureNotSupportedException();
+		return getColumnValue(columnLabel, Short.class, (short)0);
 	}
 
 	@Override
 	public int getInt(String columnLabel) throws SQLException {
-		Integer ret = query.getColumnValue(columnLabel, Integer.class);
-		return ret == null ? 0 : ret;
+		return getColumnValue(columnLabel, Integer.class, 0);
 	}
 
 	@Override
 	public long getLong(String columnLabel) throws SQLException {
-		Long ret = query.getColumnValue(columnLabel, Long.class);
-		return ret == null ? 0L : ret;
+		return getColumnValue(columnLabel, Long.class, 0L);
 	}
 
 	@Override
 	public float getFloat(String columnLabel) throws SQLException {
-		Float ret = query.getColumnValue(columnLabel, Float.class);
-		return ret == null ? 0 : ret;
+		return getColumnValue(columnLabel, Float.class, (float)0.0);
 	}
 
 	@Override
 	public double getDouble(String columnLabel) throws SQLException {
-		Double ret = query.getColumnValue(columnLabel, Double.class);
-		return ret == null ? 0 : ret;
+		return getColumnValue(columnLabel, Double.class, 0.0);
 	}
 
 	@Override
 	public BigDecimal getBigDecimal(String columnLabel, int scale) throws SQLException {
-		return query.getColumnValue(columnLabel, BigDecimal.class);
+		return getColumnValue(columnLabel, BigDecimal.class, new BigDecimal(0));
 	}
 
 	@Override
@@ -198,27 +194,27 @@ public class EsResultSet implements ResultSet {
 
 	@Override
 	public Date getDate(String columnLabel) throws SQLException {
-		return query.getColumnValue(columnLabel, Date.class);
+		return getColumnValue(columnLabel, Date.class, null);
 	}
 
 	@Override
 	public Time getTime(String columnLabel) throws SQLException {
-		return query.getColumnValue(columnLabel, Time.class);
+		return getColumnValue(columnLabel, Time.class, null);
 	}
 
 	@Override
 	public Timestamp getTimestamp(String columnLabel) throws SQLException {
-		return query.getColumnValue(columnLabel, Timestamp.class);
+		return getColumnValue(columnLabel, Timestamp.class, null);
 	}
 
 	@Override
 	public InputStream getAsciiStream(String columnLabel) throws SQLException {
-		return Utils.getAsciiStreamInternal(query.getColumnValue(columnLabel, String.class));
+		return Utils.getAsciiStreamInternal(getColumnValue(columnLabel, String.class, null));
 	}
 
 	@Override
 	public InputStream getUnicodeStream(String columnLabel) throws SQLException {
-		return Utils.getAsciiStreamInternal(query.getColumnValue(columnLabel, String.class));
+		return Utils.getAsciiStreamInternal(getColumnValue(columnLabel, String.class, null));
 	}
 
 	@Override
@@ -247,39 +243,39 @@ public class EsResultSet implements ResultSet {
 
 	@Override
 	public Object getObject(int columnIndex) throws SQLException {
-		return query.getColumnValue(columnIndex);
+		return getColumnValue(columnIndex, Object.class, null);
 	}
 
 	@Override
 	public Object getObject(String columnLabel) throws SQLException {
-		return query.getColumnValue(columnLabel);
+		return getColumnValue(columnLabel, Object.class, null);
 	}
 
 	@Override
 	public int findColumn(String columnLabel) throws SQLException {
-		return query.findColumnIndex(columnLabel);
+		return getColumnValue(columnLabel, Integer.class, 0);
 	}
 
 	@Override
 	public Reader getCharacterStream(int columnIndex) throws SQLException {
-		String data = query.getColumnValue(columnIndex, String.class);
+		String data = getColumnValue(columnIndex, String.class, null);
 		return data == null ? null : new StringReader(data);
 	}
 
 	@Override
 	public Reader getCharacterStream(String columnLabel) throws SQLException {
-		String data = query.getColumnValue(columnLabel, String.class);
+		String data = getColumnValue(columnLabel, String.class, null);
 		return data == null ? null : new StringReader(data);
 	}
 
 	@Override
 	public BigDecimal getBigDecimal(int columnIndex) throws SQLException {
-		return query.getColumnValue(columnIndex, BigDecimal.class);
+		return getColumnValue(columnIndex, BigDecimal.class, new BigDecimal(0));
 	}
 
 	@Override
 	public BigDecimal getBigDecimal(String columnLabel) throws SQLException {
-		return query.getColumnValue(columnLabel, BigDecimal.class);
+		return getColumnValue(columnLabel, BigDecimal.class, new BigDecimal(0));
 	}
 
 	@Override
@@ -364,7 +360,7 @@ public class EsResultSet implements ResultSet {
 
 	@Override
 	public void setFetchSize(int rows) throws SQLException {
-		query.setFetchSize();
+		query.setFetchSize(rows);
 	}
 
 	@Override
@@ -1010,12 +1006,37 @@ public class EsResultSet implements ResultSet {
 
 	@Override
 	public <T> T getObject(int columnIndex, Class<T> type) throws SQLException {
-		return query.getColumnValue(columnIndex, type);
+		return getColumnValue(columnIndex, type, null);
 	}
 
 	@Override
 	public <T> T getObject(String columnLabel, Class<T> type) throws SQLException {
-		return query.getColumnValue(columnLabel, type);
+		return getColumnValue(columnLabel, type, null);
+	}
+	
+	public AbstractQuery getInternalQuery() {
+		return query;
 	}
 
+	private <T> T getColumnValue(int columnIndex, Class<T> clazz, T nullValue) throws SQLException {
+		try {
+			T value = query.getColumnValue(columnIndex, clazz);
+			wasNull = value == null;
+			return wasNull ? nullValue : (T) value;
+		} catch(NullPointerException e) {
+			wasNull = true;
+			return nullValue;
+		}
+	}
+	
+	private <T> T getColumnValue(String columnName, Class<T> clazz, T nullValue) throws SQLException {
+		try {
+			T value = query.getColumnValue(columnName, clazz);
+			wasNull = value == null;
+			return wasNull ? nullValue : (T) value;
+		} catch(NullPointerException e) {
+			wasNull = true;
+			return nullValue;
+		}
+	}
 }

@@ -732,8 +732,8 @@ public class EsMetaData implements DatabaseMetaData {
 	@Override
 	public ResultSet getTypeInfo() throws SQLException {
 		return new EsResultSet(new FromArrayQuery("system_catalogs",
-				Arrays.asList(ElasticFieldType.values()).stream().filter(t -> t.isConcrete()).map(t -> new ArrayList<Object>(Arrays.asList(t.getSqlType(), t.getSqlTypeCode(), t.isCaseSensitive(), t.getLiteralPrefix(), t.getLiteralSuffix(), null, t.isCaseSensitive(), 1, t.isUnsigned(), false, false, t.getSqlType(), null, null, null, null, 10))).collect(Collectors.toList()), 
-				"TYPE_NAME", "DATA_TYPE", "PRECISION", "LITERAL_SUFFIX", "CREATE_PARAMS", "NULLABLE", "CASE_SENSITIVE", "SEARCHABLE", "UNSIGNED_ATTRIBUTE", "FIXED_PREC_SCALE", "AUTO_INCREMENT", "LOCAL_TYPE_NAME", "MINIMUM_SCALE", "MAXIMUM_SCALE", "SQL_DATA_TYPE", "SQL_DATETIME_SUB", "NUM_PREC_RADIX"));
+				Arrays.asList(ElasticFieldType.values()).stream().filter(t -> t.isConcrete()).map(t -> new ArrayList<Object>(Arrays.asList(t.getSqlType(), t.getSqlTypeCode(), t.getPrecision(), t.getLiteralPrefix(), t.getLiteralSuffix(), null, true, t.isCaseSensitive(), 1, t.isUnsigned(), false, false, t.getSqlType(), null, null, null, null, 10))).collect(Collectors.toList()), 
+				"TYPE_NAME", "DATA_TYPE", "PRECISION", "LITERAL_PREFIX", "LITERAL_SUFFIX", "CREATE_PARAMS", "NULLABLE", "CASE_SENSITIVE", "SEARCHABLE", "UNSIGNED_ATTRIBUTE", "FIXED_PREC_SCALE", "AUTO_INCREMENT", "LOCAL_TYPE_NAME", "MINIMUM_SCALE", "MAXIMUM_SCALE", "SQL_DATA_TYPE", "SQL_DATETIME_SUB", "NUM_PREC_RADIX"));
 	}
 
 	@Override

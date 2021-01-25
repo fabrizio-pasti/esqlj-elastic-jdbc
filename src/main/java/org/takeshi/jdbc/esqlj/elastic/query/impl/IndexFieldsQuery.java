@@ -44,6 +44,16 @@ public class IndexFieldsQuery extends AbstractOneShotQuery {
 		data.put("COLUMN_NAME", field.getFullName());
 		data.put("DATA_TYPE", field.getType().getSqlTypeCode());
 		data.put("TYPE_NAME", field.getType().getSqlType());
+		data.put("NUM_PREC_RADIX", 10);
+		data.put("NULLABLE", 1);
+		data.put("IS_NULLABLE", "YES");
+		data.put("IS_AUTOINCREMENT", "NO");
+		data.put("SOURCE_DATA_TYPE", field.getType().getSqlTypeCode());
+		if(field.getType().equals(ElasticFieldType.KEYWORD) && field.getSize() == null) {
+			data.put("COLUMN_SIZE", 32766L);
+		} else {
+			data.put("COLUMN_SIZE", field.getSize());
+		}
 		insertRowWithData(data);
 	}
 	

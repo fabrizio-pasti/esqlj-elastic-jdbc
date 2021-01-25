@@ -11,6 +11,7 @@ import org.takeshi.jdbc.esqlj.elastic.query.Executor;
 public class EsStatement implements Statement {
 
 	private EsConnection connection;
+	private EsResultSet resultSet;
 
 	public EsStatement(EsConnection connection) {
 		this.connection = connection;
@@ -28,7 +29,8 @@ public class EsStatement implements Statement {
 
 	@Override
 	public ResultSet executeQuery(String sql) throws SQLException {
-		return new EsResultSet(Executor.execSql(connection, sql));
+		resultSet = new EsResultSet(Executor.execSql(connection, sql));
+		return resultSet;
 	}
 
 	@Override
@@ -111,14 +113,13 @@ public class EsStatement implements Statement {
 
 	@Override
 	public boolean execute(String sql) throws SQLException {
-		// TODO Auto-generated method stub
-		return false;
+		resultSet = new EsResultSet(Executor.execSql(connection, sql));
+		return !resultSet.getInternalQuery().isEmpty(); // todo: add also if it is an update query
 	}
 
 	@Override
 	public ResultSet getResultSet() throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		return resultSet;
 	}
 
 	@Override

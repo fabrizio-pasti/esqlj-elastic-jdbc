@@ -7,20 +7,19 @@ import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
+import org.elasticsearch.action.search.ClearScrollRequest;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.search.SearchScrollRequest;
 import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.common.document.DocumentField;
 import org.elasticsearch.common.unit.TimeValue;
-import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.takeshi.jdbc.esqlj.Configuration;
 import org.takeshi.jdbc.esqlj.ConfigurationEnum;
 import org.takeshi.jdbc.esqlj.EsConnection;
 import org.takeshi.jdbc.esqlj.EsMetaData;
-import org.takeshi.jdbc.esqlj.elastic.model.ElasticFieldType;
+import org.takeshi.jdbc.esqlj.EsResultSetMetaData;
 import org.takeshi.jdbc.esqlj.elastic.model.IndexMetaData;
 import org.takeshi.jdbc.esqlj.elastic.query.AbstractQuery;
 import org.takeshi.jdbc.esqlj.elastic.query.QueryType;
@@ -33,24 +32,29 @@ public class ScrollableQuery extends AbstractQuery {
 	private ParsedQuery parsedQuery;
 	private PageDataElastic pageData;
 	private IndexMetaData indexMetaData;
+	private boolean scrollable = true;
+	private ResultSetMetaData resultSetMetaData;
+	private int fetchSize;
+	private boolean rsEmpty;
+	private boolean queryOpen = true;
 	
 	public ScrollableQuery(EsConnection connection, ParsedQuery query) throws SQLException {
 		super(connection, QueryType.SCROLLABLE, query.getIndex().getName());
 		this.parsedQuery = query;
 		this.indexMetaData = ((EsMetaData)connection.getMetaData()).getMetaDataService().getIndexMetaData(getSource());
 		pageData = new PageDataElastic(getSource(), indexMetaData, true);
-		
-		fetchData();
+		this.fetchSize = Configuration.getConfiguration(ConfigurationEnum.CFG_QUERY_FETCH_SIZE, Integer.class);
+		initialFetch();
 	}
 
-	private void fetchData() throws SQLException {
+	private void initialFetch() throws SQLException {
 		try {
 			SearchRequest searchRequest = new SearchRequest(getSource());
 			SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 			List<String> srcIncludeFields = Configuration.getConfiguration(ConfigurationEnum.CFG_INCLUDE_TEXT_FIELDS_BY_DEFAULT, Boolean.class) ?  new ArrayList<String>() : null;
 			
 			indexMetaData.getFields().stream().forEach(field -> {
-				if(field.getType().equals(ElasticFieldType.TEXT)) {
+				if(!field.isDocField()) {
 					if(srcIncludeFields != null) {
 						srcIncludeFields.add(field.getFullName());
 					}
@@ -59,15 +63,38 @@ public class ScrollableQuery extends AbstractQuery {
 				}
 			});
 	
-			searchSourceBuilder.size(Configuration.getConfiguration(ConfigurationEnum.CFG_QUERY_FETCH_SIZE, Integer.class)); 
+			searchSourceBuilder.size(fetchSize); 
 			searchRequest.source(searchSourceBuilder);
 			searchRequest.scroll(TimeValue.timeValueMinutes(Configuration.getConfiguration(ConfigurationEnum.CFG_QUERY_SCROLL_TIMEOUT_MINUTES, Long.class))); 
 			SearchResponse searchResponse = getConnection().getElasticClient().search(searchRequest, RequestOptions.DEFAULT);
 			pageData.pushData(searchResponse);
-			String scrollId = searchResponse.getScrollId();
-			DocumentField field = searchResponse.getHits().getAt(0).field("field2");
-			Object field1 = searchResponse.getHits().getAt(0).getSourceAsMap().get("field1");
-			SearchHits hits = searchResponse.getHits();
+			rsEmpty = pageData.isEmpty();
+			clearScrollIfRequired(searchResponse);
+		} catch(IOException e) {
+			throw new SQLException(e.getMessage());
+		}
+	}
+	
+	private void scrollFetch() throws SQLException {
+		try {
+			SearchScrollRequest scrollRequest = new SearchScrollRequest(pageData.getScrollId());
+			scrollRequest.scroll(TimeValue.timeValueMinutes(Configuration.getConfiguration(ConfigurationEnum.CFG_QUERY_SCROLL_TIMEOUT_MINUTES, Long.class)));
+			SearchResponse searchResponse = getConnection().getElasticClient().scroll(scrollRequest, RequestOptions.DEFAULT);
+			pageData.pushData(searchResponse);
+			clearScrollIfRequired(searchResponse);
+		} catch(IOException e) {
+			throw new SQLException(e.getMessage());
+		}
+	}
+	
+	private void clearScrollIfRequired(SearchResponse response) throws SQLException {
+		try {
+			if(response.getHits().getHits().length < fetchSize) {
+				ClearScrollRequest clearScrollRequest = new ClearScrollRequest(); 
+				clearScrollRequest.addScrollId(pageData.getScrollId());
+				getConnection().getElasticClient().clearScroll(clearScrollRequest, RequestOptions.DEFAULT);
+				queryOpen = false;
+			}
 		} catch(IOException e) {
 			throw new SQLException(e.getMessage());
 		}
@@ -75,13 +102,16 @@ public class ScrollableQuery extends AbstractQuery {
 
 	@Override
 	public boolean next() throws SQLException {
+		if(scrollable && queryOpen && pageData.oneRowLeft()) {
+			scrollFetch();
+		}
 		switch(pageData.next()) {
-		case ITERATION_FINISHED:
-			return false;
-		case NOT_INITIALIZED:
-			throw new SQLException("Query not initialized");
-		default:
-			return true;		
+			case ITERATION_FINISHED:
+				return false;
+			case NOT_INITIALIZED:
+				throw new SQLException("Query not initialized");
+			default:
+				return true;		
 		}
 	}
 
@@ -154,15 +184,13 @@ public class ScrollableQuery extends AbstractQuery {
 	}
 
 	@Override
-	public void setFetchSize() {
-		// TODO Auto-generated method stub
-		
+	public void setFetchSize(int size) {
+		this.fetchSize = size;
 	}
 
 	@Override
 	public int getFetchSize() {
-		// TODO Auto-generated method stub
-		return 0;
+		return fetchSize; 
 	}
 
 	@Override
@@ -188,7 +216,10 @@ public class ScrollableQuery extends AbstractQuery {
 
 	@Override
 	public ResultSetMetaData getResultSetMetaData() {
-		return pageData.getResultSetMetaData();
+		if(resultSetMetaData == null) {
+			resultSetMetaData = new EsResultSetMetaData(getSource(), indexMetaData);
+		}
+		return resultSetMetaData;
 	}
 
 	@Override
@@ -209,6 +240,11 @@ public class ScrollableQuery extends AbstractQuery {
 	@Override
 	public RowId getRowId() throws SQLException {
 		throw new SQLFeatureNotSupportedException();
+	}
+
+	@Override
+	public boolean isEmpty() {
+		return rsEmpty;
 	}
 
 }

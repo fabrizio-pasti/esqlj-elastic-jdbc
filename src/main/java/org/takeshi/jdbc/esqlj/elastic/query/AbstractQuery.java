@@ -54,7 +54,7 @@ public abstract class AbstractQuery {
 
 	public abstract void setIterationStep(int iterationStep);
 
-	public abstract void setFetchSize();
+	public abstract void setFetchSize(int rows);
 
 	public abstract int getFetchSize();
 
@@ -93,5 +93,7 @@ public abstract class AbstractQuery {
 	public QueryType getQueryType() {
 		return queryType;
 	}
+
+	public abstract boolean isEmpty();
 	
 }

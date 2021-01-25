@@ -86,8 +86,7 @@ public class AbstractScrollableQuery extends AbstractQuery {
 	}
 
 	@Override
-	public void setFetchSize() {
-		// TODO Auto-generated method stub
+	public void setFetchSize(int rows) {
 		
 	}
 
@@ -153,6 +152,12 @@ public class AbstractScrollableQuery extends AbstractQuery {
 	public RowId getRowId() throws SQLException {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public boolean isEmpty() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 

@@ -80,7 +80,11 @@ public class MetaDataService {
 				iMap.forEach((field, metadata) -> {
 					Map<String, Object> metadataMap = metadata.sourceAsMap();
 					if(metadataMap.size() > 0 && !managedFields.stream().anyMatch(field::equals)) {
-						fields.add(new ElasticField(field, ElasticFieldType.resolveByElasticType(((Map<String, String>)metadataMap.get(field.substring(field.lastIndexOf('.') + 1))).get("type"))));
+						Map<String, Object> fieldMap = (Map<String, Object>)metadataMap.get(field.substring(field.lastIndexOf('.') + 1));
+						fields.add(new ElasticField(
+								field, 
+								ElasticFieldType.resolveByElasticType((String)fieldMap.get("type")),
+								fieldMap.get("ignore_above") != null ? new Long((Integer)fieldMap.get("ignore_above")) : null));
 						managedFields.add(field);
 					}			
 				});

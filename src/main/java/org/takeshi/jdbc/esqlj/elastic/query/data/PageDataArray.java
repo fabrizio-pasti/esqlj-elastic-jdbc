@@ -12,26 +12,21 @@ import org.takeshi.jdbc.esqlj.elastic.query.model.PageDataState;
 
 public class PageDataArray {
 
-	private String source;
 	private List<String> columnsName;
 	private List<DataRow> dataRows = new ArrayList<DataRow>();
 	private PageDataState state = PageDataState.NOT_INITIALIZED;
 	private int currentIdxCurrentRow = -1;
 	private int iterationStep = 1;
-	private AbstractResultSetMetaData resultSetMetaData;
 
-	public PageDataArray(String source, List<String> columnsName) {
-		this.source = source;
+	public PageDataArray(List<String> columnsName) {
 		this.columnsName = columnsName;
 	}
 
-	public PageDataArray(String source, String[] columnsName) {
-		this.source = source;
+	public PageDataArray(String[] columnsName) {
 		this.columnsName = Arrays.asList(columnsName);
 	}
 
-	public PageDataArray(String source) {
-		this.source = source;
+	public PageDataArray() {
 	}
 
 	public void push(List<Object> values) {
@@ -211,24 +206,26 @@ public class PageDataArray {
 		this.iterationStep = iterationStep;
 	}
 
-	public ResultSetMetaData getResultSetMetaData() {
-		if(resultSetMetaData == null) {
-			resultSetMetaData = new ResultSetMetaDataArrayImpl(source, columnsName, dataRows);
-		}
-		return resultSetMetaData;
-	}
-
 	public int getColumnIndex(String columnLabel) {
 		return columnsName.indexOf(columnLabel);
+	}
+	
+	public List<DataRow> getDataRows() {
+		return dataRows;
 	}
 
 	private PageDataState doNext() {
 		if (dataRows.size() >= currentIdxCurrentRow) {
 			currentIdxCurrentRow += iterationStep;
-			return currentIdxCurrentRow == dataRows.size() - 1 ? PageDataState.ITERATION_FINISHED : PageDataState.ITERATION_STARTED;
+			return currentIdxCurrentRow == dataRows.size() ? PageDataState.ITERATION_FINISHED : PageDataState.ITERATION_STARTED;
 		}
 
 		return PageDataState.ITERATION_FINISHED;
 	}
+
+	public boolean isEmpty() {
+		return dataRows.isEmpty();
+	}
+
 
 }

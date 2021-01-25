@@ -13,6 +13,7 @@ import java.sql.ResultSet;
 import java.sql.SQLClientInfoException;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
+import java.sql.SQLNonTransientConnectionException;
 import java.sql.SQLWarning;
 import java.sql.SQLXML;
 import java.sql.Savepoint;
@@ -41,13 +42,8 @@ public class EsConnection implements Connection {
 		if (EsConfig.isTestMode()) {
 			return;
 		}
-		
-		if(isClosed()) {
-			client = new RestHighLevelClient(RestClient.builder(EsConfig.getUrls().stream()
-					.map(esi -> new HttpHost(esi.getServer(), esi.getPort(), esi.getProtocol().name()))
-					.toArray(HttpHost[]::new)));
-			esMetaData = new EsMetaData(this);
-		}
+				
+		openConnection();
 	}
 
 	@Override
@@ -64,8 +60,7 @@ public class EsConnection implements Connection {
 
 	@Override
 	public Statement createStatement() throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		return new EsStatement(this);
 	}
 
 	@Override
@@ -124,18 +119,19 @@ public class EsConnection implements Connection {
 
 	@Override
 	public DatabaseMetaData getMetaData() throws SQLException {
+		if(client == null) {
+			throw new SQLNonTransientConnectionException();
+		}
 		return esMetaData;
 	}
 
 	@Override
 	public void setReadOnly(boolean readOnly) throws SQLException {
-		// TODO Auto-generated method stub
-
+		throw new SQLFeatureNotSupportedException();
 	}
 
 	@Override
 	public boolean isReadOnly() throws SQLException {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -196,14 +192,12 @@ public class EsConnection implements Connection {
 
 	@Override
 	public Map<String, Class<?>> getTypeMap() throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		throw new SQLFeatureNotSupportedException();
 	}
 
 	@Override
 	public void setTypeMap(Map<String, Class<?>> map) throws SQLException {
-		// TODO Auto-generated method stub
-
+		throw new SQLFeatureNotSupportedException();
 	}
 
 	@Override
@@ -289,50 +283,42 @@ public class EsConnection implements Connection {
 
 	@Override
 	public Blob createBlob() throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		throw new SQLFeatureNotSupportedException();
 	}
 
 	@Override
 	public NClob createNClob() throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		throw new SQLFeatureNotSupportedException();
 	}
 
 	@Override
 	public SQLXML createSQLXML() throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		throw new SQLFeatureNotSupportedException();
 	}
 
 	@Override
 	public boolean isValid(int timeout) throws SQLException {
-		// TODO Auto-generated method stub
-		return false;
+		return isOpen();
 	}
 
 	@Override
 	public void setClientInfo(String name, String value) throws SQLClientInfoException {
-		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override
 	public void setClientInfo(Properties properties) throws SQLClientInfoException {
-		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override
 	public String getClientInfo(String name) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		throw new SQLFeatureNotSupportedException();
 	}
 
 	@Override
 	public Properties getClientInfo() throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		throw new SQLFeatureNotSupportedException();
 	}
 
 	@Override
@@ -361,8 +347,7 @@ public class EsConnection implements Connection {
 
 	@Override
 	public void abort(Executor executor) throws SQLException {
-		// TODO Auto-generated method stub
-
+		close();
 	}
 
 	@Override
@@ -381,6 +366,15 @@ public class EsConnection implements Connection {
 		return client;
 	}
 
+	private void openConnection() throws SQLException {
+		if(isClosed()) {
+			client = new RestHighLevelClient(RestClient.builder(EsConfig.getUrls().stream()
+					.map(esi -> new HttpHost(esi.getServer(), esi.getPort(), esi.getProtocol().name()))
+					.toArray(HttpHost[]::new)));
+			esMetaData = new EsMetaData(this);
+		}
+	}
+	
 	public boolean isOpen() {
 		try {
 			return client != null && client.ping(RequestOptions.DEFAULT);

@@ -8,16 +8,18 @@ import java.util.List;
 import java.util.Map;
 
 import org.takeshi.jdbc.esqlj.EsConnection;
+import org.takeshi.jdbc.esqlj.EsResultSetMetaData;
 import org.takeshi.jdbc.esqlj.elastic.query.data.PageDataArray;
 import org.takeshi.jdbc.esqlj.elastic.query.model.PageDataState;
 
 public class AbstractOneShotQuery extends AbstractQuery {
 
 	private PageDataArray pageData;
+	private ResultSetMetaData resultSetMetaData;
 	
 	public AbstractOneShotQuery(EsConnection connection, String source, String... columnsName) {
 		super(connection, QueryType.STATIC, source, columnsName);
-		pageData = new PageDataArray(source, getColumnsName());
+		pageData = new PageDataArray(getColumnsName());
 	}
 
 	@Override
@@ -112,8 +114,7 @@ public class AbstractOneShotQuery extends AbstractQuery {
 	}
 
 	@Override
-	public void setFetchSize() {
-		// TODO Auto-generated method stub
+	public void setFetchSize(int size) {
 		
 	}
 
@@ -144,9 +145,13 @@ public class AbstractOneShotQuery extends AbstractQuery {
 		return pageData.getColumnValue(columnName, type);
 	}
 
+	
 	@Override
 	public ResultSetMetaData getResultSetMetaData() {
-		return pageData.getResultSetMetaData();
+		if(resultSetMetaData == null) {
+			resultSetMetaData = new EsResultSetMetaData(getSource(), getColumnsName(), pageData.getDataRows());
+		}
+		return resultSetMetaData;
 	}
 
 	@Override
@@ -167,6 +172,11 @@ public class AbstractOneShotQuery extends AbstractQuery {
 	@Override
 	public RowId getRowId() throws SQLException {
 		throw new SQLFeatureNotSupportedException();
+	}
+
+	@Override
+	public boolean isEmpty() {
+		return pageData.isEmpty();
 	}
 
 }

@@ -1,19 +1,69 @@
-package org.takeshi.jdbc.esqlj.elastic.query.data;
+package org.takeshi.jdbc.esqlj;
 
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
-public abstract class AbstractResultSetMetaData implements ResultSetMetaData {
+import org.takeshi.jdbc.esqlj.elastic.model.ElasticFieldType;
+import org.takeshi.jdbc.esqlj.elastic.model.IndexMetaData;
+import org.takeshi.jdbc.esqlj.elastic.query.model.DataRow;
 
+public class EsResultSetMetaData implements ResultSetMetaData {
+
+	private List<ElasticFieldType> columnTypes;
 	private String source;
 	private List<String> columnsName;
 	
-	public AbstractResultSetMetaData(String source, List<String> columnsName) {
+	public EsResultSetMetaData(String source, List<String> columnsName, List<DataRow> dataRows) {
 		this.source = source;
 		this.columnsName = columnsName;
+		fetchTypesByData(dataRows);
 	}
 	
+	public EsResultSetMetaData(String source, IndexMetaData indexMetaData) {
+		this.source = source;
+		this.columnsName = indexMetaData.getFieldsName();
+		fetchTypesByMetaData(indexMetaData);
+	}
+
+	private void fetchTypesByData(List<DataRow> dataRows) {
+		if(dataRows == null || dataRows.size() == 0) {
+			columnTypes = IntStream.range(0, columnsName.size()).mapToObj(i -> ElasticFieldType.UNKNOWN).collect(Collectors.toList());
+		} else {
+			columnTypes = IntStream.range(0, columnsName.size()).mapToObj(i -> {
+				ElasticFieldType t = ElasticFieldType.UNKNOWN;
+				for(int row = 0; row < dataRows.size(); row++) {
+					if(dataRows.get(row).data.get(i) != null) {
+						t = ElasticFieldType.resolveByValue(dataRows.get(row).data.get(i));
+						break;
+					}
+				}
+				return t;
+			}).collect(Collectors.toList());
+		}
+	}
+
+	private void fetchTypesByMetaData(IndexMetaData indexMetaData) {
+		columnTypes = indexMetaData.getFields().stream().map(field -> field.getType()).collect(Collectors.toList());
+	}
+
+	@Override
+	public int getColumnType(int column) throws SQLException { 
+		return columnTypes.get(column - 1).getSqlTypeCode();
+	}
+	
+	@Override
+	public String getColumnTypeName(int column) throws SQLException {
+		return columnTypes.get(column - 1).getSqlType();
+	}
+	
+	@Override
+	public String getColumnClassName(int column) throws SQLException {
+		return columnTypes.get(column - 1).getClazz().getName();
+	}
+
 	@Override
 	public <T> T unwrap(Class<T> iface) throws SQLException {
 		return iface.cast(this);
@@ -51,7 +101,7 @@ public abstract class AbstractResultSetMetaData implements ResultSetMetaData {
 
 	@Override
 	public int isNullable(int column) throws SQLException {
-		return columnNullableUnknown;
+		return columnNullable;
 	}
 
 	@Override
@@ -101,17 +151,16 @@ public abstract class AbstractResultSetMetaData implements ResultSetMetaData {
 
 	@Override
 	public boolean isReadOnly(int column) throws SQLException {
-		return false;
+		return true;
 	}
 
 	@Override
 	public boolean isWritable(int column) throws SQLException {
-		return true;
+		return false;
 	}
 
 	@Override
 	public boolean isDefinitelyWritable(int column) throws SQLException {
-		return true;
+		return false;
 	}
-
 }
