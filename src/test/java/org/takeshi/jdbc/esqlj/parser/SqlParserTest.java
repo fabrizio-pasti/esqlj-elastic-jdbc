@@ -43,7 +43,7 @@ public class SqlParserTest {
 	
 	@Test
 	public void parseFiels () throws SQLException, JSQLParserException {
-		// To do
+		// given
 		String fieldValue1 = "TABLE_NAME.COL_NAME AS COL_ALIAS";
 		String fieldValue2 = "TABLE_NAME.COL_NAME COL_ALIAS";
 		String fieldValue3 = "TABLE_NAME.COL_NAME";
@@ -71,7 +71,8 @@ public class SqlParserTest {
 		String fieldValue22 = "\"FK_NAME.*\"";
 		String fieldValue23 = "\"FK_NAME.*\" COL_ALIAS";
 		String fieldValue24 = "\"FK_NAME.*\" AS COL_ALIAS";
-				
+		
+		// when
 		Field  field1 = SqlParser.parseField(fieldValue1);
 		Field  field2 = SqlParser.parseField(fieldValue2);
 		Field  field3 = SqlParser.parseField(fieldValue3);
@@ -98,6 +99,7 @@ public class SqlParserTest {
 		Field  field23 = SqlParser.parseField(fieldValue23);
 		Field  field24 = SqlParser.parseField(fieldValue24);
 		
+		// then
 		assertTrue(field1.getName().equals("COL_NAME"));
 		assertTrue(field1.getIndex().equals("TABLE_NAME"));
 		assertTrue(field1.getAlias().equals("COL_ALIAS"));
