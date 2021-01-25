@@ -3,7 +3,9 @@ package org.takeshi.jdbc.esqlj.parser;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Stream.generate;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
@@ -45,10 +47,13 @@ public final class SqlParser {
 	}
 
 	private static void visitField(SimpleNode node, int depth, Map<String, String> table, ParsedQuery qry) throws JSQLParserException {
-
+		Map<String,String> tables = new HashMap<String,String>();
 		switch (node.toString()) {
 			case "SelectItem":
 				qry.getFields().add(parseField(node.jjtGetValue().toString()));				
+				break;
+			case "Table":
+				parseTable(node.jjtGetValue().toString(), qry,tables);
 				break;
 		}
 	
@@ -125,4 +130,29 @@ public final class SqlParser {
 				
 	}
 	
+	public static void parseTable(String value,ParsedQuery qry,Map<String,String> tables) throws JSQLParserException {
+		
+		String [] tableArray = StringUtils.split(value," ");
+               
+        switch (tableArray.length) {
+			case 1:
+				tables.put(tableArray[0],tableArray[0]);
+				qry.getIndex().setName(tableArray[0]);
+				qry.getIndex().setAlias(tableArray[0]);
+				break;
+			case 2:	
+				tables.put(tableArray[1],tableArray[0]);
+				qry.getIndex().setName(tableArray[0]);
+				qry.getIndex().setAlias(tableArray[1]);
+				break;
+			case 3:	
+				tables.put(tableArray[2],tableArray[0]);
+				qry.getIndex().setName(tableArray[0]);
+				qry.getIndex().setAlias(tableArray[2]);
+				break;
+			default:
+				throw new JSQLParserException("Bad select find in " + value ) ;			
+		}
+				
+	}
 }
