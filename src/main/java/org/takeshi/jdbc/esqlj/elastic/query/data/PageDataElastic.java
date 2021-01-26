@@ -11,7 +11,7 @@ import org.elasticsearch.common.document.DocumentField;
 import org.takeshi.jdbc.esqlj.Configuration;
 import org.takeshi.jdbc.esqlj.ConfigurationEnum;
 import org.takeshi.jdbc.esqlj.elastic.model.ElasticField;
-import org.takeshi.jdbc.esqlj.elastic.model.IndexMetaData;
+import org.takeshi.jdbc.esqlj.elastic.query.impl.search.RequestInstance;
 import org.takeshi.jdbc.esqlj.elastic.query.model.DataRow;
 import org.takeshi.jdbc.esqlj.elastic.query.model.PageDataState;
 import org.takeshi.jdbc.esqlj.support.SimpleDateFormatThreadSafe;
@@ -21,19 +21,17 @@ public class PageDataElastic {
 	private PageDataState state = PageDataState.NOT_INITIALIZED;
 	private int currentIdxCurrentRow = -1;
 	private int iterationStep = 1;
-	private IndexMetaData indexMetaData;
+	private RequestInstance req;
 	
 	private List<DataRow> dataRows;
 	private boolean scrollable;
 	private String scrollId;
-	private boolean retrieveTextField;
 
 	public static final SimpleDateFormatThreadSafe sdfTimestamp = new SimpleDateFormatThreadSafe("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", TimeZone.getTimeZone("UTC"));
 	
-	public PageDataElastic(String source, IndexMetaData indexMetaData, boolean scrollable) {
-		this.indexMetaData = indexMetaData;
+	public PageDataElastic(String source, RequestInstance req, boolean scrollable) {
+		this.req = req;
 		this.scrollable = scrollable;
-		this.retrieveTextField = Configuration.getConfiguration(ConfigurationEnum.CFG_INCLUDE_TEXT_FIELDS_BY_DEFAULT, Boolean.class);
 	}
 
 	public void pushData(SearchResponse searchResponse) {
@@ -54,7 +52,7 @@ public class PageDataElastic {
 		
 		searchResponse.getHits().forEach(searchHit -> {
 			List<Object> data = new ArrayList<Object>();
-			indexMetaData.getFields().forEach((name, field) -> {
+			req.getFields().forEach((name, field) -> {
 				if(field.isDocField()) {
 					DocumentField docField = searchHit.field(field.getFullName());
 					if(docField != null) {
@@ -62,7 +60,7 @@ public class PageDataElastic {
 					} else {
 						data.add(null);
 					}
-				} else if(retrieveTextField) {
+				} else if(req.isSourceFieldsToRetrieve()) {
 					data.add(searchResponse.getHits().getAt(0).getSourceAsMap().get(field.getFullName()));
 				} else {
 					data.add(null);
@@ -141,12 +139,12 @@ public class PageDataElastic {
 	}
 
 	public Object getColumnValue(String columnName) throws SQLException {
-		return getCurrentRow().data.get(indexMetaData.getFieldsName().indexOf(columnName));
+		return getCurrentRow().data.get(req.getFieldNames().indexOf(columnName));
 	}
 
 	@SuppressWarnings("unchecked")
 	public <T> T getColumnValue(String columnName, Class<T> clazz) throws SQLException { // todo: convert type if required													// required
-		return (T) getCurrentRow().data.get(indexMetaData.getFieldsName().indexOf(columnName));
+		return (T) getCurrentRow().data.get(req.getFieldNames().indexOf(columnName));
 	}
 
 	public Object getColumnValue(int columnIndex) throws SQLException {
@@ -157,9 +155,9 @@ public class PageDataElastic {
 	public <T> T getColumnValue(int columnIndex, Class<T> clazz) throws SQLException { // todo: convert type if required
 		return (T) getCurrentRow().data.get(columnIndex);
 	}
-
 	public void setColumnValue(String columnName, Object data) throws SQLException {
-		getCurrentRow().put(indexMetaData.getFieldsName().indexOf(columnName), data);
+		
+		getCurrentRow().put(req.getFieldNames().indexOf(columnName), data);
 	}
 
 	public PageDataState next() throws SQLException {
@@ -250,7 +248,7 @@ public class PageDataElastic {
 	}
 
 	public int getColumnIndex(String columnLabel) {
-		return indexMetaData.getFieldsName().indexOf(columnLabel);
+		return req.getFieldNames().indexOf(columnLabel);
 	}
 
 	private PageDataState doNext() {

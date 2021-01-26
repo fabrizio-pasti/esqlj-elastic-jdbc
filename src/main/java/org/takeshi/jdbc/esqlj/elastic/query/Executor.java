@@ -19,8 +19,8 @@ public class Executor {
 		Index i = new Index();
 		i.setName("monitoring_segment_tx_20201");
 		q.setIndex(i);
-		Field f1 = new Field("idSession", null, null);
-		Field f2 = new Field("amount", null, null);
+		Field f1 = new Field("idSession", "pippo", null);
+		Field f2 = new Field("amount", "pluto", null);
 		q.getFields().add(f1);
 		q.getFields().add(f2);
 		return q;

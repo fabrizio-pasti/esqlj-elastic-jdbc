@@ -12,18 +12,18 @@ import org.takeshi.jdbc.esqlj.elastic.query.model.PageDataState;
 
 public class PageDataArray {
 
-	private List<String> columnsName;
+	private List<String> columnNames;
 	private List<DataRow> dataRows = new ArrayList<DataRow>();
 	private PageDataState state = PageDataState.NOT_INITIALIZED;
 	private int currentIdxCurrentRow = -1;
 	private int iterationStep = 1;
 
-	public PageDataArray(List<String> columnsName) {
-		this.columnsName = columnsName;
+	public PageDataArray(List<String> columnNames) {
+		this.columnNames = columnNames;
 	}
 
-	public PageDataArray(String[] columnsName) {
-		this.columnsName = Arrays.asList(columnsName);
+	public PageDataArray(String[] columnNames) {
+		this.columnNames = Arrays.asList(columnNames);
 	}
 
 	public PageDataArray() {
@@ -41,7 +41,7 @@ public class PageDataArray {
 
 	public void pushSubsetData(Map<String, Object> data) {
 		List<Object> columnValues = new ArrayList<Object>();
-		columnsName.stream().forEach(columnName -> {
+		columnNames.stream().forEach(columnName -> {
 			if (data.containsKey(columnName)) {
 				columnValues.add(data.get(columnName));
 			} else {
@@ -98,12 +98,12 @@ public class PageDataArray {
 	}
 
 	public Object getColumnValue(String columnName) throws SQLException {
-		return getCurrentRow().data.get(columnsName.indexOf(columnName));
+		return getCurrentRow().data.get(columnNames.indexOf(columnName));
 	}
 
 	@SuppressWarnings("unchecked")
 	public <T> T getColumnValue(String columnName, Class<T> clazz) throws SQLException { // todo: convert type if													// required
-		return (T) getCurrentRow().data.get(columnsName.indexOf(columnName));
+		return (T) getCurrentRow().data.get(columnNames.indexOf(columnName));
 	}
 
 	public Object getColumnValue(int columnIndex) throws SQLException {
@@ -116,7 +116,7 @@ public class PageDataArray {
 	}
 
 	public void setColumnValue(String columnName, Object data) throws SQLException {
-		getCurrentRow().put(columnsName.indexOf(columnName), data);
+		getCurrentRow().put(columnNames.indexOf(columnName), data);
 	}
 
 	public PageDataState next() throws SQLException {
@@ -207,7 +207,7 @@ public class PageDataArray {
 	}
 
 	public int getColumnIndex(String columnLabel) {
-		return columnsName.indexOf(columnLabel);
+		return columnNames.indexOf(columnLabel);
 	}
 	
 	public List<DataRow> getDataRows() {

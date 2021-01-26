@@ -41,8 +41,7 @@ public class EsStatement implements Statement {
 
 	@Override
 	public void close() throws SQLException {
-		// TODO Auto-generated method stub
-
+		resultSet.close();
 	}
 
 	@Override

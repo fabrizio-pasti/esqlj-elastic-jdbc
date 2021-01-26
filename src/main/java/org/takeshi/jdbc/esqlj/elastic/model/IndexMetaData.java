@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.takeshi.jdbc.esqlj.parser.model.Field;
+
 public class IndexMetaData {
 	private String index;
 	private Map<String, ElasticField> fields;
@@ -31,5 +33,6 @@ public class IndexMetaData {
 	private void resolveFieldNames() {
 		fieldsName = fields.keySet().stream().sorted().collect(Collectors.toList());
 	}
+
 
 }

@@ -9,16 +9,16 @@ import org.takeshi.jdbc.esqlj.elastic.query.AbstractOneShotQuery;
 
 public class FromArrayQuery extends AbstractOneShotQuery {
 		
-	public FromArrayQuery(String source, List<List<Object>> values, String... columnsName) throws SQLException {
-		super(null, source, columnsName);
+	public FromArrayQuery(String source, List<List<Object>> values, String... columnNames) throws SQLException {
+		super(null, source, columnNames);
 		init(values);
 	}
 
 	public void init(List<List<Object>> values) throws SQLException {
 		values.forEach(rowData -> {
 			Map<String, Object> data = new HashMap<String, Object>();
-			for(int idx = 0; idx < this.getColumnsName().size(); idx++) {
-				data.put(this.getColumnsName().get(idx), rowData.get(idx));
+			for(int idx = 0; idx < this.getColumnNames().size(); idx++) {
+				data.put(this.getColumnNames().get(idx), rowData.get(idx));
 			}
 			insertRowWithData(data);
 		});

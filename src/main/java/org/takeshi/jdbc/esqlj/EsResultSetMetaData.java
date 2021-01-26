@@ -3,50 +3,20 @@ package org.takeshi.jdbc.esqlj;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import org.takeshi.jdbc.esqlj.elastic.model.ElasticFieldType;
-import org.takeshi.jdbc.esqlj.elastic.model.IndexMetaData;
-import org.takeshi.jdbc.esqlj.elastic.query.model.DataRow;
 
 public class EsResultSetMetaData implements ResultSetMetaData {
 
 	private List<ElasticFieldType> columnTypes;
 	private String source;
-	private List<String> columnsName;
+	private List<String> columnNames;
 	
-	public EsResultSetMetaData(String source, List<String> columnsName, List<DataRow> dataRows) {
-		this.source = source;
-		this.columnsName = columnsName;
-		fetchTypesByData(dataRows);
-	}
 	
-	public EsResultSetMetaData(String source, IndexMetaData indexMetaData) {
+	public EsResultSetMetaData(String source, List<String> columnNames, List<ElasticFieldType> columnTypes) {
 		this.source = source;
-		this.columnsName = indexMetaData.getFieldsName();
-		fetchTypesByMetaData(indexMetaData);
-	}
-
-	private void fetchTypesByData(List<DataRow> dataRows) {
-		if(dataRows == null || dataRows.size() == 0) {
-			columnTypes = IntStream.range(0, columnsName.size()).mapToObj(i -> ElasticFieldType.UNKNOWN).collect(Collectors.toList());
-		} else {
-			columnTypes = IntStream.range(0, columnsName.size()).mapToObj(i -> {
-				ElasticFieldType t = ElasticFieldType.UNKNOWN;
-				for(int row = 0; row < dataRows.size(); row++) {
-					if(dataRows.get(row).data.get(i) != null) {
-						t = ElasticFieldType.resolveByValue(dataRows.get(row).data.get(i));
-						break;
-					}
-				}
-				return t;
-			}).collect(Collectors.toList());
-		}
-	}
-
-	private void fetchTypesByMetaData(IndexMetaData indexMetaData) {
-		columnTypes = indexMetaData.getFields().entrySet().stream().map(field -> field.getValue().getType()).collect(Collectors.toList());
+		this.columnNames = columnNames;
+		this.columnTypes = columnTypes;
 	}
 
 	@Override
@@ -76,7 +46,7 @@ public class EsResultSetMetaData implements ResultSetMetaData {
 
 	@Override
 	public int getColumnCount() throws SQLException {
-		return columnsName.size();
+		return columnNames.size();
 	}
 
 	@Override
@@ -116,12 +86,12 @@ public class EsResultSetMetaData implements ResultSetMetaData {
 
 	@Override
 	public String getColumnLabel(int column) throws SQLException {
-		return columnsName.get(column - 1);
+		return columnNames.get(column - 1);
 	}
 
 	@Override
 	public String getColumnName(int column) throws SQLException {
-		return columnsName.get(column - 1);
+		return columnNames.get(column - 1);
 	}
 
 	@Override
