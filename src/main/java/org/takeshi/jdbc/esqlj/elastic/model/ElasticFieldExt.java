@@ -22,4 +22,5 @@ public class ElasticFieldExt extends ElasticField {
 	public void setColumnName(String columnName) {
 		this.columnName = columnName;
 	}
+	
 }

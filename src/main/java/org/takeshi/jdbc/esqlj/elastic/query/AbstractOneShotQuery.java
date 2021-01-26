@@ -38,7 +38,7 @@ public class AbstractOneShotQuery extends AbstractQuery {
 			return true;		
 		}
 	}
-	
+
 	public void populate(List<List<Object>> data) {
 		pageData.populate(data);
 	}

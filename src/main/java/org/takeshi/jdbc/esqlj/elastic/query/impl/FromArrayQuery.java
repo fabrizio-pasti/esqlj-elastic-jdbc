@@ -13,7 +13,7 @@ public class FromArrayQuery extends AbstractOneShotQuery {
 		super(null, source, columnNames);
 		init(values);
 	}
-
+ 
 	public void init(List<List<Object>> values) throws SQLException {
 		values.forEach(rowData -> {
 			Map<String, Object> data = new HashMap<String, Object>();

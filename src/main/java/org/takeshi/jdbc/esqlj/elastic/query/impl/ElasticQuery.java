@@ -56,7 +56,7 @@ public class ElasticQuery extends AbstractQuery {
 			throw new SQLException(e.getMessage());
 		}
 	}
-	
+
 	private void scrollFetch() throws SQLException {
 		try {
 			SearchScrollRequest scrollRequest = new SearchScrollRequest(pageData.getScrollId());

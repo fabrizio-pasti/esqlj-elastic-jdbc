@@ -1,6 +1,5 @@
 package org.takeshi.jdbc.esqlj.elastic.query.data;
 
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;

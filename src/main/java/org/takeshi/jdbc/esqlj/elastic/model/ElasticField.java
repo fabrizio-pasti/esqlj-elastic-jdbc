@@ -5,7 +5,7 @@ public class ElasticField implements Comparable<ElasticField> {
 		private String name;
 		private ElasticFieldType type;
 		private Long size;
-				
+
 		public ElasticField(String fullName, ElasticFieldType type) {
 			super();
 			this.fullName = fullName;

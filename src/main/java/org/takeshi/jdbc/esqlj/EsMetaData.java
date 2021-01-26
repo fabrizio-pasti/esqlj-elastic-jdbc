@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.takeshi.jdbc.esqlj.elastic.metadata.MetaDataService;
-import org.takeshi.jdbc.esqlj.elastic.model.ElasticField;
 import org.takeshi.jdbc.esqlj.elastic.model.ElasticFieldType;
 import org.takeshi.jdbc.esqlj.elastic.model.ElasticObjectType;
 import org.takeshi.jdbc.esqlj.elastic.query.impl.FromArrayQuery;

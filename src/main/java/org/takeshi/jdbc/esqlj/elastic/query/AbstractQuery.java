@@ -31,7 +31,7 @@ public abstract class AbstractQuery {
 	public List<String> getColumnNames() {
 		return columnNames;
 	}	
-	
+ 	
 	public abstract boolean isFirst() throws SQLException;
 	
 	public abstract boolean isLast() throws SQLException;

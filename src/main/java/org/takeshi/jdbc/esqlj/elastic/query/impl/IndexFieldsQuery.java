@@ -2,7 +2,6 @@ package org.takeshi.jdbc.esqlj.elastic.query.impl;
 
 import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.takeshi.jdbc.esqlj.EsConnection;

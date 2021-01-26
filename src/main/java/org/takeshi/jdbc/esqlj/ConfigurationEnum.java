@@ -1,7 +1,5 @@
 package org.takeshi.jdbc.esqlj;
 
-import java.sql.Timestamp;
-import java.sql.Types;
 import java.util.Arrays;
 
 public enum ConfigurationEnum {

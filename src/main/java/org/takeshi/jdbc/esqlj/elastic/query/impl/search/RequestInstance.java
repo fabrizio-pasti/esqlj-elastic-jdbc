@@ -12,7 +12,6 @@ import org.takeshi.jdbc.esqlj.ConfigurationEnum;
 import org.takeshi.jdbc.esqlj.elastic.model.ElasticField;
 import org.takeshi.jdbc.esqlj.elastic.model.ElasticFieldType;
 import org.takeshi.jdbc.esqlj.elastic.model.IndexMetaData;
-import org.takeshi.jdbc.esqlj.elastic.query.data.PageDataElastic;
 import org.takeshi.jdbc.esqlj.parser.model.ParsedQuery;
 
 public class RequestInstance {
@@ -38,7 +37,7 @@ public class RequestInstance {
 	public void setFields(Map<String, ElasticField> fields) {
 		this.fields = fields;
 	}
-		
+
 	public List<String> getFieldNames() {
 		return fields.keySet().stream().collect(Collectors.toList());
 	}

@@ -42,7 +42,7 @@ public class EsResultSetMetaData implements ResultSetMetaData {
 	@Override
 	public boolean isWrapperFor(Class<?> iface) throws SQLException {
 		return iface.isInstance(this);
-	}
+	} 
 
 	@Override
 	public int getColumnCount() throws SQLException {

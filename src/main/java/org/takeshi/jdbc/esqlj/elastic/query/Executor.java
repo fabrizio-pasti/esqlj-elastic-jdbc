@@ -19,10 +19,10 @@ public class Executor {
 		Index i = new Index();
 		i.setName("monitoring_segment_tx_20201");
 		q.setIndex(i);
-		Field f1 = new Field("idSession", "pippo", null);
-		Field f2 = new Field("amount", "pluto", null);
+		Field f1 = new Field("idSession", "alias1", null);
+		Field f2 = new Field("amount", "alias2", null);
 		q.getFields().add(f1);
 		q.getFields().add(f2);
-		return q;
+		return q; 
 	}
 }

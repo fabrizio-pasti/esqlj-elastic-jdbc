@@ -16,7 +16,7 @@ public class EsStatement implements Statement {
 	public EsStatement(EsConnection connection) {
 		this.connection = connection;
 	}
-
+ 
 	@Override
 	public <T> T unwrap(Class<T> iface) throws SQLException {
 		return iface.cast(this);

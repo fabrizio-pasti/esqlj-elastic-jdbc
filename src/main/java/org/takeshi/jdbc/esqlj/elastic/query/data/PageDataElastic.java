@@ -8,8 +8,6 @@ import java.util.TimeZone;
 
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.common.document.DocumentField;
-import org.takeshi.jdbc.esqlj.Configuration;
-import org.takeshi.jdbc.esqlj.ConfigurationEnum;
 import org.takeshi.jdbc.esqlj.elastic.model.ElasticField;
 import org.takeshi.jdbc.esqlj.elastic.query.impl.search.RequestInstance;
 import org.takeshi.jdbc.esqlj.elastic.query.model.DataRow;
@@ -48,7 +46,6 @@ public class PageDataElastic {
 		} else {
 			dataRows = new ArrayList<DataRow>();
 		}
-		
 		
 		searchResponse.getHits().forEach(searchHit -> {
 			List<Object> data = new ArrayList<Object>();
