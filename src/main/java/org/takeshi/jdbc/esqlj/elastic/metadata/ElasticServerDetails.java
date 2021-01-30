@@ -1,8 +1,12 @@
 package org.takeshi.jdbc.esqlj.elastic.metadata;
 
+import java.io.LineNumberReader;
+
 import org.elasticsearch.client.core.MainResponse;
 
 public class ElasticServerDetails {
+	public static long ELASTIC_REL_7_10_0 = 7010000000000L;
+	
 	private String clusterName;
 	private String clusterUuid;
 	private String nodeName;
@@ -14,6 +18,7 @@ public class ElasticServerDetails {
 	private String minimumIndexCompatibilityVersion;
 	private String minimumWireCompatibilityVersion;
 	private String number;
+	private Long releaseNumber;
 
 	public ElasticServerDetails(MainResponse response) {
 		this.clusterName = response.getClusterName();
@@ -29,8 +34,9 @@ public class ElasticServerDetails {
 		this.minimumIndexCompatibilityVersion= version.getMinimumIndexCompatibilityVersion();
 		this.minimumWireCompatibilityVersion = version.getMinimumWireCompatibilityVersion();
 		this.number = version.getNumber();
+		convertReleaseNumberToInteger();
 	}
-	
+
 	public String getClusterName() {
 		return clusterName;
 	}
@@ -119,4 +125,17 @@ public class ElasticServerDetails {
 		this.number = number;
 	}
 
+	public boolean isElasticReleaseEqOrGt(Long elasticReleaseNumber) {
+		return releaseNumber >= elasticReleaseNumber;
+	}
+	
+	private void convertReleaseNumberToInteger() {
+		String[] splittedNumber = number.split("\\.");
+		releaseNumber = 0L;
+		for(int i = 0; i < 4; i++) {
+			if(splittedNumber.length > i) {
+				releaseNumber += Long.valueOf(splittedNumber[i]) * (long)Math.pow(10,  (4 - i) * 3);
+			}
+		}
+	}
 }

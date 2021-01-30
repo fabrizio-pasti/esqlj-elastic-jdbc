@@ -8,6 +8,8 @@ public class ParsedQuery {
 	List<Field> fields= new ArrayList<Field>();
     
 	Index index = new Index();
+	
+	Long limit;
 
 	public List<Field> getFields() {
 		return fields;
@@ -23,6 +25,14 @@ public class ParsedQuery {
 
 	public void setIndex(Index index) {
 		this.index = index;
+	}
+
+	public Long getLimit() {
+		return limit;
+	}
+
+	public void setLimit(Long limit) {
+		this.limit = limit;
 	}
 	
 

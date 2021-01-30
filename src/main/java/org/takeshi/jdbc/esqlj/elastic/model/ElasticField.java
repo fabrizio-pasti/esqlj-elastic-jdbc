@@ -1,6 +1,7 @@
 package org.takeshi.jdbc.esqlj.elastic.model;
 
 public class ElasticField implements Comparable<ElasticField> {
+		public static String DOC_ID_ALIAS = "_id";
 		private String fullName;
 		private String name;
 		private ElasticFieldType type;

@@ -22,21 +22,14 @@ public class PageDataElastic {
 	private RequestInstance req;
 	
 	private List<DataRow> dataRows;
-	private boolean scrollable;
-	private String scrollId;
 
 	public static final SimpleDateFormatThreadSafe sdfTimestamp = new SimpleDateFormatThreadSafe("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", TimeZone.getTimeZone("UTC"));
 	
-	public PageDataElastic(String source, RequestInstance req, boolean scrollable) {
+	public PageDataElastic(String source, RequestInstance req) {
 		this.req = req;
-		this.scrollable = scrollable;
 	}
 
 	public void pushData(SearchResponse searchResponse) {
-		if(scrollable) {
-			scrollId = searchResponse.getScrollId();
-		}
-		
 		currentIdxCurrentRow = -1;
 		
 		if(dataRows != null) {
@@ -50,7 +43,9 @@ public class PageDataElastic {
 		searchResponse.getHits().forEach(searchHit -> {
 			List<Object> data = new ArrayList<Object>();
 			req.getFields().forEach((name, field) -> {
-				if(field.isDocField()) {
+				if(field.getFullName().equals(ElasticField.DOC_ID_ALIAS)) {
+					data.add(searchHit.getId());
+				} else if(field.isDocField()) {
 					DocumentField docField = searchHit.field(field.getFullName());
 					if(docField != null) {
 						data.add(resolveType(field, docField.getValue())); // only first field value is managed
@@ -87,10 +82,6 @@ public class PageDataElastic {
 			default:
 				return value;
 		}
-	}
-
-	public String getScrollId() {
-		return scrollId;
 	}
 
 	public DataRow getCurrentRow() throws SQLException {

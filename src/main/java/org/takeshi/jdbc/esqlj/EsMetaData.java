@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.takeshi.jdbc.esqlj.elastic.metadata.MetaDataService;
+import org.takeshi.jdbc.esqlj.elastic.model.ElasticField;
 import org.takeshi.jdbc.esqlj.elastic.model.ElasticFieldType;
 import org.takeshi.jdbc.esqlj.elastic.model.ElasticObjectType;
 import org.takeshi.jdbc.esqlj.elastic.query.impl.FromArrayQuery;
@@ -694,7 +695,7 @@ public class EsMetaData implements DatabaseMetaData {
 			throws SQLException {
 		return new EsResultSet(new FromArrayQuery(table,
 				Arrays.asList(
-						Arrays.asList(2, "_id", Types.VARCHAR, "VARCHAR", 0, 0, 0, 0)), "SCOPE", "COLUMN_NAME", "DATA_TYPE", "TYPE_NAME", "COLUMN_SIZE", "BUFFER_LENGTH", "DECIMAL_DIGITS", "PSEUDO_COLUMN"));
+						Arrays.asList(2, ElasticField.DOC_ID_ALIAS, Types.VARCHAR, "VARCHAR", 0, 0, 0, 0)), "SCOPE", "COLUMN_NAME", "DATA_TYPE", "TYPE_NAME", "COLUMN_SIZE", "BUFFER_LENGTH", "DECIMAL_DIGITS", "PSEUDO_COLUMN"));
 	}
 
 	@Override
@@ -706,7 +707,7 @@ public class EsMetaData implements DatabaseMetaData {
 	public ResultSet getPrimaryKeys(String catalog, String schema, String table) throws SQLException {
 		return new EsResultSet(new FromArrayQuery(table,
 				Arrays.asList(
-						Arrays.asList(catalog, schema, table, "_id", 1, "_id")), "TABLE_CAT", "TABLE_SCHEM", "TABLE_NAME", "COLUMN_NAME", "KEY_SEQ", "PK_NAME"));
+						Arrays.asList(catalog, schema, table, ElasticField.DOC_ID_ALIAS, 1, ElasticField.DOC_ID_ALIAS)), "TABLE_CAT", "TABLE_SCHEM", "TABLE_NAME", "COLUMN_NAME", "KEY_SEQ", "PK_NAME"));
 	}
 
 	@Override

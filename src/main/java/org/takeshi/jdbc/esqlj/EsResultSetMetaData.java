@@ -71,7 +71,7 @@ public class EsResultSetMetaData implements ResultSetMetaData {
 
 	@Override
 	public int isNullable(int column) throws SQLException {
-		return columnNullable;
+		return columnTypes.get(column - 1).isPrimaryKey() ? columnNoNulls : columnNullable;
 	}
 
 	@Override

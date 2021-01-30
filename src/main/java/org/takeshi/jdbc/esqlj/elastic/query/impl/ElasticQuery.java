@@ -5,6 +5,7 @@ import java.sql.ResultSetMetaData;
 import java.sql.RowId;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
+import java.sql.SQLSyntaxErrorException;
 
 import org.elasticsearch.action.search.ClearScrollRequest;
 import org.elasticsearch.action.search.SearchResponse;
@@ -14,7 +15,6 @@ import org.elasticsearch.common.unit.TimeValue;
 import org.takeshi.jdbc.esqlj.Configuration;
 import org.takeshi.jdbc.esqlj.ConfigurationEnum;
 import org.takeshi.jdbc.esqlj.EsConnection;
-import org.takeshi.jdbc.esqlj.EsMetaData;
 import org.takeshi.jdbc.esqlj.EsResultSetMetaData;
 import org.takeshi.jdbc.esqlj.elastic.query.AbstractQuery;
 import org.takeshi.jdbc.esqlj.elastic.query.QueryType;
@@ -23,74 +23,109 @@ import org.takeshi.jdbc.esqlj.elastic.query.impl.search.RequestBuilder;
 import org.takeshi.jdbc.esqlj.elastic.query.impl.search.RequestInstance;
 import org.takeshi.jdbc.esqlj.elastic.query.model.PageDataState;
 import org.takeshi.jdbc.esqlj.parser.model.ParsedQuery;
+import org.takeshi.jdbc.esqlj.support.ElasticUtils;
+import org.takeshi.jdbc.esqlj.support.EsRuntimeException;
 
 public class ElasticQuery extends AbstractQuery {
 
 	private ParsedQuery parsedQuery;
 	private PageDataElastic pageData;
-	private boolean scrollable = true;
 	private ResultSetMetaData resultSetMetaData;
 	private int fetchSize;
 	private boolean rsEmpty;
 	private RequestInstance requestInstance;
 	
-	public ElasticQuery(EsConnection connection, ParsedQuery query, boolean scrollable) throws SQLException {
+	public ElasticQuery(EsConnection connection, ParsedQuery query) throws SQLException {
 		super(connection, QueryType.SCROLLABLE, query.getIndex().getName());
 		this.parsedQuery = query;
-		this.scrollable = scrollable;
-		this.fetchSize = Configuration.getConfiguration(ConfigurationEnum.CFG_QUERY_FETCH_SIZE, Integer.class);
+		this.fetchSize = Configuration.getConfiguration(ConfigurationEnum.CFG_QUERY_SCROLL_FETCH_SIZE, Integer.class);
 		initialFetch();
 	}
 
 	private void initialFetch() throws SQLException {
 		try {
-			requestInstance = RequestBuilder.buildRequest(((EsMetaData)getConnection().getMetaData()).getMetaDataService().getIndexMetaData(getSource()), parsedQuery, fetchSize, scrollable);
+			requestInstance = RequestBuilder.buildRequest(getConnection(), parsedQuery, fetchSize);
 			
-			pageData = new PageDataElastic(getSource(), requestInstance, true);
+			pageData = new PageDataElastic(getSource(), requestInstance);
 				
 			SearchResponse searchResponse = getConnection().getElasticClient().search(requestInstance.getSearchRequest(), RequestOptions.DEFAULT);
+			requestInstance.updatePagination(searchResponse);
 			pageData.pushData(searchResponse);
 			rsEmpty = pageData.isEmpty();
 			clearScrollIfRequired(searchResponse);
+		} catch(EsRuntimeException ere) {
+			throw new SQLSyntaxErrorException(ere.getMessage());
 		} catch(IOException e) {
 			throw new SQLException(e.getMessage());
 		}
 	}
 
+	@SuppressWarnings("incomplete-switch")
 	private void scrollFetch() throws SQLException {
 		try {
-			SearchScrollRequest scrollRequest = new SearchScrollRequest(pageData.getScrollId());
-			scrollRequest.scroll(TimeValue.timeValueMinutes(Configuration.getConfiguration(ConfigurationEnum.CFG_QUERY_SCROLL_TIMEOUT_MINUTES, Long.class)));
-			SearchResponse searchResponse = getConnection().getElasticClient().scroll(scrollRequest, RequestOptions.DEFAULT);
-			pageData.pushData(searchResponse);
-			clearScrollIfRequired(searchResponse);
-		} catch(IOException e) {
-			throw new SQLException(e.getMessage());
-		}
-	}
-	
-	private void clearScrollIfRequired(SearchResponse response) throws SQLException {
-		if(response.getHits().getHits().length < fetchSize) {
-			clearScroll();
-		}
-	}
-	
-	private void clearScroll() throws SQLException {
-		try {
-			open = false;
-			if(pageData.getScrollId() != null) {
-				ClearScrollRequest clearScrollRequest = new ClearScrollRequest(); 
-				clearScrollRequest.addScrollId(pageData.getScrollId());
-				getConnection().getElasticClient().clearScroll(clearScrollRequest, RequestOptions.DEFAULT);
+			switch(requestInstance.getPaginationMode()) {
+				case SCROLL_API:
+					paginateByScrollApi();
+					break;
+				case BY_ORDER:
+				case BY_ORDER_WITH_PIT:
+					paginateByOrder();
+					break;
 			}
 		} catch(IOException e) {
 			throw new SQLException(e.getMessage());
 		}
 	}
 
+	private void paginateByScrollApi() throws IOException, SQLException {
+		SearchScrollRequest scrollRequest = new SearchScrollRequest(requestInstance.getPaginationId());
+		scrollRequest.scroll(TimeValue.timeValueMinutes(Configuration.getConfiguration(ConfigurationEnum.CFG_QUERY_SCROLL_TIMEOUT_MINUTES, Long.class)));
+		SearchResponse searchResponse = getConnection().getElasticClient().scroll(scrollRequest, RequestOptions.DEFAULT);
+		requestInstance.updatePagination(searchResponse);
+		pageData.pushData(searchResponse);
+		clearScrollIfRequired(searchResponse);
+	}
+
+	private void paginateByOrder() throws IOException, SQLException {
+		SearchResponse searchResponse = getConnection().getElasticClient().search(requestInstance.getSearchRequest(), RequestOptions.DEFAULT);
+		requestInstance.updatePagination(searchResponse);
+		pageData.pushData(searchResponse);
+		rsEmpty = pageData.isEmpty();
+		clearScrollIfRequired(searchResponse);
+	}
+
+	private void clearScrollIfRequired(SearchResponse response) throws SQLException {
+		if(response.getHits().getHits().length < fetchSize) {
+			clearScroll();
+		}
+	}
+	
+	@SuppressWarnings("incomplete-switch")
+	private void clearScroll() throws SQLException {
+		try {
+			open = false;
+			switch(requestInstance.getPaginationMode()) {
+				case SCROLL_API:
+					clearPaginationByScrollApi();
+					break;
+				case BY_ORDER_WITH_PIT:
+					ElasticUtils.deletePointInTime(getConnection(), requestInstance.getPaginationId());
+					break; 
+			}
+		} catch(IOException e) {
+			throw new SQLException(e.getMessage());
+		}
+	}
+
+	private void clearPaginationByScrollApi() throws IOException {
+		ClearScrollRequest clearScrollRequest = new ClearScrollRequest(); 
+		clearScrollRequest.addScrollId(requestInstance.getPaginationId());
+		getConnection().getElasticClient().clearScroll(clearScrollRequest, RequestOptions.DEFAULT);
+	}
+
 	@Override
 	public boolean next() throws SQLException {
-		if(scrollable && open && pageData.oneRowLeft()) {
+		if(requestInstance.isScrollable() && open && pageData.oneRowLeft()) {
 			scrollFetch();
 		}
 		switch(pageData.next()) {

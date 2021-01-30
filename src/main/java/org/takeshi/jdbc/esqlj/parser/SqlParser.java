@@ -3,9 +3,12 @@ package org.takeshi.jdbc.esqlj.parser;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Stream.generate;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.takeshi.jdbc.esqlj.parser.model.Field;
 import org.takeshi.jdbc.esqlj.parser.model.ParsedQuery;
 
@@ -19,18 +22,18 @@ public final class SqlParser {
 	private SqlParser() {
 	}
 
-	public static Node parse(String sql) throws JSQLParserException {
+	public static ParsedQuery parse(String sql) throws JSQLParserException {
 		Map<String, String> table = new LinkedHashMap<String, String>();
 		ParsedQuery qry = new ParsedQuery();
 		SimpleNode node = (SimpleNode) CCJSqlParserUtil.parseAST(sql);
 
 		visit(node, 0);
 
-		visitTable(node, 0, table, qry);
+		//visitTable(node, 0, table, qry);
 
 		visitField(node, 0, table,qry);
 
-		return null;
+		return qry;
 	}
 
 	private static void visit(SimpleNode node, int depth) {
@@ -43,12 +46,14 @@ public final class SqlParser {
 		}
 	}
 
-	private static void visitField(SimpleNode node, int depth, Map<String, String> table, ParsedQuery qry) {
-
+	private static void visitField(SimpleNode node, int depth, Map<String, String> table, ParsedQuery qry) throws JSQLParserException {
+		Map<String,String> tables = new HashMap<String,String>();
 		switch (node.toString()) {
 			case "SelectItem":
-				qry.getFields().add(new Field(node.jjtGetLastToken().toString().equals("*") ? "*" : node.jjtGetLastToken().toString(), 
-						node.jjtGetLastToken().toString().equals("*") ? null : null, null));				
+				qry.getFields().add(parseField(node.jjtGetValue().toString()));				
+				break;
+			case "Table":
+				parseTable(node.jjtGetValue().toString(), qry,tables);
 				break;
 		}
 	
@@ -81,20 +86,73 @@ public final class SqlParser {
 
 	}
 	
-	public static Field parseField(String value) {
-		
-		System.out.println(value);
-		
-		if (value.contains(".") & value.toLowerCase().contains("as")) {
-			//String index = value.contains(".");
-			System.out.println(value);
-		} else {
-			System.out.println(value);
+	public static Field parseField(String value) throws JSQLParserException {
+				
+		String [] fieldArray = StringUtils.split(value," ");
+               
+        switch (fieldArray.length) {
+			case 1:
+				if(value.contains(".\"")) {
+					String colName = StringUtils.split(fieldArray[0],".")[1] + "." +StringUtils.split(fieldArray[0],".")[2];
+					return new Field(colName, null, StringUtils.split(fieldArray[0],".\"")[0]);
+				}else if (value.contains("\"")){	
+					return new Field(fieldArray[0], null, null);
+				}else if (value.contains(".")){	
+					return new Field(StringUtils.split(fieldArray[0],".")[1], null, StringUtils.split(fieldArray[0],".")[0]);
+				}else {					
+					return new Field(fieldArray[0], null, null);
+				}	
+			case 2:	
+				if(value.contains(".\"")) {
+					String colName = StringUtils.split(fieldArray[0],".")[1] + "." + StringUtils.split(fieldArray[0],".")[2];
+					return new Field(colName, fieldArray[1], StringUtils.split(fieldArray[0],".\"")[0]);
+				}else if (value.contains("\"")){	
+					return new Field(fieldArray[0], fieldArray[1], null);
+				}else if (value.contains(".")){	
+					return new Field(StringUtils.split(fieldArray[0],".")[1], fieldArray[1], StringUtils.split(fieldArray[0],".")[0]);
+				}else {					
+					return new Field(fieldArray[0], fieldArray[1], null);
+				}			
+			case 3:	
+				if(value.contains(".\"")) {
+					String colName = StringUtils.split(fieldArray[0],".")[1] + "." + StringUtils.split(fieldArray[0],".")[2];
+					return new Field(colName, fieldArray[2], StringUtils.split(fieldArray[0],".\"")[0]);
+				}else if (value.contains("\"")){	
+					return new Field(fieldArray[0], fieldArray[2], null);
+				}else if (value.contains(".")){	
+					return new Field(StringUtils.split(fieldArray[0],".")[1], fieldArray[2], StringUtils.split(fieldArray[0],".")[0]);
+				}else {					
+					return new Field(fieldArray[0], fieldArray[2], null);
+				}
+			default:
+				throw new JSQLParserException("Bad select find in " + value ) ;			
 		}
-		
-		return null;
-		
-		
+				
 	}
 	
+	public static void parseTable(String value,ParsedQuery qry,Map<String,String> tables) throws JSQLParserException {
+		
+		String [] tableArray = StringUtils.split(value," ");
+               
+        switch (tableArray.length) {
+			case 1:
+				tables.put(tableArray[0],tableArray[0]);
+				qry.getIndex().setName(tableArray[0]);
+				qry.getIndex().setAlias(tableArray[0]);
+				break;
+			case 2:	
+				tables.put(tableArray[1],tableArray[0]);
+				qry.getIndex().setName(tableArray[0]);
+				qry.getIndex().setAlias(tableArray[1]);
+				break;
+			case 3:	
+				tables.put(tableArray[2],tableArray[0]);
+				qry.getIndex().setName(tableArray[0]);
+				qry.getIndex().setAlias(tableArray[2]);
+				break;
+			default:
+				throw new JSQLParserException("Bad select find in " + value ) ;			
+		}
+				
+	}
 }

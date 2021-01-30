@@ -31,6 +31,12 @@ public class MetaDataService {
 		retrieveElasticInfo();
 	}
 
+	/*synchronized (objectCache) {
+                            if (objectCache.containsKey(parent)) {
+                                // Already cached
+                                continue;
+                            }
+                        }*/
 	private void retrieveElasticInfo() throws SQLException {
 		try {
 			MainResponse response = client.info(RequestOptions.DEFAULT);

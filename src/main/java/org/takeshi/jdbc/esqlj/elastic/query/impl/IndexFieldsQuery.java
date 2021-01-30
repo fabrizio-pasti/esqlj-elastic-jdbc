@@ -1,5 +1,6 @@
 package org.takeshi.jdbc.esqlj.elastic.query.impl;
 
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,11 +22,10 @@ public class IndexFieldsQuery extends AbstractOneShotQuery {
 	}
 
 	public void init(String index) throws SQLException {
-		insertRow(index, new ElasticField("_id", ElasticFieldType.KEYWORD));
-		
 		((EsMetaData)getConnection().getMetaData()).getMetaDataService().getIndexFields(index).forEach((name, field) -> {
 			insertRow(index, field);
 		});
+		insertRow(index, new ElasticField(ElasticField.DOC_ID_ALIAS, ElasticFieldType.DOC_ID));
 	}
 
 	private void insertRow(String index, ElasticField field) {
@@ -35,8 +35,8 @@ public class IndexFieldsQuery extends AbstractOneShotQuery {
 		data.put("DATA_TYPE", field.getType().getSqlTypeCode());
 		data.put("TYPE_NAME", field.getType().getSqlType());
 		data.put("NUM_PREC_RADIX", 10);
-		data.put("NULLABLE", 1);
-		data.put("IS_NULLABLE", "YES");
+		data.put("NULLABLE", field.getType().isPrimaryKey() ? ResultSetMetaData.columnNoNulls : ResultSetMetaData.columnNullable);
+		data.put("IS_NULLABLE", field.getType().isPrimaryKey() ? "NO" : "YES");
 		data.put("IS_AUTOINCREMENT", "NO");
 		data.put("SOURCE_DATA_TYPE", field.getType().getSqlTypeCode());
 		if(field.getType().equals(ElasticFieldType.KEYWORD) && field.getSize() == null) {
