@@ -102,8 +102,12 @@ public class ElasticQuery extends AbstractQuery {
 	
 	@SuppressWarnings("incomplete-switch")
 	private void clearScroll() throws SQLException {
+		if(!requestInstance.isScrollOpen()) {
+			return;
+		}
+		
 		try {
-			open = false;
+			requestInstance.setScrollOpen(false);
 			switch(requestInstance.getPaginationMode()) {
 				case SCROLL_API:
 					clearPaginationByScrollApi();
@@ -125,7 +129,7 @@ public class ElasticQuery extends AbstractQuery {
 
 	@Override
 	public boolean next() throws SQLException {
-		if(requestInstance.isScrollable() && open && pageData.oneRowLeft()) {
+		if(requestInstance.isScrollable() && requestInstance.isScrollOpen() && pageData.oneRowLeft()) {
 			scrollFetch();
 		}
 		switch(pageData.next()) {

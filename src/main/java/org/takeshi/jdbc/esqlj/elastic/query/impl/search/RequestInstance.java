@@ -37,6 +37,7 @@ public class RequestInstance {
 	private IndexMetaData indexMetaData;
 	private boolean pointInTimeApiAvailable;
 	private Object[] paginationSortValues;
+	private boolean scrollOpen;
 	
 	Pattern pattern = Pattern.compile("\"id\":\\s*\"([\\w=]*)\"");
 	
@@ -121,6 +122,8 @@ public class RequestInstance {
 		} else {
 			paginationMode = PaginationType.SCROLL_API;
 		}
+		
+		setScrollOpen(true);
 	}
 
 	@SuppressWarnings("incomplete-switch")
@@ -154,6 +157,14 @@ public class RequestInstance {
 		} catch(Exception e) {
 			pointInTimeApiAvailable = true;
 		}
+	}
+
+	public boolean isScrollOpen() {
+		return scrollOpen;
+	}
+
+	public void setScrollOpen(boolean scrollOpen) {
+		this.scrollOpen = scrollOpen;
 	}
 
 }

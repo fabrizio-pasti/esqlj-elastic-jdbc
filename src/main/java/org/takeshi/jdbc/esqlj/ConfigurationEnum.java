@@ -9,7 +9,7 @@ public enum ConfigurationEnum {
 		CFG_QUERY_SCROLL_FETCH_SIZE("queryScrollFetchSize", Integer.class, 100),
 		CFG_QUERY_SCROLL_TIMEOUT_MINUTES("queryScrollTimeoutMinutes", Long.class, 1L),
 		CFG_QUERY_SCROLL_FROM_ROWS("queryScrollFromRows", Long.class, 100L),
-		CFG_QUERY_SCROLL_ONLY_BY_SCROLL_API("queryScrollOnlyByScrollApi", Boolean.class, false);
+		CFG_QUERY_SCROLL_ONLY_BY_SCROLL_API("queryScrollOnlyByScrollApi", Boolean.class, true);
 		
 		String name;
 		Class<?> clazz;
