@@ -4,20 +4,27 @@ import java.sql.ResultSetMetaData;
 import java.sql.RowId;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.takeshi.jdbc.esqlj.EsConnection;
-import org.takeshi.jdbc.esqlj.elastic.query.data.oneshot.PageData;
-import org.takeshi.jdbc.esqlj.elastic.query.data.oneshot.PageDataState;
+import org.takeshi.jdbc.esqlj.EsResultSetMetaData;
+import org.takeshi.jdbc.esqlj.elastic.model.ElasticFieldType;
+import org.takeshi.jdbc.esqlj.elastic.query.data.PageDataArray;
+import org.takeshi.jdbc.esqlj.elastic.query.model.DataRow;
+import org.takeshi.jdbc.esqlj.elastic.query.model.PageDataState;
 
 public class AbstractOneShotQuery extends AbstractQuery {
 
-	private PageData pageData;
+	private PageDataArray pageData;
+	private ResultSetMetaData resultSetMetaData;
 	
-	public AbstractOneShotQuery(EsConnection connection, String source, String... columnsName) {
-		super(connection, QueryType.STATIC, source, columnsName);
-		pageData = new PageData(source, getColumnsName());
+	public AbstractOneShotQuery(EsConnection connection, String source, String... columnNames) {
+		super(connection, QueryType.STATIC, source, columnNames);
+		pageData = new PageDataArray(getColumnNames());
 	}
 
 	@Override
@@ -31,7 +38,7 @@ public class AbstractOneShotQuery extends AbstractQuery {
 			return true;		
 		}
 	}
-	
+
 	public void populate(List<List<Object>> data) {
 		pageData.populate(data);
 	}
@@ -112,8 +119,7 @@ public class AbstractOneShotQuery extends AbstractQuery {
 	}
 
 	@Override
-	public void setFetchSize() {
-		// TODO Auto-generated method stub
+	public void setFetchSize(int size) {
 		
 	}
 
@@ -130,7 +136,8 @@ public class AbstractOneShotQuery extends AbstractQuery {
 
 	@Override
 	public void close() throws SQLException {
-		 setClosed();
+		pageData = null;
+		setClosed();
 	}
 
 	@Override
@@ -143,9 +150,13 @@ public class AbstractOneShotQuery extends AbstractQuery {
 		return pageData.getColumnValue(columnName, type);
 	}
 
+	
 	@Override
 	public ResultSetMetaData getResultSetMetaData() {
-		return pageData.getResultSetMetaData();
+		if(resultSetMetaData == null) {
+			resultSetMetaData = new EsResultSetMetaData(getSource(), getColumnNames(), fetchTypesByData(getColumnNames(), pageData.getDataRows()));
+		}
+		return resultSetMetaData;
 	}
 
 	@Override
@@ -168,4 +179,29 @@ public class AbstractOneShotQuery extends AbstractQuery {
 		throw new SQLFeatureNotSupportedException();
 	}
 
+	@Override
+	public boolean isEmpty() {
+		return pageData.isEmpty();
+	}
+
+	private List<ElasticFieldType> fetchTypesByData(List<String> columnNames, List<DataRow> dataRows) {
+		List<ElasticFieldType> columnTypes = new ArrayList<ElasticFieldType>();
+		
+		if(dataRows == null || dataRows.size() == 0) {
+			columnTypes = IntStream.range(0, columnNames.size()).mapToObj(i -> ElasticFieldType.UNKNOWN).collect(Collectors.toList());
+		} else {
+			columnTypes = IntStream.range(0, columnNames.size()).mapToObj(i -> {
+				ElasticFieldType t = ElasticFieldType.UNKNOWN;
+				for(int row = 0; row < dataRows.size(); row++) {
+					if(dataRows.get(row).data.get(i) != null) {
+						t = ElasticFieldType.resolveByValue(dataRows.get(row).data.get(i));
+						break;
+					}
+				}
+				return t;
+			}).collect(Collectors.toList());
+		}
+		
+		return columnTypes;
+	}
 }

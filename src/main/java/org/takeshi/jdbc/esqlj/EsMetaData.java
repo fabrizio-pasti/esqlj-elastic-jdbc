@@ -12,11 +12,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.takeshi.jdbc.esqlj.elastic.metadata.MetaDataService;
+import org.takeshi.jdbc.esqlj.elastic.model.ElasticFieldType;
+import org.takeshi.jdbc.esqlj.elastic.model.ElasticObjectType;
 import org.takeshi.jdbc.esqlj.elastic.query.impl.FromArrayQuery;
 import org.takeshi.jdbc.esqlj.elastic.query.impl.IndexFieldsQuery;
 import org.takeshi.jdbc.esqlj.elastic.query.impl.IndicesQuery;
-import org.takeshi.jdbc.esqlj.elastic.query.model.ElasticFieldType;
-import org.takeshi.jdbc.esqlj.elastic.query.model.ElasticObjectType;
 import org.takeshi.jdbc.esqlj.support.EsConfig;
 import org.takeshi.jdbc.esqlj.support.EsConfig.ConfigurationPropertyEnum;
 
@@ -731,8 +731,8 @@ public class EsMetaData implements DatabaseMetaData {
 	@Override
 	public ResultSet getTypeInfo() throws SQLException {
 		return new EsResultSet(new FromArrayQuery("system_catalogs",
-				Arrays.asList(ElasticFieldType.values()).stream().filter(t -> t.isConcrete()).map(t -> new ArrayList<Object>(Arrays.asList(t.getSqlType(), t.getSqlTypeCode(), t.isCaseSensitive(), t.getLiteralPrefix(), t.getLiteralSuffix(), null, t.isCaseSensitive(), 1, t.isUnsigned(), false, false, t.getSqlType(), null, null, null, null, 10))).collect(Collectors.toList()), 
-				"TYPE_NAME", "DATA_TYPE", "PRECISION", "LITERAL_SUFFIX", "CREATE_PARAMS", "NULLABLE", "CASE_SENSITIVE", "SEARCHABLE", "UNSIGNED_ATTRIBUTE", "FIXED_PREC_SCALE", "AUTO_INCREMENT", "LOCAL_TYPE_NAME", "MINIMUM_SCALE", "MAXIMUM_SCALE", "SQL_DATA_TYPE", "SQL_DATETIME_SUB", "NUM_PREC_RADIX"));
+				Arrays.asList(ElasticFieldType.values()).stream().filter(t -> t.isConcrete()).map(t -> new ArrayList<Object>(Arrays.asList(t.getSqlType(), t.getSqlTypeCode(), t.getPrecision(), t.getLiteralPrefix(), t.getLiteralSuffix(), null, true, t.isCaseSensitive(), 1, t.isUnsigned(), false, false, t.getSqlType(), null, null, null, null, 10))).collect(Collectors.toList()), 
+				"TYPE_NAME", "DATA_TYPE", "PRECISION", "LITERAL_PREFIX", "LITERAL_SUFFIX", "CREATE_PARAMS", "NULLABLE", "CASE_SENSITIVE", "SEARCHABLE", "UNSIGNED_ATTRIBUTE", "FIXED_PREC_SCALE", "AUTO_INCREMENT", "LOCAL_TYPE_NAME", "MINIMUM_SCALE", "MAXIMUM_SCALE", "SQL_DATA_TYPE", "SQL_DATETIME_SUB", "NUM_PREC_RADIX"));
 	}
 
 	@Override
@@ -805,7 +805,7 @@ public class EsMetaData implements DatabaseMetaData {
 	public ResultSet getUDTs(String catalog, String schemaPattern, String typeNamePattern, int[] types)
 			throws SQLException {
 		return new EsResultSet(new FromArrayQuery("system_catalogs",
-				Arrays.asList(ElasticFieldType.values()).stream().filter(t -> t.isUdt()).map(t -> new ArrayList<Object>(Arrays.asList(catalog, schemaPattern, t.getSqlType(), t.getClass().getName(), t.getSqlTypeCode(), null, null))).collect(Collectors.toList()), 
+				Arrays.stream(ElasticFieldType.values()).filter(t -> t.isUdt()).map(t -> new ArrayList<Object>(Arrays.asList(catalog, schemaPattern, t.getSqlType(), t.getClass().getName(), t.getSqlTypeCode(), null, null))).collect(Collectors.toList()), 
 				"TYPE_CAT", "TYPE_SCHEM", "TYPE_NAME", "CLASS_NAME", "DATA_TYPE", "REMARKS", "BASE_TYPE"));
 	}
 
@@ -949,6 +949,10 @@ public class EsMetaData implements DatabaseMetaData {
 	@Override
 	public boolean generatedKeyAlwaysReturned() throws SQLException {
 		return false;
+	}
+	
+	public MetaDataService getMetaDataService() {
+		return metaDataService;
 	}
 
 }

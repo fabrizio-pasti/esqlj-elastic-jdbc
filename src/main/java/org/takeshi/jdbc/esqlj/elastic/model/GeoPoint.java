@@ -1,4 +1,4 @@
-package org.takeshi.jdbc.esqlj.elastic.query.model;
+package org.takeshi.jdbc.esqlj.elastic.model;
 
 public class GeoPoint {
 	private double latitude;

@@ -13,8 +13,8 @@ import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.indices.GetIndexRequest;
 import org.elasticsearch.client.indices.GetIndexResponse;
 import org.takeshi.jdbc.esqlj.EsConnection;
+import org.takeshi.jdbc.esqlj.elastic.model.ElasticObjectType;
 import org.takeshi.jdbc.esqlj.elastic.query.AbstractOneShotQuery;
-import org.takeshi.jdbc.esqlj.elastic.query.model.ElasticObjectType;
 
 public class IndicesQuery extends AbstractOneShotQuery {
 			

@@ -6,30 +6,31 @@ import java.sql.SQLException;
 import java.sql.SQLWarning;
 import java.sql.Statement;
 
+import org.takeshi.jdbc.esqlj.elastic.query.Executor;
+
 public class EsStatement implements Statement {
 
 	private EsConnection connection;
+	private EsResultSet resultSet;
 
 	public EsStatement(EsConnection connection) {
 		this.connection = connection;
 	}
-
+ 
 	@Override
 	public <T> T unwrap(Class<T> iface) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		return iface.cast(this);
 	}
 
 	@Override
 	public boolean isWrapperFor(Class<?> iface) throws SQLException {
-		// TODO Auto-generated method stub
-		return false;
+		return iface.isInstance(this);
 	}
 
 	@Override
 	public ResultSet executeQuery(String sql) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		resultSet = new EsResultSet(Executor.execSql(connection, sql));
+		return resultSet;
 	}
 
 	@Override
@@ -40,8 +41,7 @@ public class EsStatement implements Statement {
 
 	@Override
 	public void close() throws SQLException {
-		// TODO Auto-generated method stub
-
+		resultSet.close();
 	}
 
 	@Override
@@ -112,14 +112,13 @@ public class EsStatement implements Statement {
 
 	@Override
 	public boolean execute(String sql) throws SQLException {
-		// TODO Auto-generated method stub
-		return false;
+		resultSet = new EsResultSet(Executor.execSql(connection, sql));
+		return !resultSet.getInternalQuery().isEmpty(); // todo: add also if it is an update query
 	}
 
 	@Override
 	public ResultSet getResultSet() throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		return resultSet;
 	}
 
 	@Override

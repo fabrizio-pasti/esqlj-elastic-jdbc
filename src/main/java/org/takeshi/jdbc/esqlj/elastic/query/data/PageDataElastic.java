@@ -1,59 +1,96 @@
-package org.takeshi.jdbc.esqlj.elastic.query.data.oneshot;
+package org.takeshi.jdbc.esqlj.elastic.query.data;
 
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
+import java.util.TimeZone;
 
-import org.takeshi.jdbc.esqlj.elastic.query.data.AbstractResultSetMetaData;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.common.document.DocumentField;
+import org.takeshi.jdbc.esqlj.elastic.model.ElasticField;
+import org.takeshi.jdbc.esqlj.elastic.query.impl.search.RequestInstance;
 import org.takeshi.jdbc.esqlj.elastic.query.model.DataRow;
+import org.takeshi.jdbc.esqlj.elastic.query.model.PageDataState;
+import org.takeshi.jdbc.esqlj.support.SimpleDateFormatThreadSafe;
 
-public class PageData {
-
-	private String source;
-	private List<String> columnsName;
-	private List<DataRow> dataRows = new ArrayList<DataRow>();
+public class PageDataElastic {
+	
 	private PageDataState state = PageDataState.NOT_INITIALIZED;
 	private int currentIdxCurrentRow = -1;
 	private int iterationStep = 1;
-	private AbstractResultSetMetaData resultSetMetaData;
+	private RequestInstance req;
+	
+	private List<DataRow> dataRows;
+	private boolean scrollable;
+	private String scrollId;
 
-	public PageData(String source, List<String> columnsName) {
-		this.source = source;
-		this.columnsName = columnsName;
+	public static final SimpleDateFormatThreadSafe sdfTimestamp = new SimpleDateFormatThreadSafe("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", TimeZone.getTimeZone("UTC"));
+	
+	public PageDataElastic(String source, RequestInstance req, boolean scrollable) {
+		this.req = req;
+		this.scrollable = scrollable;
 	}
 
-	public PageData(String source, String[] columnsName) {
-		this.source = source;
-		this.columnsName = Arrays.asList(columnsName);
-	}
-
-	public void push(List<Object> values) {
-		dataRows.add(new DataRow(values));
-		state = PageDataState.READY_TO_ITERATE;
-	}
-
-	public void push(Object... values) {
-		dataRows.add(new DataRow(values));
-		state = PageDataState.READY_TO_ITERATE;
-	}
-
-	public void pushSubsetData(Map<String, Object> data) {
-		List<Object> columnValues = new ArrayList<Object>();
-		columnsName.stream().forEach(columnName -> {
-			if (data.containsKey(columnName)) {
-				columnValues.add(data.get(columnName));
-			} else {
-				columnValues.add(null);
-			}
+	public void pushData(SearchResponse searchResponse) {
+		if(scrollable) {
+			scrollId = searchResponse.getScrollId();
+		}
+		
+		currentIdxCurrentRow = -1;
+		
+		if(dataRows != null) {
+			DataRow dataRow = dataRows.get(dataRows.size() - 1);
+			dataRows = new ArrayList<DataRow>();
+			dataRows.add(dataRow);
+		} else {
+			dataRows = new ArrayList<DataRow>();
+		}
+		
+		searchResponse.getHits().forEach(searchHit -> {
+			List<Object> data = new ArrayList<Object>();
+			req.getFields().forEach((name, field) -> {
+				if(field.isDocField()) {
+					DocumentField docField = searchHit.field(field.getFullName());
+					if(docField != null) {
+						data.add(resolveType(field, docField.getValue())); // only first field value is managed
+					} else {
+						data.add(null);
+					}
+				} else if(req.isSourceFieldsToRetrieve()) {
+					data.add(searchResponse.getHits().getAt(0).getSourceAsMap().get(field.getFullName()));
+				} else {
+					data.add(null);
+				}
+			});
+			dataRows.add(new DataRow(data));
 		});
-		push(columnValues);
+				
+		state = state == PageDataState.NOT_INITIALIZED ? PageDataState.READY_TO_ITERATE : PageDataState.ITERATION_STARTED;
+	}
+	
+	private Object resolveType(ElasticField field, Object value) {
+		switch(field.getType()) {
+			case BOOLEAN:
+				if(value != null) {
+					return value;
+				}
+				return null;
+			case DATE:
+			case DATE_NANOS:
+				try {
+					return sdfTimestamp.parse((String)value);
+				} catch (ParseException e) {
+					// log error
+					return null;
+				}
+			default:
+				return value;
+		}
 	}
 
-	public void populate(List<List<Object>> data) {
-		data.stream().forEach(row -> push(row));
+	public String getScrollId() {
+		return scrollId;
 	}
 
 	public DataRow getCurrentRow() throws SQLException {
@@ -99,12 +136,12 @@ public class PageData {
 	}
 
 	public Object getColumnValue(String columnName) throws SQLException {
-		return getCurrentRow().data.get(columnsName.indexOf(columnName));
+		return getCurrentRow().data.get(req.getFieldNames().indexOf(columnName));
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> T getColumnValue(String columnName, Class<T> clazz) throws SQLException { // todo: convert type if													// required
-		return (T) getCurrentRow().data.get(columnsName.indexOf(columnName));
+	public <T> T getColumnValue(String columnName, Class<T> clazz) throws SQLException { // todo: convert type if required													// required
+		return (T) getCurrentRow().data.get(req.getFieldNames().indexOf(columnName));
 	}
 
 	public Object getColumnValue(int columnIndex) throws SQLException {
@@ -115,9 +152,9 @@ public class PageData {
 	public <T> T getColumnValue(int columnIndex, Class<T> clazz) throws SQLException { // todo: convert type if required
 		return (T) getCurrentRow().data.get(columnIndex);
 	}
-
 	public void setColumnValue(String columnName, Object data) throws SQLException {
-		getCurrentRow().put(columnsName.indexOf(columnName), data);
+		
+		getCurrentRow().put(req.getFieldNames().indexOf(columnName), data);
 	}
 
 	public PageDataState next() throws SQLException {
@@ -207,24 +244,28 @@ public class PageData {
 		this.iterationStep = iterationStep;
 	}
 
-	public ResultSetMetaData getResultSetMetaData() {
-		if(resultSetMetaData == null) {
-			resultSetMetaData = new ResultSetMetaDataImpl(source, columnsName, dataRows);
-		}
-		return resultSetMetaData;
-	}
-
 	public int getColumnIndex(String columnLabel) {
-		return columnsName.indexOf(columnLabel);
+		return req.getFieldNames().indexOf(columnLabel);
 	}
 
 	private PageDataState doNext() {
 		if (dataRows.size() >= currentIdxCurrentRow) {
 			currentIdxCurrentRow += iterationStep;
-			return currentIdxCurrentRow == dataRows.size() - 1 ? PageDataState.ITERATION_FINISHED : PageDataState.ITERATION_STARTED;
+			return currentIdxCurrentRow == dataRows.size() ? PageDataState.ITERATION_FINISHED : PageDataState.ITERATION_STARTED;
 		}
 
 		return PageDataState.ITERATION_FINISHED;
 	}
+
+	public boolean oneRowLeft() {
+		return currentIdxCurrentRow == dataRows.size() - 2;
+	}
+
+	public boolean isEmpty() {
+		return dataRows.isEmpty();
+	}
+
+
+	
 
 }

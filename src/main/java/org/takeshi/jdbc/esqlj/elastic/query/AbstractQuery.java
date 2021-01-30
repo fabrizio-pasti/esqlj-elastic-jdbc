@@ -11,15 +11,15 @@ import org.takeshi.jdbc.esqlj.EsConnection;
 public abstract class AbstractQuery {
 	private EsConnection connection;
 	private QueryType queryType;
-	private List<String> columnsName;
-	private boolean open = true;
+	private List<String> columnNames;
+	protected boolean open = true;
 	private String source;
 	
-	public AbstractQuery(EsConnection connection, QueryType queryType, String source, String... columnsName) {
+	public AbstractQuery(EsConnection connection, QueryType queryType, String source, String... columnNames) {
 		this.source = source;
 		this.queryType = queryType;
 		this.connection = connection;
-		this.columnsName = Arrays.asList(columnsName);
+		this.columnNames = Arrays.asList(columnNames);
 	}
 	
 	public abstract boolean next() throws SQLException;
@@ -28,10 +28,10 @@ public abstract class AbstractQuery {
 		return connection;
 	}
 
-	public List<String> getColumnsName() {
-		return columnsName;
+	public List<String> getColumnNames() {
+		return columnNames;
 	}	
-	
+ 	
 	public abstract boolean isFirst() throws SQLException;
 	
 	public abstract boolean isLast() throws SQLException;
@@ -54,7 +54,7 @@ public abstract class AbstractQuery {
 
 	public abstract void setIterationStep(int iterationStep);
 
-	public abstract void setFetchSize();
+	public abstract void setFetchSize(int rows);
 
 	public abstract int getFetchSize();
 
@@ -93,5 +93,7 @@ public abstract class AbstractQuery {
 	public QueryType getQueryType() {
 		return queryType;
 	}
+
+	public abstract boolean isEmpty();
 	
 }
