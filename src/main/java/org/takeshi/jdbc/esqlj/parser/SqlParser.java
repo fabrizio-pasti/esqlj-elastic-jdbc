@@ -5,17 +5,20 @@ import static java.util.stream.Stream.generate;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.takeshi.jdbc.esqlj.parser.model.Condition;
+import org.takeshi.jdbc.esqlj.parser.model.ECondition;
 import org.takeshi.jdbc.esqlj.parser.model.Field;
 import org.takeshi.jdbc.esqlj.parser.model.ParsedQuery;
 
 import net.sf.jsqlparser.JSQLParserException;
+import net.sf.jsqlparser.expression.ExpressionVisitor;
+import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
-import net.sf.jsqlparser.parser.Node;
 import net.sf.jsqlparser.parser.SimpleNode;
+import net.sf.jsqlparser.expression.operators.relational.InExpression;
 
 public final class SqlParser {
 
@@ -55,6 +58,11 @@ public final class SqlParser {
 			case "Table":
 				parseTable(node.jjtGetValue().toString(), qry,tables);
 				break;
+			case "RegularCondition":
+			case "LikeExpression":
+			case "InExpression":
+				RegularCondition(node,qry);
+				break;
 		}
 	
 		for (int i = 0; i < node.jjtGetNumChildren(); i++) {
@@ -62,29 +70,29 @@ public final class SqlParser {
 		}
 	}
 
-	private static void visitTable(SimpleNode node, int depth, Map<String, String> table, ParsedQuery qry) {
-
-		switch (node.toString()) {
-		case "Table":
-			
-			String [] tableArray = node.jjtGetValue().toString().split(" ");
-			
-			if(tableArray.length > 1) {
-				table.put(tableArray[1],  tableArray[0]);				
-				qry.getIndex().setName(tableArray[0]);
-				qry.getIndex().setAlias(tableArray[1]);				
-			}else {
-				qry.getIndex().setName(tableArray[0]);				
-			}
-			
-			break;
-		};
-
-		for (int i = 0; i < node.jjtGetNumChildren(); i++) {
-			visitTable((SimpleNode) node.jjtGetChild(i), depth + 1, table, qry);
-		}
-
-	}
+//	private static void visitTable(SimpleNode node, int depth, Map<String, String> table, ParsedQuery qry) {
+//
+//		switch (node.toString()) {
+//		case "Table":
+//			
+//			String [] tableArray = node.jjtGetValue().toString().split(" ");
+//			
+//			if(tableArray.length > 1) {
+//				table.put(tableArray[1],  tableArray[0]);				
+//				qry.getIndex().setName(tableArray[0]);
+//				qry.getIndex().setAlias(tableArray[1]);				
+//			}else {
+//				qry.getIndex().setName(tableArray[0]);				
+//			}
+//			
+//			break;
+//		};
+//
+//		for (int i = 0; i < node.jjtGetNumChildren(); i++) {
+//			visitTable((SimpleNode) node.jjtGetChild(i), depth + 1, table, qry);
+//		}
+//
+//	}
 	
 	public static Field parseField(String value) throws JSQLParserException {
 				
@@ -152,6 +160,36 @@ public final class SqlParser {
 				break;
 			default:
 				throw new JSQLParserException("Bad select find in " + value ) ;			
+		}
+				
+	}
+	
+	public static void RegularCondition(SimpleNode node, ParsedQuery qry ) throws JSQLParserException {
+		Condition condition = new Condition();		               
+		Field field = null;
+		ECondition econ = ECondition.valueOf(node.jjtGetValue().getClass().getSimpleName()); 
+		switch (econ) {
+        	case EqualsTo:
+        	case GreaterThan:
+        	case GreaterThanEquals:						
+			case MinorThan:				
+			case MinorThanEquals:				
+			case NotEqualsTo:
+			case LikeExpression:			
+				field = parseField(node.jjtGetValue().toString());				
+				condition.setCondition(econ);
+				condition.setLeftField(new Field(field.getName(), null,field.getIndex(), node.jjtGetLastToken().toString()));	
+				qry.getIndex().getCondition().add(condition);
+				break;	
+			case InExpression:					
+				field = parseField(StringUtils.substring(node.jjtGetValue().toString(), 0,StringUtils.indexOf(node.jjtGetValue().toString(), "IN")));				
+				condition.setCondition(econ);								
+				condition.setLeftField(new Field(field.getName(), null,field.getIndex(), ((InExpression) node.jjtGetValue()).getRightItemsList().toString()));	
+				qry.getIndex().getCondition().add(condition);
+				break;	
+			case Between:
+			default:
+				break;			
 		}
 				
 	}

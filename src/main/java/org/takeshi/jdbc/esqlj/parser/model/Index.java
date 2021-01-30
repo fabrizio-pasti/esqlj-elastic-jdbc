@@ -10,7 +10,7 @@ public class Index {
 	
 	List<JoinedIndex> joinedIndex = new ArrayList<JoinedIndex>();
 	
-	Condition condition = new Condition();
+	List<Condition> condition = new ArrayList<Condition>();
 
 	public String getName() {
 		return name;
@@ -36,14 +36,13 @@ public class Index {
 		this.joinedIndex = joinedIndex;
 	}
 
-	public Condition getCondition() {
+	public List<Condition> getCondition() {
 		return condition;
 	}
 
-	public void setCondition(Condition condition) {
+	public void setCondition(List<Condition> condition) {
 		this.condition = condition;
 	}
-	
 	
  
 }

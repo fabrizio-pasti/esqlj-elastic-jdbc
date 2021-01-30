@@ -2,17 +2,18 @@ package org.takeshi.jdbc.esqlj.parser.model;
 
 public class Condition {
 	
-	String condition;
+	ECondition condition;
 	
 	Field  leftField;
 	
 	Field rightField;
-
-	public String getCondition() {
+	
+	
+	public ECondition getCondition() {
 		return condition;
 	}
 
-	public void setCondition(String condition) {
+	public void setCondition(ECondition condition) {
 		this.condition = condition;
 	}
 

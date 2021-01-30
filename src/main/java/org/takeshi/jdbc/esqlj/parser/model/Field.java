@@ -4,11 +4,19 @@ public class Field {
 	String name;
 	String alias;
 	String index;
-			
+	String value;
+	
 	public Field(String name, String alias, String index) {		
 		this.name = name;
 		this.alias = alias;
 		this.index = index;
+	}
+	
+	public Field(String name, String alias, String index, String value) {		
+		this.name = name;
+		this.alias = alias;
+		this.index = index;
+		this.value = value;
 	}
 	
 	public String getName() {
@@ -28,6 +36,14 @@ public class Field {
 	}
 	public void setIndex(String index) {
 		this.index = index;
+	}
+
+	public String getValue() {
+		return value;
+	}
+
+	public void setValue(String value) {
+		this.value = value;
 	}
 	
 	

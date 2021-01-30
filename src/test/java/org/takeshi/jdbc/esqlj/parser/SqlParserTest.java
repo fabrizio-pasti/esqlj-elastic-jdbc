@@ -7,8 +7,10 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.takeshi.jdbc.esqlj.parser.model.ECondition;
 import org.takeshi.jdbc.esqlj.parser.model.Field;
 import org.takeshi.jdbc.esqlj.parser.model.ParsedQuery;
 
@@ -22,59 +24,125 @@ public class SqlParserTest {
 	@Test
 	public void parseSimpleQuery () throws SQLException, JSQLParserException {
 		// given
-		String sql1 = "SELECT   *    FROM TABLE1";
-		String sql2 = "SELECT *    FROM TABLE1 T1 WHERE COL1=5 AND COL2>10 AND COL3 = 'VALUE'";
-		String sql3 = "SELECT * \n" +
-						"FROM TABLE1 AS T1 \n" +
-						"WHERE T1.COL1='VALORE'";
+		String sql1 = "SELECT   *    FROM TABLE1";		
 		
+		// when
 		ParsedQuery qry1 = SqlParser.parse(sql1);
-		ParsedQuery qry2 = SqlParser.parse(sql2);
 		
+		//then
 		assertTrue(qry1.getFields().size()==1);
 		assertTrue(qry1.getFields().get(0).getName().equals("*"));	
 		assertNull(qry1.getFields().get(0).getIndex());
 		assertNull(qry1.getFields().get(0).getAlias());	
 		assertTrue(qry1.getIndex().getName().equals("TABLE1"));
-		assertTrue(qry1.getIndex().getAlias().equals("TABLE1"));
+		assertTrue(qry1.getIndex().getAlias().equals("TABLE1"));		
 		
-		assertTrue(qry2.getFields().size()==1);
-		assertTrue(qry2.getFields().get(0).getName().equals("*"));	
-		assertNull(qry2.getFields().get(0).getIndex());
-		assertNull(qry2.getFields().get(0).getAlias());	
-		assertTrue(qry2.getIndex().getName().equals("TABLE1"));
-		assertTrue(qry2.getIndex().getAlias().equals("T1"));
 	}
-	
-	
-	
-	
-	
 	
 	@Test
-	public void parse () throws SQLException, JSQLParserException {
-		String sql = "SELECT WTH.\"WITHDRAWAL.ID\"    ID_TX, STATE_TYPE.PIPPO     AS    PLUTO FROM A2E_TX_WITHDRAWAL WITHDRAWAL INNER JOIN A2E_TX_STATE_TYPE STATE_TYPE ON STATE_TYPE.ID_TX_STATE_TYPE = WITHDRAWAL.FK_TX_STATE_TYPE";
-		String sql1 = "SELECT * FROM A2E_TX_WITHDRAWAL";
-		String sql2 = "SELECT withdrawal.pfk_transaction, state_type.str_description, tr.id_transaction FROM A2E_TX_WITHDRAWAL WITHDRAWAL INNER JOIN A2E_TX_STATE_TYPE STATE_TYPE ON STATE_TYPE.ID_TX_STATE_TYPE = WITHDRAWAL.FK_TX_STATE_TYPE INNER JOIN A2E_TRANSACTION TR ON tr.id_transaction = withdrawal.pfk_transaction";
-		String sql3 = "Select a from pippo, (select b from pluto) t1 where pippo.a = t1.b";
+	public void parseQuery () throws SQLException, JSQLParserException {
+		// given		
+		String sql = "SELECT *    FROM TABLE1 T1 WHERE T1.COL1=5 AND COL2>=10 OR COL2 < 12";
 		
+		// when
 		ParsedQuery qry = SqlParser.parse(sql);
-		ParsedQuery qry1 = SqlParser.parse(sql1);
 		
-		assertTrue(qry.getFields().size()==2);
-		assertTrue(qry.getFields().get(0).getName().equals("\"WITHDRAWAL.ID\""));
-		assertTrue(qry.getFields().get(0).getIndex().equals("wth"));
-		assertTrue(qry.getFields().get(0).getAlias().equals("ID_TX"));
-		assertTrue(qry.getFields().get(1).getName().equals("PIPPO"));
-		assertTrue(qry.getFields().get(1).getIndex().equals("STATE_TYPE"));
-		assertTrue(qry.getFields().get(1).getAlias().equals("PLUTO"));
+		//then
+		assertTrue(qry.getFields().size()==1);
+		assertTrue(qry.getFields().get(0).getName().equals("*"));	
+		assertNull(qry.getFields().get(0).getIndex());
+		assertNull(qry.getFields().get(0).getAlias());	
+		assertTrue(qry.getIndex().getName().equals("TABLE1"));
+		assertTrue(qry.getIndex().getAlias().equals("T1"));		
+		assertTrue(qry.getIndex().getJoinedIndex().size()==0);
 		
+		assertTrue(qry.getIndex().getCondition().get(0).getCondition().compareTo(ECondition.EqualsTo)==0);
+		assertTrue(qry.getIndex().getCondition().get(0).getLeftField().getName().equals("COL1"));
+		assertTrue(qry.getIndex().getCondition().get(0).getLeftField().getIndex().equals("T1"));
+		assertNull(qry.getIndex().getCondition().get(0).getLeftField().getAlias());
+		assertTrue(qry.getIndex().getCondition().get(0).getLeftField().getValue().equals("5"));
 		
-		assertTrue(qry1.getFields().size()==1);
-		assertTrue(qry1.getFields().get(0).getName().equals("*"));		
-		assertNull(qry1.getFields().get(0).getIndex());
-		assertNull(qry1.getFields().get(0).getAlias());
+		assertTrue(qry.getIndex().getCondition().get(1).getCondition().compareTo(ECondition.GreaterThanEquals)==0);
+		assertTrue(qry.getIndex().getCondition().get(1).getLeftField().getName().equals("COL2"));
+		assertNull(qry.getIndex().getCondition().get(1).getLeftField().getIndex());
+		assertNull(qry.getIndex().getCondition().get(1).getLeftField().getAlias());
+		assertTrue(qry.getIndex().getCondition().get(1).getLeftField().getValue().equals("10"));
+		
+		assertTrue(qry.getIndex().getCondition().get(2).getCondition().compareTo(ECondition.MinorThan)==0);
+		assertTrue(qry.getIndex().getCondition().get(2).getLeftField().getName().equals("COL2"));
+		assertNull(qry.getIndex().getCondition().get(1).getLeftField().getIndex());
+		assertNull(qry.getIndex().getCondition().get(2).getLeftField().getAlias());
+		assertTrue(qry.getIndex().getCondition().get(2).getLeftField().getValue().equals("12"));
+		
 	}
+		
+	@Test
+	public void parseMultilineQuery () throws SQLException, JSQLParserException {
+		// given		
+		String sql = "SELECT T1.COL10 PrimaColonna,T1.COL11 AS  SecondaColonna \n" +
+				"FROM TABLE1 AS T1 \n" +
+				"WHERE T1.COL1 like '%VALORE%' \n" +
+				"AND T1.COL2 != 150";
+		
+		// when
+		ParsedQuery qry = SqlParser.parse(sql);
+		
+		//then
+		assertTrue(qry.getFields().size()==2);
+		assertTrue(qry.getFields().get(0).getName().equals("COL10"));	
+		assertTrue(qry.getFields().get(0).getIndex().equals("T1"));
+		assertTrue(qry.getFields().get(0).getAlias().equals("PrimaColonna"));	
+		assertTrue(qry.getFields().get(1).getName().equals("COL11"));	
+		assertTrue(qry.getFields().get(1).getIndex().equals("T1"));
+		assertTrue(qry.getFields().get(1).getAlias().equals("SecondaColonna"));
+		assertTrue(qry.getIndex().getName().equals("TABLE1"));
+		assertTrue(qry.getIndex().getAlias().equals("T1"));		
+		assertTrue(qry.getIndex().getJoinedIndex().size()==0);
+		
+		assertTrue(qry.getIndex().getCondition().get(0).getCondition().compareTo(ECondition.LikeExpression)==0);
+		assertTrue(qry.getIndex().getCondition().get(0).getLeftField().getName().equals("COL1"));
+		assertTrue(qry.getIndex().getCondition().get(0).getLeftField().getIndex().equals("T1"));
+		assertNull(qry.getIndex().getCondition().get(0).getLeftField().getAlias());
+		assertTrue(qry.getIndex().getCondition().get(0).getLeftField().getValue().equals("'%VALORE%'"));
+		
+		assertTrue(qry.getIndex().getCondition().get(1).getCondition().compareTo(ECondition.NotEqualsTo)==0);
+		assertTrue(qry.getIndex().getCondition().get(1).getLeftField().getName().equals("COL2"));
+		assertTrue(qry.getIndex().getCondition().get(1).getLeftField().getIndex().equals("T1"));
+		assertNull(qry.getIndex().getCondition().get(1).getLeftField().getAlias());
+		assertTrue(qry.getIndex().getCondition().get(1).getLeftField().getValue().equals("150"));
+		
+	}
+	
+	@Test
+	public void parseInConditionQuery () throws SQLException, JSQLParserException {
+		// given		
+		String sql = "SELECT T1.COL10 PrimaColonna,T1.COL11 AS  SecondaColonna \n" +
+					 "FROM TABLE1 T1 \n " + 
+					 "WHERE T1.COL1 in (5,10,15,20)";
+		
+		// when
+		ParsedQuery qry = SqlParser.parse(sql);
+		
+		//then
+		assertTrue(qry.getFields().size()==2);
+		assertTrue(qry.getFields().get(0).getName().equals("COL10"));	
+		assertTrue(qry.getFields().get(0).getIndex().equals("T1"));
+		assertTrue(qry.getFields().get(0).getAlias().equals("PrimaColonna"));	
+		assertTrue(qry.getFields().get(1).getName().equals("COL11"));	
+		assertTrue(qry.getFields().get(1).getIndex().equals("T1"));
+		assertTrue(qry.getFields().get(1).getAlias().equals("SecondaColonna"));
+		assertTrue(qry.getIndex().getName().equals("TABLE1"));
+		assertTrue(qry.getIndex().getAlias().equals("T1"));		
+		assertTrue(qry.getIndex().getJoinedIndex().size()==0);
+		
+		assertTrue(qry.getIndex().getCondition().get(0).getCondition().compareTo(ECondition.InExpression)==0);
+		assertTrue(qry.getIndex().getCondition().get(0).getLeftField().getName().equals("COL1"));
+		assertTrue(qry.getIndex().getCondition().get(0).getLeftField().getIndex().equals("T1"));
+		assertNull(qry.getIndex().getCondition().get(0).getLeftField().getAlias());
+		assertTrue(qry.getIndex().getCondition().get(0).getLeftField().getValue().equals("(5, 10, 15, 20)"));		
+	}
+	
+	
 	
 	@Test
 	public void parseTable () throws SQLException, JSQLParserException {
@@ -106,8 +174,6 @@ public class SqlParserTest {
 		assertTrue(qry2.getIndex().getAlias().equals("T1"));
 		assertTrue(qry3.getIndex().getName().equals("TABLE1"));
 		assertTrue(qry3.getIndex().getAlias().equals("TABLE1"));
-		
-		
 		
 	}
 	
@@ -260,5 +326,63 @@ public class SqlParserTest {
 		assertTrue(field12.getName().equals("\"FK_NAME.*\""));
 		assertNull(field12.getIndex());
 		assertTrue(field12.getAlias().equals("COL_ALIAS"));
+	}
+	
+	
+	@Test
+	@Ignore
+	public void parse () throws SQLException, JSQLParserException {
+		String sql = "SELECT WTH.\"WITHDRAWAL.ID\"    ID_TX, STATE_TYPE.PIPPO     AS    PLUTO FROM A2E_TX_WITHDRAWAL WITHDRAWAL INNER JOIN A2E_TX_STATE_TYPE STATE_TYPE ON STATE_TYPE.ID_TX_STATE_TYPE = WITHDRAWAL.FK_TX_STATE_TYPE";
+		String sql1 = "SELECT * FROM A2E_TX_WITHDRAWAL";
+		String sql2 = "SELECT withdrawal.pfk_transaction, state_type.str_description, tr.id_transaction FROM A2E_TX_WITHDRAWAL WITHDRAWAL INNER JOIN A2E_TX_STATE_TYPE STATE_TYPE ON STATE_TYPE.ID_TX_STATE_TYPE = WITHDRAWAL.FK_TX_STATE_TYPE INNER JOIN A2E_TRANSACTION TR ON tr.id_transaction = withdrawal.pfk_transaction";
+		String sql3 = "Select a from pippo, (select b from pluto) t1 where pippo.a = t1.b";
+		
+		ParsedQuery qry = SqlParser.parse(sql);
+		ParsedQuery qry1 = SqlParser.parse(sql1);
+		
+		assertTrue(qry.getFields().size()==2);
+		assertTrue(qry.getFields().get(0).getName().equals("\"WITHDRAWAL.ID\""));
+		assertTrue(qry.getFields().get(0).getIndex().equals("wth"));
+		assertTrue(qry.getFields().get(0).getAlias().equals("ID_TX"));
+		assertTrue(qry.getFields().get(1).getName().equals("PIPPO"));
+		assertTrue(qry.getFields().get(1).getIndex().equals("STATE_TYPE"));
+		assertTrue(qry.getFields().get(1).getAlias().equals("PLUTO"));
+		
+		
+		assertTrue(qry1.getFields().size()==1);
+		assertTrue(qry1.getFields().get(0).getName().equals("*"));		
+		assertNull(qry1.getFields().get(0).getIndex());
+		assertNull(qry1.getFields().get(0).getAlias());
+	}
+	
+	@Test
+	@Ignore
+	public void parseBeetwenConditionQuery () throws SQLException, JSQLParserException {
+		// given		
+		String sql = "SELECT T1.COL10 PrimaColonna,T1.COL11 AS  SecondaColonna \n" +
+					 "FROM TABLE1 T1 \n " + 
+					 "WHERE T1.COL1 Between '01-01-2020' AND '31-12-2020'";
+		
+		// when
+		ParsedQuery qry = SqlParser.parse(sql);
+		
+		//then
+		assertTrue(qry.getFields().size()==2);
+		assertTrue(qry.getFields().get(0).getName().equals("COL10"));	
+		assertTrue(qry.getFields().get(0).getIndex().equals("T1"));
+		assertTrue(qry.getFields().get(0).getAlias().equals("PrimaColonna"));	
+		assertTrue(qry.getFields().get(1).getName().equals("COL11"));	
+		assertTrue(qry.getFields().get(1).getIndex().equals("T1"));
+		assertTrue(qry.getFields().get(1).getAlias().equals("SecondaColonna"));
+		assertTrue(qry.getIndex().getName().equals("TABLE1"));
+		assertTrue(qry.getIndex().getAlias().equals("T1"));		
+		assertTrue(qry.getIndex().getJoinedIndex().size()==0);
+		
+		assertTrue(qry.getIndex().getCondition().get(0).getCondition().compareTo(ECondition.Between)==0);
+		assertTrue(qry.getIndex().getCondition().get(0).getLeftField().getName().equals("COL1"));
+		assertTrue(qry.getIndex().getCondition().get(0).getLeftField().getIndex().equals("T1"));
+		assertNull(qry.getIndex().getCondition().get(0).getLeftField().getAlias());
+		assertTrue(qry.getIndex().getCondition().get(0).getLeftField().getValue().equals("5,10,15,20"));
+		
 	}
 }
