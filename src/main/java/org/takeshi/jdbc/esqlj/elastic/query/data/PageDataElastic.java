@@ -3,11 +3,14 @@ package org.takeshi.jdbc.esqlj.elastic.query.data;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.TimeZone;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.common.document.DocumentField;
+import org.elasticsearch.search.SearchHit;
 import org.takeshi.jdbc.esqlj.elastic.model.ElasticField;
 import org.takeshi.jdbc.esqlj.elastic.query.impl.search.RequestInstance;
 import org.takeshi.jdbc.esqlj.elastic.query.model.DataRow;
@@ -20,6 +23,7 @@ public class PageDataElastic {
 	private int currentIdxCurrentRow = -1;
 	private int iterationStep = 1;
 	private RequestInstance req;
+	private Long fetchedRows = 0L;
 	
 	private List<DataRow> dataRows;
 
@@ -31,8 +35,9 @@ public class PageDataElastic {
 
 	public void pushData(SearchResponse searchResponse) {
 		currentIdxCurrentRow = -1;
+		boolean firstPush = dataRows == null;
 		
-		if(dataRows != null) {
+		if(!firstPush) {
 			DataRow dataRow = dataRows.get(dataRows.size() - 1);
 			dataRows = new ArrayList<DataRow>();
 			dataRows.add(dataRow);
@@ -40,7 +45,10 @@ public class PageDataElastic {
 			dataRows = new ArrayList<DataRow>();
 		}
 		
-		searchResponse.getHits().forEach(searchHit -> {
+		int takeNRows = req.getSelect().getLimit() != null ? (searchResponse.getHits().getHits().length + fetchedRows > req.getSelect().getLimit() ? new Long(req.getSelect().getLimit() - fetchedRows).intValue() : searchResponse.getHits().getHits().length) : searchResponse.getHits().getHits().length;
+
+		for(int i = 0; i < takeNRows; i++) {
+			SearchHit searchHit = searchResponse.getHits().getHits()[i];
 			List<Object> data = new ArrayList<Object>();
 			req.getFields().forEach((name, field) -> {
 				if(field.getFullName().equals(ElasticField.DOC_ID_ALIAS)) {
@@ -58,9 +66,10 @@ public class PageDataElastic {
 					data.add(null);
 				}
 			});
-			dataRows.add(new DataRow(data));
-		});
-				
+			dataRows.add(new DataRow(data));			
+		}
+		
+		fetchedRows += dataRows.size() - (firstPush ? 0 : 1) ;
 		state = state == PageDataState.NOT_INITIALIZED ? PageDataState.READY_TO_ITERATE : PageDataState.ITERATION_STARTED;
 	}
 	
@@ -256,6 +265,9 @@ public class PageDataElastic {
 		return dataRows.isEmpty();
 	}
 
+	public Long getFetchedRows() {
+		return fetchedRows;
+	}
 
 	
 

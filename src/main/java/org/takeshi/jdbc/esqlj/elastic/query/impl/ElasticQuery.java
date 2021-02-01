@@ -22,35 +22,33 @@ import org.takeshi.jdbc.esqlj.elastic.query.data.PageDataElastic;
 import org.takeshi.jdbc.esqlj.elastic.query.impl.search.RequestBuilder;
 import org.takeshi.jdbc.esqlj.elastic.query.impl.search.RequestInstance;
 import org.takeshi.jdbc.esqlj.elastic.query.model.PageDataState;
-import org.takeshi.jdbc.esqlj.parser.model.ParsedQuery;
+import org.takeshi.jdbc.esqlj.elastic.query.statement.SqlStatementSelect;
 import org.takeshi.jdbc.esqlj.support.ElasticUtils;
 import org.takeshi.jdbc.esqlj.support.EsRuntimeException;
 
 public class ElasticQuery extends AbstractQuery {
 
-	private ParsedQuery parsedQuery;
 	private PageDataElastic pageData;
 	private ResultSetMetaData resultSetMetaData;
 	private int fetchSize;
 	private boolean rsEmpty;
 	private RequestInstance requestInstance;
 	
-	public ElasticQuery(EsConnection connection, ParsedQuery query) throws SQLException {
-		super(connection, QueryType.SCROLLABLE, query.getIndex().getName());
-		this.parsedQuery = query;
+	public ElasticQuery(EsConnection connection, SqlStatementSelect select) throws SQLException {
+		super(connection, QueryType.SCROLLABLE, select.getIndex().getName());
 		this.fetchSize = Configuration.getConfiguration(ConfigurationEnum.CFG_QUERY_SCROLL_FETCH_SIZE, Integer.class);
-		initialFetch();
+		initialFetch(select);
 	}
-
-	private void initialFetch() throws SQLException {
+	
+	private void initialFetch(SqlStatementSelect select) throws SQLException {
 		try {
-			requestInstance = RequestBuilder.buildRequest(getConnection(), parsedQuery, fetchSize);
+			requestInstance = RequestBuilder.buildRequest(getConnection(), select, fetchSize);
 			
 			pageData = new PageDataElastic(getSource(), requestInstance);
 				
 			SearchResponse searchResponse = getConnection().getElasticClient().search(requestInstance.getSearchRequest(), RequestOptions.DEFAULT);
-			requestInstance.updatePagination(searchResponse);
 			pageData.pushData(searchResponse);
+			requestInstance.updateRequest(searchResponse, pageData);
 			rsEmpty = pageData.isEmpty();
 			clearScrollIfRequired(searchResponse);
 		} catch(EsRuntimeException ere) {
@@ -81,15 +79,15 @@ public class ElasticQuery extends AbstractQuery {
 		SearchScrollRequest scrollRequest = new SearchScrollRequest(requestInstance.getPaginationId());
 		scrollRequest.scroll(TimeValue.timeValueMinutes(Configuration.getConfiguration(ConfigurationEnum.CFG_QUERY_SCROLL_TIMEOUT_MINUTES, Long.class)));
 		SearchResponse searchResponse = getConnection().getElasticClient().scroll(scrollRequest, RequestOptions.DEFAULT);
-		requestInstance.updatePagination(searchResponse);
 		pageData.pushData(searchResponse);
+		requestInstance.updateRequest(searchResponse, pageData);
 		clearScrollIfRequired(searchResponse);
 	}
 
 	private void paginateByOrder() throws IOException, SQLException {
 		SearchResponse searchResponse = getConnection().getElasticClient().search(requestInstance.getSearchRequest(), RequestOptions.DEFAULT);
-		requestInstance.updatePagination(searchResponse);
 		pageData.pushData(searchResponse);
+		requestInstance.updateRequest(searchResponse, pageData);
 		rsEmpty = pageData.isEmpty();
 		clearScrollIfRequired(searchResponse);
 	}

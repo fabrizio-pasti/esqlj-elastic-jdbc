@@ -21,8 +21,9 @@ import org.takeshi.jdbc.esqlj.elastic.metadata.MetaDataService;
 import org.takeshi.jdbc.esqlj.elastic.model.ElasticField;
 import org.takeshi.jdbc.esqlj.elastic.model.ElasticFieldType;
 import org.takeshi.jdbc.esqlj.elastic.model.IndexMetaData;
+import org.takeshi.jdbc.esqlj.elastic.query.data.PageDataElastic;
 import org.takeshi.jdbc.esqlj.elastic.query.model.PaginationType;
-import org.takeshi.jdbc.esqlj.parser.model.ParsedQuery;
+import org.takeshi.jdbc.esqlj.elastic.query.statement.SqlStatementSelect;
 
 public class RequestInstance {
 
@@ -30,7 +31,6 @@ public class RequestInstance {
 	private SearchRequest searchRequest;
 	private SearchSourceBuilder searchSourceBuilder;
 	private int fetchSize;
-	private ParsedQuery query;
 	private PaginationType paginationMode = PaginationType.NO_SCROLL;
 	private String paginationId;
 	private MetaDataService metaDataService;
@@ -38,14 +38,15 @@ public class RequestInstance {
 	private boolean pointInTimeApiAvailable;
 	private Object[] paginationSortValues;
 	private boolean scrollOpen;
+	private SqlStatementSelect select;
 	
 	Pattern pattern = Pattern.compile("\"id\":\\s*\"([\\w=]*)\"");
 	
-	public RequestInstance(EsConnection connection, int fetchSize, ParsedQuery query) throws SQLException {
+	public RequestInstance(EsConnection connection, int fetchSize, SqlStatementSelect select) throws SQLException {
 		this.metaDataService = ((EsMetaData)connection.getMetaData()).getMetaDataService();
-		this.query = query;
-		this.indexMetaData = metaDataService.getIndexMetaData(query.getIndex().getName());
-		searchRequest = new SearchRequest(query.getIndex().getName());
+		this.select = select;
+		this.indexMetaData = metaDataService.getIndexMetaData(select.getIndex().getName());
+		searchRequest = new SearchRequest(select.getIndex().getName());
 		searchSourceBuilder = new SearchSourceBuilder();
 		this.fetchSize = fetchSize;
 		implementScrollStrategy();
@@ -81,7 +82,7 @@ public class RequestInstance {
 	}
 
 	public boolean isStarSelect() {
-		return query.getFields().size() == 1 && query.getFields().get(0).getName().equals("*");
+		return select.getFields().size() == 1 && select.getFields().get(0).getName().equals("*");
 	}
 	
 	public boolean isSourceFieldsToRetrieve() {
@@ -113,7 +114,7 @@ public class RequestInstance {
 	}
 
 	private void implementScrollStrategy() {
-		if(query.getLimit() != null && query.getLimit() < Configuration.getConfiguration(ConfigurationEnum.CFG_QUERY_SCROLL_FROM_ROWS, Long.class)) {
+		if(select.getLimit() != null && select.getLimit() < Configuration.getConfiguration(ConfigurationEnum.CFG_QUERY_SCROLL_FROM_ROWS, Long.class)) {
 			return;
 		}
 		
@@ -126,8 +127,31 @@ public class RequestInstance {
 		setScrollOpen(true);
 	}
 
+	public void updateRequest(SearchResponse searchResponse, PageDataElastic pageData) throws SQLNonTransientConnectionException {
+		updateFetchSize(pageData);
+		updatePagination(searchResponse);
+	}
+
+	public SqlStatementSelect getSelect() {
+		return select;
+	}
+
+	public boolean isScrollOpen() {
+		return scrollOpen;
+	}
+
+	public void setScrollOpen(boolean scrollOpen) {
+		this.scrollOpen = scrollOpen;
+	}
+	
+	private void updateFetchSize(PageDataElastic pageData) {
+		if(select.getLimit() != null) {
+			searchSourceBuilder.size((pageData.getFetchedRows() + fetchSize) > select.getLimit() ? new Long(select.getLimit() - pageData.getFetchedRows()).intValue() : fetchSize);
+		}
+	}
+	
 	@SuppressWarnings("incomplete-switch")
-	public void updatePagination(SearchResponse searchResponse) throws SQLNonTransientConnectionException {
+	private void updatePagination(SearchResponse searchResponse) throws SQLNonTransientConnectionException {
 		switch(paginationMode) {
 			case SCROLL_API:
 				paginationId = searchResponse.getScrollId();
@@ -157,14 +181,6 @@ public class RequestInstance {
 		} catch(Exception e) {
 			pointInTimeApiAvailable = true;
 		}
-	}
-
-	public boolean isScrollOpen() {
-		return scrollOpen;
-	}
-
-	public void setScrollOpen(boolean scrollOpen) {
-		this.scrollOpen = scrollOpen;
 	}
 
 }
