@@ -195,4 +195,7 @@ public enum ExpressionEnum {
 					.orElseGet(null);
 		}
 		
+		public static boolean isInstanceOf(Object expression, ExpressionEnum type) {
+			return resolveByInstance(expression).equals(type);
+		}
 	}
