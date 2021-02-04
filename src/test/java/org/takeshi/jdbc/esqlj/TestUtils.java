@@ -4,8 +4,12 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
-import org.takeshi.jdbc.esqlj.support.EsConfig;
 import org.takeshi.jdbc.esqlj.support.EsConfig.ConfigurationPropertyEnum;
+
+
+/**
+* @author  Fabrizio Pasti - fabrizio.pasti@gmail.com
+*/
 
 public class TestUtils {
 	private static String TEST_CONNECTION_STRING = "ESQLJ_CONNECTION_STRING";

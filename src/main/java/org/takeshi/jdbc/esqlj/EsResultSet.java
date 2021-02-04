@@ -27,6 +27,9 @@ import java.util.Map;
 import org.takeshi.jdbc.esqlj.elastic.query.AbstractQuery;
 import org.takeshi.jdbc.esqlj.support.Utils;
 
+/**
+* @author  Fabrizio Pasti - fabrizio.pasti@gmail.com
+*/
 
 public class EsResultSet implements ResultSet {
 	private AbstractQuery query;

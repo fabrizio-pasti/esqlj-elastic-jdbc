@@ -11,6 +11,10 @@ import org.takeshi.jdbc.esqlj.EsConnection;
 import org.takeshi.jdbc.esqlj.elastic.query.statement.SqlStatementSelect;
 import org.takeshi.jdbc.esqlj.support.ElasticUtils;
 
+/**
+* @author  Fabrizio Pasti - fabrizio.pasti@gmail.com
+*/
+
 public class RequestBuilder {
 
 	public static RequestInstance buildRequest(EsConnection connection, SqlStatementSelect select, int fetchSize) throws SQLException {

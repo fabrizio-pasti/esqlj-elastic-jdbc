@@ -26,6 +26,10 @@ import org.takeshi.jdbc.esqlj.elastic.query.statement.SqlStatementSelect;
 import org.takeshi.jdbc.esqlj.support.ElasticUtils;
 import org.takeshi.jdbc.esqlj.support.EsRuntimeException;
 
+/**
+* @author  Fabrizio Pasti - fabrizio.pasti@gmail.com
+*/
+
 public class ElasticQuery extends AbstractQuery {
 
 	private PageDataElastic pageData;

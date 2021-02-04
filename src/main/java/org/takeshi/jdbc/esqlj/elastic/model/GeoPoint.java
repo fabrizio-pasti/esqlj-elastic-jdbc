@@ -1,5 +1,9 @@
 package org.takeshi.jdbc.esqlj.elastic.model;
 
+/**
+* @author  Fabrizio Pasti - fabrizio.pasti@gmail.com
+*/
+
 public class GeoPoint {
 	private double latitude;
 	private double longitude;

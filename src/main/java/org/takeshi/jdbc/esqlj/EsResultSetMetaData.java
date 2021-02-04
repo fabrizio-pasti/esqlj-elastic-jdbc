@@ -6,6 +6,10 @@ import java.util.List;
 
 import org.takeshi.jdbc.esqlj.elastic.model.ElasticFieldType;
 
+/**
+* @author  Fabrizio Pasti - fabrizio.pasti@gmail.com
+*/
+
 public class EsResultSetMetaData implements ResultSetMetaData {
 
 	private List<ElasticFieldType> columnTypes;

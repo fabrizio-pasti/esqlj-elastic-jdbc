@@ -8,6 +8,10 @@ import java.sql.Statement;
 
 import org.takeshi.jdbc.esqlj.elastic.query.Executor;
 
+/**
+* @author  Fabrizio Pasti - fabrizio.pasti@gmail.com
+*/
+
 public class EsStatement implements Statement {
 
 	private EsConnection connection;

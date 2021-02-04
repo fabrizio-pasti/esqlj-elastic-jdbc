@@ -2,20 +2,19 @@ package org.takeshi.jdbc.esqlj;
 
 import static junitparams.JUnitParamsRunner.$;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThrows;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Arrays;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.takeshi.jdbc.esqlj.elastic.query.impl.FromArrayQuery;
 
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 
+/**
+* @author  Fabrizio Pasti - fabrizio.pasti@gmail.com
+*/
 
 @RunWith(JUnitParamsRunner.class)
 public class MetadataTestUnit

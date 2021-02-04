@@ -7,6 +7,10 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+* @author  Fabrizio Pasti - fabrizio.pasti@gmail.com
+*/
+
 public class TermsQuery {
 	private Map<String, List<Object>> equalObjects = new HashMap<String, List<Object>>();
 	private Map<String, List<Object>> notEqualObjects = new HashMap<String, List<Object>>();

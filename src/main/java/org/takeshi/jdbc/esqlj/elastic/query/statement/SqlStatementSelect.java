@@ -6,8 +6,10 @@ import java.util.stream.Collectors;
 
 import org.takeshi.jdbc.esqlj.elastic.query.statement.model.Field;
 import org.takeshi.jdbc.esqlj.elastic.query.statement.model.Index;
+import org.takeshi.jdbc.esqlj.support.EsRuntimeException;
 
 import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.expression.Function;
 import net.sf.jsqlparser.expression.LongValue;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
@@ -17,6 +19,10 @@ import net.sf.jsqlparser.statement.select.OrderByElement;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.select.SelectExpressionItem;
+
+/**
+* @author  Fabrizio Pasti - fabrizio.pasti@gmail.com
+*/
 
 public class SqlStatementSelect extends SqlStatement {
 
@@ -49,11 +55,11 @@ public class SqlStatementSelect extends SqlStatement {
 	}
 	
 	public Index getIndexByNameOrAlias(String name) {
-		return indices.stream().filter(index -> index.getName().equals(name) || (index.getAlias() != null && index.getAlias().equals(name))).findFirst().get();
+		return indices.stream().filter(index -> index.getName().equals(name) || (index.getAlias() != null && index.getAlias().equals(name))).findFirst().orElse(null);
 	}
 
 	public Field getFieldByNameOrAlias(String name) {
-		return fields.stream().filter(field -> field.getName().equals(name) || (field.getAlias() != null && field.getAlias().equals(name))).findFirst().get();
+		return fields.stream().filter(field -> field.getName().equals(name) || (field.getAlias() != null && field.getAlias().equals(name))).findFirst().orElse(null);
 	}
 
 	private void init() {
@@ -71,20 +77,29 @@ public class SqlStatementSelect extends SqlStatement {
 	private List<Field> resolveFields() {
 		String index = "root";
 		return select.getSelectItems().stream().map(item -> {
-			SelectExpressionItem sei = (SelectExpressionItem)item; 
-			Column c = (Column)sei.getExpression();
-			return new Field(c.getColumnName(), sei.getAlias() == null ? null : sei.getAlias().getName(), c.getTable() == null ? index : getIndexByNameOrAlias(c.getTable().getName()).getName());
+			SelectExpressionItem sei = (SelectExpressionItem)item;
+			if(sei.getExpression() instanceof Column) {
+				Column c = (Column)sei.getExpression();
+				return new Field(c.getColumnName(), sei.getAlias() == null ? null : sei.getAlias().getName(), c.getTable() == null ? index : getIndexByNameOrAlias(c.getTable().getName()).getName());
+			} else if(sei.getExpression() instanceof Function) {
+				Function f = (Function)sei.getExpression();
+				return new Field(f, sei.getAlias() == null ? null : sei.getAlias().getName());				
+			}
+			throw new EsRuntimeException(String.format("Unexpexted expression '%s' in select clause", sei.toString()));
 		}).collect(Collectors.toList());
 	}
 	
 	private List<OrderByElement> resolveOrderByFields() {
 		if(select.getOrderByElements() == null) {
-			return null;
+			return new ArrayList<OrderByElement>();
 		}
 		
 		return select.getOrderByElements().stream().map(elem -> {
 			Column c = (Column)elem.getExpression();
-			c.setColumnName(getFieldByNameOrAlias(c.getColumnName()).getName());
+			Field columnOrAlias = getFieldByNameOrAlias(c.getColumnName());
+			if(columnOrAlias != null) {
+				c.setColumnName(columnOrAlias.getName());
+			} 
 			return elem;
 		}).collect(Collectors.toList());
 	}		

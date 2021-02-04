@@ -8,15 +8,17 @@ import static org.junit.Assert.assertThrows;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-import org.takeshi.jdbc.esqlj.support.EsConfig;
 import org.takeshi.jdbc.esqlj.support.ElasticInstance.HttpProtocol;
+import org.takeshi.jdbc.esqlj.support.EsConfig;
 
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
+
+/**
+* @author  Fabrizio Pasti - fabrizio.pasti@gmail.com
+*/
 
 @RunWith(JUnitParamsRunner.class)
 public class ConnectionTestUnit {

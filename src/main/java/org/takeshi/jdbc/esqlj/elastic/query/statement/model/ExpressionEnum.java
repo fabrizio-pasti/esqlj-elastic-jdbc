@@ -90,6 +90,10 @@ import net.sf.jsqlparser.expression.operators.relational.SimilarToExpression;
 import net.sf.jsqlparser.expression.operators.relational.SupportsOldOracleJoinSyntax;
 import net.sf.jsqlparser.schema.Column;
 
+/**
+* @author  Fabrizio Pasti - fabrizio.pasti@gmail.com
+*/
+
 public enum ExpressionEnum {
 		ALIAS(Alias.class),
 		ALL_COMPARISON_EXPRESSION(AllComparisonExpression.class),

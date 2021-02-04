@@ -3,6 +3,10 @@ package org.takeshi.jdbc.esqlj.support;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
+/**
+* @author  Fabrizio Pasti - fabrizio.pasti@gmail.com
+*/
+
 public class Utils {
 	
 	public static Object toString(Class<?> clazz, String value) {

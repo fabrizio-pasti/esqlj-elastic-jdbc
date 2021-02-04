@@ -5,6 +5,10 @@ import java.util.List;
 
 import org.elasticsearch.index.query.QueryBuilder;
 
+/**
+* @author  Fabrizio Pasti - fabrizio.pasti@gmail.com
+*/
+
 public class EvaluateQueryResult {
 		private boolean and = true;
 		private List<QueryBuilder> queryBuilders = new ArrayList<QueryBuilder>();

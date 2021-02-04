@@ -16,6 +16,10 @@ import org.takeshi.jdbc.esqlj.elastic.query.statement.SqlStatementSelect;
 import org.takeshi.jdbc.esqlj.elastic.query.statement.model.Field;
 import org.takeshi.jdbc.esqlj.support.EsRuntimeException;
 
+/**
+* @author  Fabrizio Pasti - fabrizio.pasti@gmail.com
+*/
+
 public class RequestBuilderFields {
 	
 	public static void manageFields(SqlStatementSelect select, RequestInstance req) {
@@ -28,7 +32,7 @@ public class RequestBuilderFields {
 			req.setFields(req.getIndexMetaData().getFields());
 			req.getFields().put(ElasticField.DOC_ID_ALIAS, getDocIdField());
 		} else {
-			req.setFields(select.getFields().stream().map(f -> ElasticFieldExt.promoteInstance(resolveField(req.getIndexMetaData(), f), f.getAlias())).collect(Collectors.toMap(ElasticFieldExt::getColumnName, Function.identity(), (o1, o2) -> o1, LinkedHashMap::new)));
+			req.setFields(select.getFields().stream().map(f -> ElasticFieldExt.promoteInstance(resolveField(req.getIndexMetaData(), f), f)).collect(Collectors.toMap(ElasticFieldExt::getColumnName, Function.identity(), (o1, o2) -> o1, LinkedHashMap::new)));
 		}
 	}
 

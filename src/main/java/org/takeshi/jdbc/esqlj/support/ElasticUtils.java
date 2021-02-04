@@ -14,6 +14,10 @@ import org.takeshi.jdbc.esqlj.ConfigurationEnum;
 import org.takeshi.jdbc.esqlj.EsConnection;
 import org.takeshi.jdbc.esqlj.elastic.query.impl.search.RequestInstance;
 
+/**
+* @author  Fabrizio Pasti - fabrizio.pasti@gmail.com
+*/
+
 public class ElasticUtils {
 
 	public static String getPointInTime(EsConnection connection, RequestInstance req) throws SQLNonTransientConnectionException  {

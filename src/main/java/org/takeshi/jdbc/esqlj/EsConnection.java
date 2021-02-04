@@ -29,6 +29,10 @@ import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.takeshi.jdbc.esqlj.support.EsConfig;
 
+/**
+* @author  Fabrizio Pasti - fabrizio.pasti@gmail.com
+*/
+
 public class EsConnection implements Connection {
 
 	private static RestHighLevelClient client;

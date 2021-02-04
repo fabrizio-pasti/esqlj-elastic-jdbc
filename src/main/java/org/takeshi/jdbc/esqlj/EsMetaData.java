@@ -21,6 +21,10 @@ import org.takeshi.jdbc.esqlj.elastic.query.impl.IndicesQuery;
 import org.takeshi.jdbc.esqlj.support.EsConfig;
 import org.takeshi.jdbc.esqlj.support.EsConfig.ConfigurationPropertyEnum;
 
+/**
+* @author  Fabrizio Pasti - fabrizio.pasti@gmail.com
+*/
+
 public class EsMetaData implements DatabaseMetaData {
 	private EsConnection connection;
 	private MetaDataService metaDataService;

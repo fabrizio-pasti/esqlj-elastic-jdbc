@@ -1,5 +1,9 @@
 package org.takeshi.jdbc.esqlj.support;
 
+/**
+* @author  Fabrizio Pasti - fabrizio.pasti@gmail.com
+*/
+
 public class ElasticInstance {
 	public enum HttpProtocol {
 		http, https

@@ -21,6 +21,10 @@ import org.takeshi.jdbc.esqlj.elastic.model.ElasticField;
 import org.takeshi.jdbc.esqlj.elastic.model.ElasticFieldType;
 import org.takeshi.jdbc.esqlj.elastic.model.IndexMetaData;
 
+/**
+* @author  Fabrizio Pasti - fabrizio.pasti@gmail.com
+*/
+
 public class MetaDataService {
 	private ElasticServerDetails elasticServerDetails;
 	private RestHighLevelClient client;

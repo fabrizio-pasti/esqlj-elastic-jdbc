@@ -8,6 +8,10 @@ import java.util.List;
 
 import org.takeshi.jdbc.esqlj.EsConnection;
 
+/**
+* @author  Fabrizio Pasti - fabrizio.pasti@gmail.com
+*/
+
 public abstract class AbstractQuery {
 	private EsConnection connection;
 	private QueryType queryType;

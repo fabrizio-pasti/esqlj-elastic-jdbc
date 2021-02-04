@@ -4,6 +4,10 @@ import java.io.LineNumberReader;
 
 import org.elasticsearch.client.core.MainResponse;
 
+/**
+* @author  Fabrizio Pasti - fabrizio.pasti@gmail.com
+*/
+
 public class ElasticServerDetails {
 	public static long ELASTIC_REL_7_10_0 = 7010000000000L;
 	

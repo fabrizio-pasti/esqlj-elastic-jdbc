@@ -11,6 +11,10 @@ import java.util.logging.Logger;
 
 import org.takeshi.jdbc.esqlj.support.EsConfig;
 
+/**
+* @author  Fabrizio Pasti - fabrizio.pasti@gmail.com
+*/
+
 public class EsDriver implements Driver {
 	static {
 		try {

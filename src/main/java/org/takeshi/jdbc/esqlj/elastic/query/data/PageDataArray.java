@@ -9,6 +9,10 @@ import java.util.Map;
 import org.takeshi.jdbc.esqlj.elastic.query.model.DataRow;
 import org.takeshi.jdbc.esqlj.elastic.query.model.PageDataState;
 
+/**
+* @author  Fabrizio Pasti - fabrizio.pasti@gmail.com
+*/
+
 public class PageDataArray {
 
 	private List<String> columnNames;

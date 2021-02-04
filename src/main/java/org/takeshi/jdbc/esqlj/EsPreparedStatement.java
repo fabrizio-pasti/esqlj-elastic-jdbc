@@ -23,6 +23,10 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Calendar;
 
+/**
+* @author  Fabrizio Pasti - fabrizio.pasti@gmail.com
+*/
+
 public class EsPreparedStatement implements PreparedStatement {
 
 	private EsConnection connection;

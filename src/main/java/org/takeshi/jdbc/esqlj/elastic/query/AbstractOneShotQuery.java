@@ -17,6 +17,10 @@ import org.takeshi.jdbc.esqlj.elastic.query.data.PageDataArray;
 import org.takeshi.jdbc.esqlj.elastic.query.model.DataRow;
 import org.takeshi.jdbc.esqlj.elastic.query.model.PageDataState;
 
+/**
+* @author  Fabrizio Pasti - fabrizio.pasti@gmail.com
+*/
+
 public class AbstractOneShotQuery extends AbstractQuery {
 
 	private PageDataArray pageData;

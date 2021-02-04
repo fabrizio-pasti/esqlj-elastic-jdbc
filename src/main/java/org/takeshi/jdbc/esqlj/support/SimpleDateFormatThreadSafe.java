@@ -11,6 +11,10 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
+/**
+* @author  Fabrizio Pasti - fabrizio.pasti@gmail.com
+*/
+
 public class SimpleDateFormatThreadSafe extends SimpleDateFormat {
 
     private static final long serialVersionUID = 5448371898056188202L;

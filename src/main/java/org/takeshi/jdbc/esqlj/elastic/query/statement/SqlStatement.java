@@ -2,6 +2,10 @@ package org.takeshi.jdbc.esqlj.elastic.query.statement;
 
 import org.takeshi.jdbc.esqlj.elastic.query.statement.model.Index;
 
+/**
+* @author  Fabrizio Pasti - fabrizio.pasti@gmail.com
+*/
+
 public class SqlStatement {
 	private SqlStatementType type;
 	protected Index index;

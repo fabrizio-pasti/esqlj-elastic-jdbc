@@ -2,7 +2,9 @@ package org.takeshi.jdbc.esqlj.elastic.query.impl.search;
 
 import java.sql.SQLException;
 import java.sql.SQLSyntaxErrorException;
+import java.util.Date;
 
+import org.joda.time.LocalDate;
 import org.takeshi.jdbc.esqlj.elastic.query.statement.model.ExpressionEnum;
 import org.takeshi.jdbc.esqlj.support.ToDateUtils;
 
@@ -16,6 +18,10 @@ import net.sf.jsqlparser.expression.operators.arithmetic.Division;
 import net.sf.jsqlparser.expression.operators.arithmetic.Multiplication;
 import net.sf.jsqlparser.expression.operators.arithmetic.Subtraction;
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
+
+/**
+* @author  Fabrizio Pasti - fabrizio.pasti@gmail.com
+*/
 
 public class ValueExpressionResolver {
 
@@ -58,8 +64,13 @@ public class ValueExpressionResolver {
 					throw new SQLSyntaxErrorException("TO_DATE with invalid number of parameters");
 				}
 				return ToDateUtils.resolveToDate((String)evaluateValueExpression(parameters.getExpressions().get(0)), (String)evaluateValueExpression(parameters.getExpressions().get(1)));
+			case "NOW":
+			case "GETDATE":
+				return new Date();
+			case "CURDATE":
+				return new LocalDate(new Date()).toDate();
 		}
-		return null;
+		throw new SQLSyntaxErrorException(String.format("Function '%s' unsupported", function.getName()));
 	}
 	
 	private static Object addition(Object a, Object b) {

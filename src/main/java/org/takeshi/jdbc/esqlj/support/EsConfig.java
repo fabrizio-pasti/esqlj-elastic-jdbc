@@ -13,6 +13,10 @@ import java.util.regex.Pattern;
 
 import org.takeshi.jdbc.esqlj.support.ElasticInstance.HttpProtocol;
 
+/**
+* @author  Fabrizio Pasti - fabrizio.pasti@gmail.com
+*/
+
 public class EsConfig {
 	
 	static {

@@ -7,6 +7,10 @@ import java.util.Map;
 
 import org.takeshi.jdbc.esqlj.elastic.query.AbstractOneShotQuery;
 
+/**
+* @author  Fabrizio Pasti - fabrizio.pasti@gmail.com
+*/
+
 public class FromArrayQuery extends AbstractOneShotQuery {
 		
 	public FromArrayQuery(String source, List<List<Object>> values, String... columnNames) throws SQLException {

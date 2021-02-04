@@ -4,6 +4,10 @@ import java.sql.Types;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 
+/**
+* @author  Fabrizio Pasti - fabrizio.pasti@gmail.com
+*/
+
 public enum ElasticFieldType {
 
 		BOOLEAN("boolean", "BOOL", Boolean.class, Types.BOOLEAN, 1, null, null, false, false, true, false, false),

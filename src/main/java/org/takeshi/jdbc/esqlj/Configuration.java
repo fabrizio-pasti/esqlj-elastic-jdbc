@@ -4,6 +4,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+* @author  Fabrizio Pasti - fabrizio.pasti@gmail.com
+*/
+
 public class Configuration {
 
 	private static Map<ConfigurationEnum, Object> configuration = new HashMap<ConfigurationEnum, Object>();

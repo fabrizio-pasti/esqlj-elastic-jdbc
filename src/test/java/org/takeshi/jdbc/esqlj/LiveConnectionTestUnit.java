@@ -13,6 +13,9 @@ import java.sql.SQLException;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+/**
+* @author  Fabrizio Pasti - fabrizio.pasti@gmail.com
+*/
 
 public class LiveConnectionTestUnit
 {

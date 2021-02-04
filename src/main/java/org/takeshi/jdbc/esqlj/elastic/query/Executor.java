@@ -15,6 +15,10 @@ import org.takeshi.jdbc.esqlj.elastic.query.statement.SqlStatementUpdate;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.statement.Statement;
 
+/**
+* @author  Fabrizio Pasti - fabrizio.pasti@gmail.com
+*/
+
 public class Executor {
 	
 	public static ElasticQuery execSql(EsConnection connection, String sql) throws SQLException {
@@ -55,7 +59,7 @@ public class Executor {
 					throw new SQLSyntaxErrorException("Unrecognized statement");
 			}
 		} catch(Exception e) {
-			throw new SQLSyntaxErrorException(e.getCause().getMessage());
+			throw new SQLSyntaxErrorException(e.getCause() != null ? e.getCause().getMessage() : e.getMessage());
 		}
 	}
 	

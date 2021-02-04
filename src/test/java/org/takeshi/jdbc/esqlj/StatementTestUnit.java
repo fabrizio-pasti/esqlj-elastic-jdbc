@@ -1,9 +1,6 @@
 package org.takeshi.jdbc.esqlj;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -15,6 +12,9 @@ import java.sql.Statement;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+/**
+* @author  Fabrizio Pasti - fabrizio.pasti@gmail.com
+*/
 
 public class StatementTestUnit
 {

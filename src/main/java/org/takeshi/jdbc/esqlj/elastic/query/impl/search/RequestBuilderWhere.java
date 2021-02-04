@@ -28,6 +28,10 @@ import net.sf.jsqlparser.expression.operators.relational.MinorThanEquals;
 import net.sf.jsqlparser.expression.operators.relational.NotEqualsTo;
 import net.sf.jsqlparser.schema.Column;
 
+/**
+* @author  Fabrizio Pasti - fabrizio.pasti@gmail.com
+*/
+
 public class RequestBuilderWhere {
 	
 	public static void manageWhere(SqlStatementSelect select, RequestInstance req) throws SQLException {

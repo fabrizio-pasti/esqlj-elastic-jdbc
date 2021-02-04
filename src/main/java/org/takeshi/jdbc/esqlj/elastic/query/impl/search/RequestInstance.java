@@ -25,6 +25,10 @@ import org.takeshi.jdbc.esqlj.elastic.query.data.PageDataElastic;
 import org.takeshi.jdbc.esqlj.elastic.query.model.PaginationType;
 import org.takeshi.jdbc.esqlj.elastic.query.statement.SqlStatementSelect;
 
+/**
+* @author  Fabrizio Pasti - fabrizio.pasti@gmail.com
+*/
+
 public class RequestInstance {
 
 	private Map<String, ElasticField> fields;

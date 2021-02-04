@@ -2,6 +2,10 @@ package org.takeshi.jdbc.esqlj;
 
 import java.util.Arrays;
 
+/**
+* @author  Fabrizio Pasti - fabrizio.pasti@gmail.com
+*/
+
 public enum ConfigurationEnum {
 
 		CFG_INCLUDE_TEXT_FIELDS_BY_DEFAULT("includeTextFieldsByDefault", Boolean.class, true),

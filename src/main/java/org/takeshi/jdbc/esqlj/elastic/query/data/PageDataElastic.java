@@ -3,19 +3,27 @@ package org.takeshi.jdbc.esqlj.elastic.query.data;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.common.document.DocumentField;
 import org.elasticsearch.search.SearchHit;
 import org.takeshi.jdbc.esqlj.elastic.model.ElasticField;
+import org.takeshi.jdbc.esqlj.elastic.model.ElasticFieldExt;
 import org.takeshi.jdbc.esqlj.elastic.query.impl.search.RequestInstance;
 import org.takeshi.jdbc.esqlj.elastic.query.model.DataRow;
 import org.takeshi.jdbc.esqlj.elastic.query.model.PageDataState;
+import org.takeshi.jdbc.esqlj.elastic.query.statement.model.Field;
 import org.takeshi.jdbc.esqlj.support.SimpleDateFormatThreadSafe;
+import org.takeshi.jdbc.esqlj.support.ToDateUtils;
+
+import net.sf.jsqlparser.expression.StringValue;
+
+/**
+* @author  Fabrizio Pasti - fabrizio.pasti@gmail.com
+*/
 
 public class PageDataElastic {
 	
@@ -56,7 +64,7 @@ public class PageDataElastic {
 				} else if(field.isDocField()) {
 					DocumentField docField = searchHit.field(field.getFullName());
 					if(docField != null) {
-						data.add(resolveType(field, docField.getValue())); // only first field value is managed
+						data.add(resolveField(field, docField.getValue())); // only first field value is managed
 					} else {
 						data.add(null);
 					}
@@ -73,6 +81,17 @@ public class PageDataElastic {
 		state = state == PageDataState.NOT_INITIALIZED ? PageDataState.READY_TO_ITERATE : PageDataState.ITERATION_STARTED;
 	}
 	
+	private Object resolveField(ElasticField field, Object value) {
+		value = resolveType(field, value);
+		
+		Field selectField = ((ElasticFieldExt)field).getSelectField();
+		if(selectField.getFormatter() != null) {
+			return selectField.getFormatter().resolveValue(value);
+		}
+		
+		return value;
+	}
+
 	private Object resolveType(ElasticField field, Object value) {
 		switch(field.getType()) {
 			case BOOLEAN:

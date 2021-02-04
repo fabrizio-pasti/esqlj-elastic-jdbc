@@ -4,6 +4,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+* @author  Fabrizio Pasti - fabrizio.pasti@gmail.com
+*/
+
 public class IndexMetaData {
 	private String index;
 	private Map<String, ElasticField> fields;

@@ -3,8 +3,11 @@ package org.takeshi.jdbc.esqlj.support;
 import java.sql.SQLSyntaxErrorException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
+
+/**
+* @author  Fabrizio Pasti - fabrizio.pasti@gmail.com
+*/
 
 public class ToDateUtils {
 	 
@@ -13,13 +16,26 @@ public class ToDateUtils {
 		YYYY("yyyy"),
 		YY("yy"),
 		MM("MM"),
+		MONTH("MMMM"),
 		MON("MM"),
+		DDD("D_D_D"),
 		DD("dd"),
-		HH("hh"),
+		HH24("H_H"),
 		HH12("hh"),
-		HH24("HH"),
+		HH("hh"),
 		MI("mm"),
-		SS("ss");
+		SS("ss"),
+		DAY("EEE"),
+		AD("G"),
+		XFF(".S_S_S"),
+		FFF("S_S_S"),
+		FF("S_S"),
+		F("S"),
+		PM("a"),
+		AM("a"),
+		TZR("z"),
+		TZH("X");
+		
 		
 		private String javaFormat;
 		
@@ -41,15 +57,20 @@ public class ToDateUtils {
 			throw new SQLSyntaxErrorException(String.format("Failed to parse date '%s' with mask '%s'. Check supported formatters", date, mask));
 		}
 	}
+	
+	public static String formatDate(Date date, String mask) {
+		return new SimpleDateFormat(convertToJavaFormat(mask)).format(date);
+	}
+	
+	public static SimpleDateFormat getFormatter(String mask) {
+		return new SimpleDateFormatThreadSafe(convertToJavaFormat(mask));
+	}
 
 	private static String convertToJavaFormat(String mask) {
-		StringBuilder sbMask = new StringBuilder(mask.toUpperCase());
-		Arrays.stream(FormatMapper.values()).forEach(fmt -> {
-			int iof = sbMask.indexOf(fmt.name());
-			if(iof >= 0) {
-				sbMask.replace(iof, iof + fmt.getJavaFormat().length(), fmt.getJavaFormat());
-			}
-		});
-		return sbMask.toString();
+		mask = mask.toUpperCase();
+		for(FormatMapper fmt : FormatMapper.values()) {
+			mask = mask.replace(fmt.name(), fmt.getJavaFormat());
+		}
+		return mask.replace("_", "");
 	}
 }
