@@ -86,11 +86,11 @@ Pay attention: Scroll API consume resources on server. It's a best practice to f
 
 ## Testing
 Most of test units require a live Elastic instance.
-The activation of these units is commanded by a system environment variable named "ESQLJ_CONNECTION_STRING"
+The activation of these units is commanded by a system environment variable named "ESQLJ_TEST_CONFIG"
 The environment variabile must concatenate a valid esqlj JDBC url connection string and the load strategy of the documents requested by query inside units:
 
 ```
-ESQLJ_CONNECTION_STRING="jdbc:esqlj:http://<elastic_address>:<elastic_port>|<createAndDestroy or createOnly>"
+ESQLJ_TEST_CONFIG="jdbc:esqlj:http://<elastic_address>:<elastic_port>|<createAndDestroy or createOnly>"
 ```
 
 | Parameters | Actions | Scope
@@ -99,7 +99,7 @@ ESQLJ_CONNECTION_STRING="jdbc:esqlj:http://<elastic_address>:<elastic_port>|<cre
 | createOnly | Create index 'esqlj-test-static'. If it's just present preserve it. (Will be required a manual delete of index).| Development stage
 
 Sample configuration:
-ESQLJ_CONNECTION_STRING="jdbc:esqlj:http://10.77.154.32:9080|createOnly"
+ESQLJ_TEST_CONFIG="jdbc:esqlj:http://10.77.154.32:9080|createOnly"
 
 ## About me
 Fabrizio Pasti
