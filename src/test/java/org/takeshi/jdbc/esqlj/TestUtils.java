@@ -4,6 +4,9 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
+import org.fpasti.jdbc.esqlj.ConfigurationPropertyEnum;
+import org.fpasti.jdbc.esqlj.EsConnection;
+
 
 /**
 * @author  Fabrizio Pasti - fabrizio.pasti@gmail.com

@@ -8,9 +8,10 @@ import static org.junit.Assert.assertThrows;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import org.fpasti.jdbc.esqlj.Configuration;
+import org.fpasti.jdbc.esqlj.support.ElasticInstance.HttpProtocol;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.takeshi.jdbc.esqlj.support.ElasticInstance.HttpProtocol;
 
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
