@@ -76,7 +76,7 @@ It's in discussion an RFC on Elastic product about the introduction of an automa
 
 Still on the subject of scrolling by order, the driver will automatically use the Point in time API if Elastic 7.10 is detected. (it's required to use the linked compiled JAR for using this feature because Rest high level API seems don't implements it for now..)
 
-Pay attention: Scroll API comsume resources on server. It's a best practice to fetch all required data. The scroll link will be automatically released from esql at the end of data retrieve
+Pay attention: Scroll API consume resources on server. It's a best practice to fetch all required data as soon as possible. The scroll link will be automatically released from esql at the end of data retrieve
 
 ## Testing
 Most of test units require a live Elastic instance.
