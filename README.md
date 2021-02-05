@@ -41,6 +41,7 @@ Elastic aliases are managed like SQL Views.
 Document identifier "_id" is returned like a column and mapped like primary key on metadata info
 
 Like where filter is implemented using terms wildcard Elastic Query (https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-wildcard-query.html)
+
 Select joining actually not supported.
 
 
