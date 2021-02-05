@@ -10,7 +10,7 @@ SQL Layers: implemented DQL, not implemented DDL and DML
 
 ## Driver class
 
-###org.takeshi.jdbc.esqlj.EsDriver
+### org.takeshi.jdbc.esqlj.EsDriver
 
 ## JDBC Connections string
 
