@@ -94,3 +94,9 @@ ESQLJ_CONNECTION_STRING="jdbc:esqlj:http://<elastic_address>:<elastic_port>|<cre
 
 Sample configuration:
 ESQLJ_CONNECTION_STRING="jdbc:esqlj:http://10.77.154.32:9080|createOnly"
+
+## About me
+Fabrizio Pasti
+fabrizio.pasti@gmail.com
+www.linkedin.com/in/fabrizio-pasti-2340a627
+
