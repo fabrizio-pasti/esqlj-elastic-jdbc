@@ -23,7 +23,7 @@ Optional parameters:
 |--- |--- |---
 | userName | Credential user name | -
 | password | Credential password | -
-| includeTextFieldsByDefault | Include text typed fields by default on select * | true
+| includeTextFieldsByDefault | Include text typed fields by default on select * | false
 | indexMetaDataCache | Cache retrieved index structure. Strongly suggested for select on Elastic 'alias' | false
 | queryScrollFromRows | Number of rows fetched on first pagination | 500
 | queryScrollFetchSize | Fetched rows on next pagination | 500
