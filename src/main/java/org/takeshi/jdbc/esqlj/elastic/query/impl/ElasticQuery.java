@@ -13,7 +13,7 @@ import org.elasticsearch.action.search.SearchScrollRequest;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.common.unit.TimeValue;
 import org.takeshi.jdbc.esqlj.Configuration;
-import org.takeshi.jdbc.esqlj.ConfigurationEnum;
+import org.takeshi.jdbc.esqlj.ConfigurationPropertyEnum;
 import org.takeshi.jdbc.esqlj.EsConnection;
 import org.takeshi.jdbc.esqlj.EsResultSetMetaData;
 import org.takeshi.jdbc.esqlj.elastic.query.AbstractQuery;
@@ -40,7 +40,7 @@ public class ElasticQuery extends AbstractQuery {
 	
 	public ElasticQuery(EsConnection connection, SqlStatementSelect select) throws SQLException {
 		super(connection, QueryType.SCROLLABLE, select.getIndex().getName());
-		this.fetchSize = Configuration.getConfiguration(ConfigurationEnum.CFG_QUERY_SCROLL_FETCH_SIZE, Integer.class);
+		this.fetchSize = Configuration.getConfiguration(ConfigurationPropertyEnum.CFG_QUERY_SCROLL_FETCH_SIZE, Integer.class);
 		initialFetch(select);
 	}
 	
@@ -81,7 +81,7 @@ public class ElasticQuery extends AbstractQuery {
 
 	private void paginateByScrollApi() throws IOException, SQLException {
 		SearchScrollRequest scrollRequest = new SearchScrollRequest(requestInstance.getPaginationId());
-		scrollRequest.scroll(TimeValue.timeValueMinutes(Configuration.getConfiguration(ConfigurationEnum.CFG_QUERY_SCROLL_TIMEOUT_MINUTES, Long.class)));
+		scrollRequest.scroll(TimeValue.timeValueMinutes(Configuration.getConfiguration(ConfigurationPropertyEnum.CFG_QUERY_SCROLL_TIMEOUT_MINUTES, Long.class)));
 		SearchResponse searchResponse = getConnection().getElasticClient().scroll(scrollRequest, RequestOptions.DEFAULT);
 		pageData.pushData(searchResponse);
 		requestInstance.updateRequest(searchResponse, pageData);

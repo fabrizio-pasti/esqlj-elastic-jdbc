@@ -2,18 +2,23 @@ package org.takeshi.jdbc.esqlj.elastic.query.impl.search;
 
 
 import java.sql.SQLException;
+import java.sql.SQLSyntaxErrorException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.script.Script;
+import org.takeshi.jdbc.esqlj.elastic.query.impl.search.model.ElasticScriptMethodEnum;
 import org.takeshi.jdbc.esqlj.elastic.query.impl.search.model.EvaluateQueryResult;
 import org.takeshi.jdbc.esqlj.elastic.query.impl.search.model.TermsQuery;
 import org.takeshi.jdbc.esqlj.elastic.query.statement.SqlStatementSelect;
 import org.takeshi.jdbc.esqlj.elastic.query.statement.model.ExpressionEnum;
 
 import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.expression.ExtractExpression;
 import net.sf.jsqlparser.expression.NotExpression;
 import net.sf.jsqlparser.expression.Parenthesis;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
@@ -23,6 +28,7 @@ import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
 import net.sf.jsqlparser.expression.operators.relational.GreaterThan;
 import net.sf.jsqlparser.expression.operators.relational.GreaterThanEquals;
 import net.sf.jsqlparser.expression.operators.relational.IsNullExpression;
+import net.sf.jsqlparser.expression.operators.relational.LikeExpression;
 import net.sf.jsqlparser.expression.operators.relational.MinorThan;
 import net.sf.jsqlparser.expression.operators.relational.MinorThanEquals;
 import net.sf.jsqlparser.expression.operators.relational.NotEqualsTo;
@@ -116,23 +122,41 @@ public class RequestBuilderWhere {
 				return evaluateQueryExpression(parenthesis.getExpression(), select);
 			case GREATER_THAN:
 				GreaterThan greaterThan = (GreaterThan)expression;
+				if(greaterThan.getLeftExpression() instanceof ExtractExpression) {
+					return resolveExtract(greaterThan.getLeftExpression(), greaterThan.getRightExpression(), ">");
+				}
 				return new EvaluateQueryResult(QueryBuilders.rangeQuery(getColumn(greaterThan.getLeftExpression())).gt(ValueExpressionResolver.evaluateValueExpression(greaterThan.getRightExpression())));
 			case GREATER_THAN_EQUALS:
 				GreaterThanEquals greaterThanEquals = (GreaterThanEquals)expression;
+				if(greaterThanEquals.getLeftExpression() instanceof ExtractExpression) {
+					return resolveExtract(greaterThanEquals.getLeftExpression(), greaterThanEquals.getRightExpression(), ">=");
+				}
 				return new EvaluateQueryResult(QueryBuilders.rangeQuery(getColumn(greaterThanEquals.getLeftExpression())).gte(ValueExpressionResolver.evaluateValueExpression(greaterThanEquals.getRightExpression())));
 			case MINOR_THAN:
 				MinorThan minorThan = (MinorThan)expression;
+				if(minorThan.getLeftExpression() instanceof ExtractExpression) {
+					return resolveExtract(minorThan.getLeftExpression(), minorThan.getRightExpression(), "<");
+				}
 				return new EvaluateQueryResult(QueryBuilders.rangeQuery(getColumn(minorThan.getLeftExpression())).lt(ValueExpressionResolver.evaluateValueExpression(minorThan.getRightExpression())));
 			case MINOR_THAN_EQUALS:
 				MinorThanEquals minorThanEquals = (MinorThanEquals)expression;
+				if(minorThanEquals.getLeftExpression() instanceof ExtractExpression) {
+					return resolveExtract(minorThanEquals.getLeftExpression(), minorThanEquals.getRightExpression(), "<=");
+				}
 				return new EvaluateQueryResult(QueryBuilders.rangeQuery(getColumn(minorThanEquals.getLeftExpression())).lte(ValueExpressionResolver.evaluateValueExpression(minorThanEquals.getRightExpression())));
 			case EQUALS_TO:
 				EqualsTo equalsTo = (EqualsTo)expression;
+				if(equalsTo.getLeftExpression() instanceof ExtractExpression) {
+					return resolveExtract(equalsTo.getLeftExpression(), equalsTo.getRightExpression(), "==");
+				}
 				EvaluateQueryResult etQr = new EvaluateQueryResult();
 				etQr.setEqualTerm(getColumn(equalsTo.getLeftExpression()), ValueExpressionResolver.evaluateValueExpression(equalsTo.getRightExpression()));
 				return etQr;
 			case NOT_EQUALS_TO:
 				NotEqualsTo notEqualsTo = (NotEqualsTo)expression;
+				if(notEqualsTo.getLeftExpression() instanceof ExtractExpression) {
+					return resolveExtract(notEqualsTo.getLeftExpression(), notEqualsTo.getRightExpression(), "!=");
+				}
 				EvaluateQueryResult netQr = new EvaluateQueryResult();
 				netQr.setNotEqualTerm(getColumn(notEqualsTo.getLeftExpression()), ValueExpressionResolver.evaluateValueExpression(notEqualsTo.getRightExpression()));
 				return netQr;
@@ -149,10 +173,46 @@ public class RequestBuilderWhere {
 				return new EvaluateQueryResult(qb);
 			case BETWEEN:
 				Between between = (Between)expression;
+				if(between.getLeftExpression() instanceof ExtractExpression) {
+					return resolveExtractBetween(between);
+				}
 				return new EvaluateQueryResult(QueryBuilders.rangeQuery(getColumn(between.getLeftExpression())).gte(ValueExpressionResolver.evaluateValueExpression(between.getBetweenExpressionEnd())).lte(ValueExpressionResolver.evaluateValueExpression(between.getBetweenExpressionEnd())));
+			case LIKE_EXPRESSION:
+				LikeExpression likeExpression = (LikeExpression)expression;
+				return new EvaluateQueryResult(QueryBuilders.wildcardQuery(getColumn(likeExpression.getLeftExpression()), (String)ValueExpressionResolver.evaluateValueExpression(likeExpression.getRightExpression())));
 			default:
 				throw new SQLException(String.format("Unmanaged expression: %s", ExpressionEnum.resolveByInstance(expression).name()));
 		}
+	}
+
+	private static EvaluateQueryResult resolveExtract(Expression extractExpression, Expression valueExpression, String operator) throws SQLException {
+		ExtractExpression extract = (ExtractExpression)extractExpression;
+		ElasticScriptMethodEnum scriptDateMethod = null;
+		try {
+			scriptDateMethod = ElasticScriptMethodEnum.valueOf(extract.getName());
+		} catch(IllegalArgumentException e) {
+			throw new SQLSyntaxErrorException(String.format("Unsupported extract params '%s'", extract.getName()));
+		}
+		
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("param", ValueExpressionResolver.evaluateValueExpression(valueExpression));
+		Script script = new Script(Script.DEFAULT_SCRIPT_TYPE, Script.DEFAULT_SCRIPT_LANG, String.format("doc.%s.value.%s %s params.param", getColumn(extract.getExpression()), scriptDateMethod.getMethod(), operator), params);
+		return new EvaluateQueryResult(QueryBuilders.scriptQuery(script));
+	}
+	
+	private static EvaluateQueryResult resolveExtractBetween(Between between) throws SQLException {
+		ExtractExpression extract = (ExtractExpression)between.getLeftExpression();
+		ElasticScriptMethodEnum scriptDateMethod = null;
+		try {
+			scriptDateMethod = ElasticScriptMethodEnum.valueOf(extract.getName());
+		} catch(IllegalArgumentException e) {
+			throw new SQLSyntaxErrorException(String.format("Unsupported extract params '%s'", extract.getName()));
+		}
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("param1", ValueExpressionResolver.evaluateValueExpression(between.getBetweenExpressionStart()));
+		params.put("param2", ValueExpressionResolver.evaluateValueExpression(between.getBetweenExpressionEnd()));
+		Script script = new Script(Script.DEFAULT_SCRIPT_TYPE, Script.DEFAULT_SCRIPT_LANG, String.format("doc.%s.value.%s >= params.param1 && doc.%s.value.%s <= params.param2", getColumn(extract.getExpression()), scriptDateMethod.getMethod(), getColumn(extract.getExpression()), scriptDateMethod.getMethod()), params);
+		return new EvaluateQueryResult(QueryBuilders.scriptQuery(script));
 	}
 
 	private static void getQueryBuilderFromResult(Expression expression, EvaluateQueryResult result,

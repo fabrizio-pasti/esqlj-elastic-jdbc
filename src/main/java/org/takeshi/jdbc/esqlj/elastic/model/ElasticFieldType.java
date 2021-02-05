@@ -18,7 +18,7 @@ public enum ElasticFieldType {
 		DOC_ID("doc_id", "VARCHAR", String.class, Types.VARCHAR, 512, "'", "'", true, false, true, false, true),
 		DOUBLE("double", "NUMBER", Double.class, Types.DOUBLE, 76, null, null, false, false, true, false, false),
 		FLOAT("float", "NUMBER", Float.class, Types.FLOAT, 38, null, null, false, false, true, false, false),
-		GEO_POINT("geo_point", "STRUCT", GeoPoint.class, Types.STRUCT, 0, "'", "'", false, false, true, true, false),
+		GEO_POINT("geo_point", "STRUCT", EsGeoPoint.class, Types.STRUCT, 0, "'", "'", false, false, true, true, false),
 		HALF_FLOAT("half_float", "NUMBER", Float.class, Types.FLOAT, 16, null, null, false, false, true, false, false),
 		INTEGER("integer", "NUMBER", Integer.class, Types.INTEGER, 10, null, null, false, false, true, false, false),
 		IP("ip", "VARCHAR", String.class, Types.VARCHAR, 39, "'", "'", true, false, true, false, false),

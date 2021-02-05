@@ -7,7 +7,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.takeshi.jdbc.esqlj.Configuration;
-import org.takeshi.jdbc.esqlj.ConfigurationEnum;
+import org.takeshi.jdbc.esqlj.ConfigurationPropertyEnum;
 import org.takeshi.jdbc.esqlj.elastic.model.ElasticField;
 import org.takeshi.jdbc.esqlj.elastic.model.ElasticFieldExt;
 import org.takeshi.jdbc.esqlj.elastic.model.ElasticFieldType;
@@ -37,7 +37,7 @@ public class RequestBuilderFields {
 	}
 
 	private static void addFieldsToRequest(SqlStatementSelect query, RequestInstance req) {
-		List<String> sourceFields = !Configuration.getConfiguration(ConfigurationEnum.CFG_INCLUDE_TEXT_FIELDS_BY_DEFAULT, Boolean.class) && (query.getFields() == null || query.getFields().size() == 0) ?  null : new ArrayList<String>();
+		List<String> sourceFields = !Configuration.getConfiguration(ConfigurationPropertyEnum.CFG_INCLUDE_TEXT_FIELDS_BY_DEFAULT, Boolean.class) && (query.getFields() == null || query.getFields().size() == 0) ?  null : new ArrayList<String>();
 		req.getFields().forEach((name, field) -> {
 			if(!field.isDocField()) {
 				if(sourceFields != null) {

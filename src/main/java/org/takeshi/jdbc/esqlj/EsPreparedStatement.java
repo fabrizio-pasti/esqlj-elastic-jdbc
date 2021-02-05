@@ -17,6 +17,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.RowId;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 import java.sql.SQLWarning;
 import java.sql.SQLXML;
 import java.sql.Time;
@@ -27,12 +28,22 @@ import java.util.Calendar;
 * @author  Fabrizio Pasti - fabrizio.pasti@gmail.com
 */
 
+/*
+ * Actually unimplemented
+ */
 public class EsPreparedStatement implements PreparedStatement {
 
 	private EsConnection connection;
+	private String sql;
 
-	public EsPreparedStatement(EsConnection connection) {
+	protected EsPreparedStatement(EsConnection connection) throws SQLFeatureNotSupportedException {
 		this.connection = connection;
+		throw new SQLFeatureNotSupportedException();
+	}
+	 
+	protected EsPreparedStatement(EsConnection connection, String sql) throws SQLFeatureNotSupportedException {
+		this(connection);
+		this.sql = sql;
 	}
 	
 	@Override
@@ -199,8 +210,7 @@ public class EsPreparedStatement implements PreparedStatement {
 
 	@Override
 	public Connection getConnection() throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		return connection;
 	}
 
 	@Override
@@ -627,6 +637,10 @@ public class EsPreparedStatement implements PreparedStatement {
 	public void setNClob(int parameterIndex, Reader reader) throws SQLException {
 		// TODO Auto-generated method stub
 
+	}
+
+	public String getSql() {
+		return sql;
 	}
 
 }

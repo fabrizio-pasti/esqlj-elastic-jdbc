@@ -18,8 +18,6 @@ import org.takeshi.jdbc.esqlj.elastic.model.ElasticObjectType;
 import org.takeshi.jdbc.esqlj.elastic.query.impl.FromArrayQuery;
 import org.takeshi.jdbc.esqlj.elastic.query.impl.IndexFieldsQuery;
 import org.takeshi.jdbc.esqlj.elastic.query.impl.IndicesQuery;
-import org.takeshi.jdbc.esqlj.support.EsConfig;
-import org.takeshi.jdbc.esqlj.support.EsConfig.ConfigurationPropertyEnum;
 
 /**
 * @author  Fabrizio Pasti - fabrizio.pasti@gmail.com
@@ -61,12 +59,12 @@ public class EsMetaData implements DatabaseMetaData {
 
 	@Override
 	public String getURL() throws SQLException {
-		return EsConfig.getUrl();
+		return Configuration.getUrl();
 	}
 
 	@Override
 	public String getUserName() throws SQLException {
-		return EsConfig.getConfiguration(ConfigurationPropertyEnum.USERNAME, String.class);
+		return Configuration.getConfiguration(ConfigurationPropertyEnum.CFG_USERNAME, String.class);
 	}
 
 	@Override

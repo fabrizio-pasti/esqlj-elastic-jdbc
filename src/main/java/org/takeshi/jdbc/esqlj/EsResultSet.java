@@ -35,6 +35,7 @@ public class EsResultSet implements ResultSet {
 	private AbstractQuery query;
 	private int fetchDirection;
 	private boolean wasNull;
+	private boolean closeable;
 
 	public EsResultSet(AbstractQuery query) {
 		this.query = query;
@@ -52,7 +53,11 @@ public class EsResultSet implements ResultSet {
 
 	@Override
 	public boolean next() throws SQLException {
-		return query.next();
+		boolean next = query.next();
+		if(isCloseable() && !next) {
+			close();
+		}
+		return next;
 	}
 
 	@Override
@@ -623,7 +628,6 @@ public class EsResultSet implements ResultSet {
 
 	@Override
 	public Statement getStatement() throws SQLException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -681,38 +685,32 @@ public class EsResultSet implements ResultSet {
 
 	@Override
 	public Date getDate(int columnIndex, Calendar cal) throws SQLException { // !!
-		// TODO Auto-generated method stub
-		return null;
+		throw new SQLFeatureNotSupportedException();
 	}
 
 	@Override
 	public Date getDate(String columnLabel, Calendar cal) throws SQLException { // !!
-		// TODO Auto-generated method stub
-		return null;
+		throw new SQLFeatureNotSupportedException();
 	}
 
 	@Override
 	public Time getTime(int columnIndex, Calendar cal) throws SQLException { // !!
-		// TODO Auto-generated method stub
-		return null;
+		throw new SQLFeatureNotSupportedException();
 	}
 
 	@Override
 	public Time getTime(String columnLabel, Calendar cal) throws SQLException { // !!
-		// TODO Auto-generated method stub
-		return null;
+		throw new SQLFeatureNotSupportedException();
 	}
 
 	@Override
 	public Timestamp getTimestamp(int columnIndex, Calendar cal) throws SQLException { // !!
-		// TODO Auto-generated method stub
-		return null;
+		throw new SQLFeatureNotSupportedException();
 	}
 
 	@Override
 	public Timestamp getTimestamp(String columnLabel, Calendar cal) throws SQLException { // !!
-		// TODO Auto-generated method stub
-		return null;
+		throw new SQLFeatureNotSupportedException();
 	}
 
 	@Override
@@ -797,8 +795,7 @@ public class EsResultSet implements ResultSet {
 
 	@Override
 	public void updateNString(int columnIndex, String nString) throws SQLException {
-		// TODO Auto-generated method stub
-
+		throw new SQLFeatureNotSupportedException();
 	}
 
 	@Override
@@ -813,8 +810,7 @@ public class EsResultSet implements ResultSet {
 
 	@Override
 	public void updateNClob(String columnLabel, NClob nClob) throws SQLException {
-		// TODO Auto-generated method stub
-
+		throw new SQLFeatureNotSupportedException();
 	}
 
 	@Override
@@ -1041,5 +1037,13 @@ public class EsResultSet implements ResultSet {
 			wasNull = true;
 			return nullValue;
 		}
+	}
+
+	public boolean isCloseable() {
+		return closeable;
+	}
+
+	public void setCloseable(boolean closeable) {
+		this.closeable = closeable;
 	}
 }

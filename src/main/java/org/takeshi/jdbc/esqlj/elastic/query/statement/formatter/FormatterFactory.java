@@ -1,7 +1,5 @@
 package org.takeshi.jdbc.esqlj.elastic.query.statement.formatter;
 
-import java.sql.SQLSyntaxErrorException;
-
 import org.takeshi.jdbc.esqlj.support.EsRuntimeException;
 
 import net.sf.jsqlparser.expression.Function;

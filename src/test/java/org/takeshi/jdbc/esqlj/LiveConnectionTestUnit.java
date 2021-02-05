@@ -26,7 +26,6 @@ public class LiveConnectionTestUnit
 		connection = TestUtils.getLiveConnection(null);
     } 
     
-	
     @Test
 	public void isPresent() throws SQLException {
 		DatabaseMetaData metadata = connection.getMetaData();

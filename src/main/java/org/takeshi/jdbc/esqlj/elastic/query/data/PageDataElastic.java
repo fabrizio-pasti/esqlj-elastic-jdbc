@@ -3,7 +3,6 @@ package org.takeshi.jdbc.esqlj.elastic.query.data;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -17,9 +16,6 @@ import org.takeshi.jdbc.esqlj.elastic.query.model.DataRow;
 import org.takeshi.jdbc.esqlj.elastic.query.model.PageDataState;
 import org.takeshi.jdbc.esqlj.elastic.query.statement.model.Field;
 import org.takeshi.jdbc.esqlj.support.SimpleDateFormatThreadSafe;
-import org.takeshi.jdbc.esqlj.support.ToDateUtils;
-
-import net.sf.jsqlparser.expression.StringValue;
 
 /**
 * @author  Fabrizio Pasti - fabrizio.pasti@gmail.com

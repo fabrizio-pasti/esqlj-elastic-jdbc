@@ -1,13 +1,10 @@
 package org.takeshi.jdbc.esqlj.elastic.query.statement.model;
 
-import java.sql.SQLSyntaxErrorException;
-
 import org.takeshi.jdbc.esqlj.elastic.query.statement.StatementUtils;
 import org.takeshi.jdbc.esqlj.elastic.query.statement.formatter.Formatter;
 import org.takeshi.jdbc.esqlj.elastic.query.statement.formatter.FormatterFactory;
 
 import net.sf.jsqlparser.expression.Function;
-import net.sf.jsqlparser.schema.Column;
 
 /**
 * @author  Fabrizio Pasti - fabrizio.pasti@gmail.com

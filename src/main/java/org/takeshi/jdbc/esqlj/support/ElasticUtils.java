@@ -10,7 +10,7 @@ import org.apache.http.util.EntityUtils;
 import org.elasticsearch.client.Request;
 import org.elasticsearch.client.Response;
 import org.takeshi.jdbc.esqlj.Configuration;
-import org.takeshi.jdbc.esqlj.ConfigurationEnum;
+import org.takeshi.jdbc.esqlj.ConfigurationPropertyEnum;
 import org.takeshi.jdbc.esqlj.EsConnection;
 import org.takeshi.jdbc.esqlj.elastic.query.impl.search.RequestInstance;
 
@@ -22,7 +22,7 @@ public class ElasticUtils {
 
 	public static String getPointInTime(EsConnection connection, RequestInstance req) throws SQLNonTransientConnectionException  {
 		try {
-			Request rawReq = new Request("POST", String.format("/%s/_pit?keep_alive=%dm", req.getIndexMetaData().getIndex(), Configuration.getConfiguration(ConfigurationEnum.CFG_QUERY_SCROLL_TIMEOUT_MINUTES, Long.class)));
+			Request rawReq = new Request("POST", String.format("/%s/_pit?keep_alive=%dm", req.getIndexMetaData().getIndex(), Configuration.getConfiguration(ConfigurationPropertyEnum.CFG_QUERY_SCROLL_TIMEOUT_MINUTES, Long.class)));
 			Response res = connection.getElasticClient().getLowLevelClient().performRequest(rawReq);
 			Pattern pattern = Pattern.compile("\"id\":\\s*\"([\\w=]*)\"");
 		    Matcher matcher = pattern.matcher(EntityUtils.toString(res.getEntity()));

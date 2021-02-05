@@ -13,7 +13,7 @@ import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.search.builder.PointInTimeBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.takeshi.jdbc.esqlj.Configuration;
-import org.takeshi.jdbc.esqlj.ConfigurationEnum;
+import org.takeshi.jdbc.esqlj.ConfigurationPropertyEnum;
 import org.takeshi.jdbc.esqlj.EsConnection;
 import org.takeshi.jdbc.esqlj.EsMetaData;
 import org.takeshi.jdbc.esqlj.elastic.metadata.ElasticServerDetails;
@@ -90,7 +90,7 @@ public class RequestInstance {
 	}
 	
 	public boolean isSourceFieldsToRetrieve() {
-		return !isStarSelect() || Configuration.getConfiguration(ConfigurationEnum.CFG_INCLUDE_TEXT_FIELDS_BY_DEFAULT, Boolean.class);
+		return !isStarSelect() || Configuration.getConfiguration(ConfigurationPropertyEnum.CFG_INCLUDE_TEXT_FIELDS_BY_DEFAULT, Boolean.class);
 	}
 
 	public PaginationType getPaginationMode() {
@@ -118,11 +118,11 @@ public class RequestInstance {
 	}
 
 	private void implementScrollStrategy() {
-		if(select.getLimit() != null && select.getLimit() < Configuration.getConfiguration(ConfigurationEnum.CFG_QUERY_SCROLL_FROM_ROWS, Long.class)) {
+		if(select.getLimit() != null && select.getLimit() < Configuration.getConfiguration(ConfigurationPropertyEnum.CFG_QUERY_SCROLL_FROM_ROWS, Long.class)) {
 			return;
 		}
 		
-		if(isOrdered() && !Configuration.getConfiguration(ConfigurationEnum.CFG_QUERY_SCROLL_ONLY_BY_SCROLL_API, Boolean.class)) {
+		if(isOrdered() && !Configuration.getConfiguration(ConfigurationPropertyEnum.CFG_QUERY_SCROLL_ONLY_BY_SCROLL_API, Boolean.class)) {
 			paginationMode = metaDataService.getElasticServerDetails().isElasticReleaseEqOrGt(ElasticServerDetails.ELASTIC_REL_7_10_0) && pointInTimeApiAvailable ? PaginationType.BY_ORDER_WITH_PIT : PaginationType.BY_ORDER;
 		} else {
 			paginationMode = PaginationType.SCROLL_API;
@@ -166,7 +166,7 @@ public class RequestInstance {
 			case BY_ORDER_WITH_PIT:
 				updateSearchAfter(searchResponse);
 				PointInTimeBuilder pit = new PointInTimeBuilder(searchResponse.pointInTimeId());
-				pit.setKeepAlive(TimeValue.timeValueMinutes(Configuration.getConfiguration(ConfigurationEnum.CFG_QUERY_SCROLL_TIMEOUT_MINUTES, Long.class)));
+				pit.setKeepAlive(TimeValue.timeValueMinutes(Configuration.getConfiguration(ConfigurationPropertyEnum.CFG_QUERY_SCROLL_TIMEOUT_MINUTES, Long.class)));
 				getSearchSourceBuilder().pointInTimeBuilder(pit);
 				break;
 		}

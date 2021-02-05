@@ -6,7 +6,7 @@ import java.sql.SQLNonTransientConnectionException;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.search.builder.PointInTimeBuilder;
 import org.takeshi.jdbc.esqlj.Configuration;
-import org.takeshi.jdbc.esqlj.ConfigurationEnum;
+import org.takeshi.jdbc.esqlj.ConfigurationPropertyEnum;
 import org.takeshi.jdbc.esqlj.EsConnection;
 import org.takeshi.jdbc.esqlj.elastic.query.statement.SqlStatementSelect;
 import org.takeshi.jdbc.esqlj.support.ElasticUtils;
@@ -35,12 +35,12 @@ public class RequestBuilder {
 		
 		switch(req.getPaginationMode()) {
 			case SCROLL_API:
-				req.getSearchRequest().scroll(TimeValue.timeValueMinutes(Configuration.getConfiguration(ConfigurationEnum.CFG_QUERY_SCROLL_TIMEOUT_MINUTES, Long.class)));
+				req.getSearchRequest().scroll(TimeValue.timeValueMinutes(Configuration.getConfiguration(ConfigurationPropertyEnum.CFG_QUERY_SCROLL_TIMEOUT_MINUTES, Long.class)));
 				break;
 			case BY_ORDER_WITH_PIT:
 				req.getSearchRequest().setMaxConcurrentShardRequests(6); // enable work around
 				PointInTimeBuilder pit = new PointInTimeBuilder(ElasticUtils.getPointInTime(connection, req));
-				pit.setKeepAlive(TimeValue.timeValueMinutes(Configuration.getConfiguration(ConfigurationEnum.CFG_QUERY_SCROLL_TIMEOUT_MINUTES, Long.class)));
+				pit.setKeepAlive(TimeValue.timeValueMinutes(Configuration.getConfiguration(ConfigurationPropertyEnum.CFG_QUERY_SCROLL_TIMEOUT_MINUTES, Long.class)));
 				req.getSearchSourceBuilder().pointInTimeBuilder(pit);
 				break;
 			default:

@@ -16,7 +16,7 @@ import org.elasticsearch.client.core.MainResponse;
 import org.elasticsearch.client.indices.GetFieldMappingsRequest;
 import org.elasticsearch.client.indices.GetFieldMappingsResponse;
 import org.takeshi.jdbc.esqlj.Configuration;
-import org.takeshi.jdbc.esqlj.ConfigurationEnum;
+import org.takeshi.jdbc.esqlj.ConfigurationPropertyEnum;
 import org.takeshi.jdbc.esqlj.elastic.model.ElasticField;
 import org.takeshi.jdbc.esqlj.elastic.model.ElasticFieldType;
 import org.takeshi.jdbc.esqlj.elastic.model.IndexMetaData;
@@ -65,7 +65,7 @@ public class MetaDataService {
 	}
 
 	public IndexMetaData getIndexMetaData(String index) throws SQLException {
-		if(Configuration.getConfiguration(ConfigurationEnum.CFG_INDEX_METADATA_CACHE, Boolean.class)) {
+		if(Configuration.getConfiguration(ConfigurationPropertyEnum.CFG_INDEX_METADATA_CACHE, Boolean.class)) {
 			if(!cacheIndexMetaData.containsKey(index)) {
 				cacheIndexMetaData.put(index, new IndexMetaData(index, getIndexFields(index)));
 			}

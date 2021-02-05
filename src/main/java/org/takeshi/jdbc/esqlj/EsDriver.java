@@ -9,8 +9,6 @@ import java.sql.SQLFeatureNotSupportedException;
 import java.util.Properties;
 import java.util.logging.Logger;
 
-import org.takeshi.jdbc.esqlj.support.EsConfig;
-
 /**
 * @author  Fabrizio Pasti - fabrizio.pasti@gmail.com
 */
@@ -28,7 +26,7 @@ public class EsDriver implements Driver {
 	// jdbc:esqlj://153.77.137.170:9200
 	@Override
 	public Connection connect(String url, Properties info) throws SQLException {
-		EsConfig.parseConnectionString(url, info);
+		Configuration.parseConnectionString(url, info);
 		return new EsConnection();
 	}
 
@@ -39,17 +37,17 @@ public class EsDriver implements Driver {
 
 	@Override
 	public DriverPropertyInfo[] getPropertyInfo(String url, Properties info) throws SQLException {
-		return EsConfig.getDriverPropertyInfo();
+		return Configuration.getDriverPropertyInfo();
 	}
 
 	@Override
 	public int getMajorVersion() {
-		return EsConfig.getMajorVersion();
+		return Configuration.getMajorVersion();
 	}
 
 	@Override
 	public int getMinorVersion() {
-		return EsConfig.getMinorVersion();
+		return Configuration.getMinorVersion();
 	}
 
 	@Override

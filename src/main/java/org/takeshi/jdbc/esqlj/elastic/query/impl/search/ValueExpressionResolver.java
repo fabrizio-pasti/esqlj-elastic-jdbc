@@ -18,6 +18,7 @@ import net.sf.jsqlparser.expression.operators.arithmetic.Division;
 import net.sf.jsqlparser.expression.operators.arithmetic.Multiplication;
 import net.sf.jsqlparser.expression.operators.arithmetic.Subtraction;
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
+import net.sf.jsqlparser.schema.Column;
 
 /**
 * @author  Fabrizio Pasti - fabrizio.pasti@gmail.com
@@ -67,6 +68,11 @@ public class ValueExpressionResolver {
 			case "NOW":
 			case "GETDATE":
 				return new Date();
+			case "TRUNC":
+				if(parameters.getExpressions().get(0) instanceof Column && ((Column)parameters.getExpressions().get(0)).getColumnName().equalsIgnoreCase("SYSDATE")) {
+					return new LocalDate(new Date()).toDate();
+				}
+				throw new SQLSyntaxErrorException(String.format("'%s' unsupported", function.toString()));
 			case "CURDATE":
 				return new LocalDate(new Date()).toDate();
 		}

@@ -1,7 +1,5 @@
 package org.takeshi.jdbc.esqlj.elastic.metadata;
 
-import java.io.LineNumberReader;
-
 import org.elasticsearch.client.core.MainResponse;
 
 /**

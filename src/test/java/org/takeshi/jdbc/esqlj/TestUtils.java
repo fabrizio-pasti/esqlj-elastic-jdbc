@@ -4,8 +4,6 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
-import org.takeshi.jdbc.esqlj.support.EsConfig.ConfigurationPropertyEnum;
-
 
 /**
 * @author  Fabrizio Pasti - fabrizio.pasti@gmail.com
@@ -33,7 +31,7 @@ public class TestUtils {
     	if(info == null) {
     		info = new Properties();
     	}
-    	info.put(ConfigurationPropertyEnum.TEST_MODE.name, true);
+    	info.put(ConfigurationPropertyEnum.CFG_TEST_MODE.name, true);
         return (EsConnection) DriverManager.getConnection(url, info);
     }
 

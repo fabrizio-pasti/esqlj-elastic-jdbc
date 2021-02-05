@@ -3,7 +3,6 @@ package org.takeshi.jdbc.esqlj.elastic.query.statement.formatter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.takeshi.jdbc.esqlj.support.SimpleDateFormatThreadSafe;
 import org.takeshi.jdbc.esqlj.support.ToDateUtils;
 
 import net.sf.jsqlparser.expression.Function;
