@@ -86,20 +86,22 @@ Pay attention: Scroll API consume resources on server. It's a best practice to f
 
 ## Testing
 Most of test units require a live Elastic instance.
-The activation of these units is commanded by a system environment variable named "ESQLJ_TEST_CONFIG"
+The activation of these units is commanded by a system variable named "ESQLJ_TEST_CONFIG".
 The environment variabile must concatenate a valid esqlj JDBC url connection string and the load strategy of the documents requested by query inside units:
 
 ```
-ESQLJ_TEST_CONFIG="jdbc:esqlj:http://<elastic_address>:<elastic_port>|<createAndDestroy or createOnly>"
+ESQLJ_TEST_CONFIG="jdbc:esqlj:http://<elastic_address>:<elastic_port>|<createAndDestroy or createOnly>
 ```
 
 | Parameters | Actions | Scope
 |--- |--- |---
-| createAndDestroy | Create index 'esqlj-test-\<uuid\>' and at the end of execution of test units delete it | Continuous Delivery/Deployment
-| createOnly | Create index 'esqlj-test-static'. If it's just present preserve it. (Will be required a manual delete of index).| Development stage
+| createAndDestroy | Create index 'esqlj-test-volatile-\<uuid\>' and at the end of execution of test units delete it | Continuous Delivery/Deployment
+| createOnly | Create index 'esqlj-test-static-<release.version>'. If it's just present preserve it. (Will be required a manual delete of index).| Development stage
 
 Sample configuration:
 ESQLJ_TEST_CONFIG="jdbc:esqlj:http://10.77.154.32:9080|createOnly"
+
+If ESQLJ_TEST_CONFIG isn't declared, all tests depending from live connection will be skipped. 
 
 ## About me
 Fabrizio Pasti

@@ -35,7 +35,7 @@ public class EsResultSet implements ResultSet {
 	private AbstractQuery query;
 	private int fetchDirection;
 	private boolean wasNull;
-	private boolean closeable;
+	private boolean closeable = true;
 
 	public EsResultSet(AbstractQuery query) {
 		this.query = query;

@@ -1,6 +1,6 @@
 package org.takeshi.jdbc.esqlj;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -9,8 +9,8 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 /**
 * @author  Fabrizio Pasti - fabrizio.pasti@gmail.com
@@ -20,7 +20,7 @@ public class StatementTestUnit
 {
 	private static Connection connection;
 	
-	@BeforeClass
+	/*@BeforeAll
     public static void init() throws SQLException {
 		connection = TestUtils.getLiveConnection(null);
     } 
@@ -49,6 +49,6 @@ public class StatementTestUnit
 			System.out.println("");
 		}
 		
-	}
+	}*/
     
 }
