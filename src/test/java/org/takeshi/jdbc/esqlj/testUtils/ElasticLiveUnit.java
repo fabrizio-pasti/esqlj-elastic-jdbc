@@ -1,4 +1,4 @@
-package org.takeshi.jdbc.esqlj.test;
+package org.takeshi.jdbc.esqlj.testUtils;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

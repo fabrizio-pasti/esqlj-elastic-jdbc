@@ -247,7 +247,7 @@ public class ElasticQuery extends AbstractQuery {
 	@Override
 	public ResultSetMetaData getResultSetMetaData() {
 		if(resultSetMetaData == null) {
-			resultSetMetaData = new EsResultSetMetaData(getSource(), requestInstance.getFieldNames(), requestInstance.getFieldTypes());
+			resultSetMetaData = new EsResultSetMetaData(getSource(), requestInstance.getFieldNames(), requestInstance.getColumnNames(), requestInstance.getFieldTypes());
 		}
 		return resultSetMetaData;
 	}

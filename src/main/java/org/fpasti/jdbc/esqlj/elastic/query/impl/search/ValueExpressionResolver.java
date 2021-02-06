@@ -2,11 +2,11 @@ package org.fpasti.jdbc.esqlj.elastic.query.impl.search;
 
 import java.sql.SQLException;
 import java.sql.SQLSyntaxErrorException;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 import org.fpasti.jdbc.esqlj.elastic.query.statement.model.ExpressionEnum;
 import org.fpasti.jdbc.esqlj.support.ToDateUtils;
-import org.joda.time.LocalDate;
 
 import net.sf.jsqlparser.expression.DoubleValue;
 import net.sf.jsqlparser.expression.Expression;
@@ -67,14 +67,14 @@ public class ValueExpressionResolver {
 				return ToDateUtils.resolveToDate((String)evaluateValueExpression(parameters.getExpressions().get(0)), (String)evaluateValueExpression(parameters.getExpressions().get(1)));
 			case "NOW":
 			case "GETDATE":
-				return new Date();
+				return LocalDateTime.now(ZoneId.systemDefault());
 			case "TRUNC":
 				if(parameters.getExpressions().get(0) instanceof Column && ((Column)parameters.getExpressions().get(0)).getColumnName().equalsIgnoreCase("SYSDATE")) {
-					return new LocalDate(new Date()).toDate();
+					return LocalDateTime.now(ZoneId.systemDefault());
 				}
 				throw new SQLSyntaxErrorException(String.format("'%s' unsupported", function.toString()));
 			case "CURDATE":
-				return new LocalDate(new Date()).toDate();
+				return LocalDateTime.now(ZoneId.systemDefault());
 		}
 		throw new SQLSyntaxErrorException(String.format("Function '%s' unsupported", function.getName()));
 	}

@@ -1,7 +1,8 @@
 package org.fpasti.jdbc.esqlj.elastic.query.statement.formatter;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import org.fpasti.jdbc.esqlj.support.ToDateUtils;
 
@@ -26,7 +27,7 @@ public class ToCharFormatter extends Formatter {
 
 	@Override
 	public Object resolveValue(Object value) {
-		return sdf.format(((Date)value));
+		return sdf.format(((LocalDateTime)value));
 	}
 
 }

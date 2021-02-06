@@ -1,4 +1,4 @@
-package org.takeshi.jdbc.esqlj.test;
+package org.takeshi.jdbc.esqlj.testUtils;
 
 import org.junit.jupiter.api.extension.ConditionEvaluationResult;
 import org.junit.jupiter.api.extension.ExecutionCondition;

@@ -14,6 +14,7 @@ import net.sf.jsqlparser.expression.LongValue;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.Statement;
+import net.sf.jsqlparser.statement.select.AllColumns;
 import net.sf.jsqlparser.statement.select.Join;
 import net.sf.jsqlparser.statement.select.OrderByElement;
 import net.sf.jsqlparser.statement.select.PlainSelect;
@@ -63,7 +64,7 @@ public class SqlStatementSelect extends SqlStatement {
 	}
 
 	private void init() {
-		index = new Index(select.getFromItem().toString(), select.getFromItem().getAlias() != null ? select.getFromItem().getAlias().getName() : null);
+		index = new Index(select.getFromItem().toString().replaceAll("\"", ""), select.getFromItem().getAlias() != null ? select.getFromItem().getAlias().getName().replaceAll("\"", "") : null);
 		indices = new ArrayList<Index>(); 
 		indices.add(index);
 		if(select.getJoins() != null) {
@@ -77,15 +78,19 @@ public class SqlStatementSelect extends SqlStatement {
 	private List<Field> resolveFields() {
 		String index = "root";
 		return select.getSelectItems().stream().map(item -> {
-			SelectExpressionItem sei = (SelectExpressionItem)item;
-			if(sei.getExpression() instanceof Column) {
-				Column c = (Column)sei.getExpression();
-				return new Field(c.getColumnName(), sei.getAlias() == null ? null : sei.getAlias().getName(), c.getTable() == null ? index : getIndexByNameOrAlias(c.getTable().getName()).getName());
-			} else if(sei.getExpression() instanceof Function) {
-				Function f = (Function)sei.getExpression();
-				return new Field(f, sei.getAlias() == null ? null : sei.getAlias().getName());				
+			if(item instanceof SelectExpressionItem) {
+				SelectExpressionItem sei = (SelectExpressionItem)item;
+				if(sei.getExpression() instanceof Column) {
+					Column c = (Column)sei.getExpression();
+					return new Field(c.getColumnName(), sei.getAlias() == null ? null : sei.getAlias().getName(), c.getTable() == null ? index : getIndexByNameOrAlias(c.getTable().getName().replace("\"", "")).getName());
+				} else if(sei.getExpression() instanceof Function) {
+					Function f = (Function)sei.getExpression();
+					return new Field(f, sei.getAlias() == null ? null : sei.getAlias().getName());				
+				}
+			} else if(item instanceof AllColumns) {
+				return new Field("*", null, index);
 			}
-			throw new EsRuntimeException(String.format("Unexpexted expression '%s' in select clause", sei.toString()));
+			throw new EsRuntimeException(String.format("Unexpexted expression '%s' in select clause", item.toString()));
 		}).collect(Collectors.toList());
 	}
 	

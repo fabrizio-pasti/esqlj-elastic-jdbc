@@ -32,6 +32,7 @@ import org.fpasti.jdbc.esqlj.elastic.query.statement.SqlStatementSelect;
 public class RequestInstance {
 
 	private Map<String, ElasticField> fields;
+	private List<String> columnNames;
 	private SearchRequest searchRequest;
 	private SearchSourceBuilder searchSourceBuilder;
 	private int fetchSize;
@@ -67,6 +68,14 @@ public class RequestInstance {
 
 	public void setFields(Map<String, ElasticField> fields) {
 		this.fields = fields;
+	}
+	
+	public List<String> getColumnNames() {
+		return columnNames != null ? columnNames : getFieldNames();
+	}
+
+	public void setColumnNames(List<String> columnNames) {
+		this.columnNames = columnNames;
 	}
 
 	public List<String> getFieldNames() {

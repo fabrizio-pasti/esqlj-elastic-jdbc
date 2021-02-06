@@ -33,6 +33,7 @@ public class RequestBuilderFields {
 			req.getFields().put(ElasticField.DOC_ID_ALIAS, getDocIdField());
 		} else {
 			req.setFields(select.getFields().stream().map(f -> ElasticFieldExt.promoteInstance(resolveField(req.getIndexMetaData(), f), f)).collect(Collectors.toMap(ElasticFieldExt::getColumnName, Function.identity(), (o1, o2) -> o1, LinkedHashMap::new)));
+			req.setColumnNames(select.getFields().stream().map(field -> field.getName()).collect(Collectors.toList()));
 		}
 	}
 

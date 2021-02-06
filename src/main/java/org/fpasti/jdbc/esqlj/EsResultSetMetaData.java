@@ -14,13 +14,19 @@ public class EsResultSetMetaData implements ResultSetMetaData {
 
 	private List<ElasticFieldType> columnTypes;
 	private String source;
+	private List<String> labelNames;
 	private List<String> columnNames;
 	
 	
-	public EsResultSetMetaData(String source, List<String> columnNames, List<ElasticFieldType> columnTypes) {
+	public EsResultSetMetaData(String source, List<String> labelNames, List<ElasticFieldType> columnTypes) {
 		this.source = source;
-		this.columnNames = columnNames;
+		this.labelNames = labelNames;
 		this.columnTypes = columnTypes;
+	}
+	
+	public EsResultSetMetaData(String source, List<String> labelNames, List<String> columnNames, List<ElasticFieldType> columnTypes) {
+		this(source, labelNames, columnTypes);
+		this.columnNames = columnNames;
 	}
 
 	@Override
@@ -50,7 +56,7 @@ public class EsResultSetMetaData implements ResultSetMetaData {
 
 	@Override
 	public int getColumnCount() throws SQLException {
-		return columnNames.size();
+		return labelNames.size();
 	}
 
 	@Override
@@ -90,7 +96,7 @@ public class EsResultSetMetaData implements ResultSetMetaData {
 
 	@Override
 	public String getColumnLabel(int column) throws SQLException {
-		return columnNames.get(column - 1);
+		return labelNames.get(column - 1);
 	}
 
 	@Override

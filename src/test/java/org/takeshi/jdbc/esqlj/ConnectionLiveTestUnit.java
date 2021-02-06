@@ -11,9 +11,9 @@ import java.sql.SQLException;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.takeshi.jdbc.esqlj.test.ElasticLiveEnvironment;
-import org.takeshi.jdbc.esqlj.test.ElasticLiveUnit;
-import org.takeshi.jdbc.esqlj.test.TestUtils;
+import org.takeshi.jdbc.esqlj.testUtils.ElasticLiveEnvironment;
+import org.takeshi.jdbc.esqlj.testUtils.ElasticLiveUnit;
+import org.takeshi.jdbc.esqlj.testUtils.TestUtils;
 
 /**
 * @author  Fabrizio Pasti - fabrizio.pasti@gmail.com
@@ -21,17 +21,17 @@ import org.takeshi.jdbc.esqlj.test.TestUtils;
 
 @ElasticLiveUnit
 @ExtendWith(ElasticLiveEnvironment.class)
-public class EsConnectionLiveTestUnit
+public class ConnectionLiveTestUnit
 {
     
     @Test
-	public void isPresent() throws SQLException {
+	public void metadataExists() throws SQLException {
 		DatabaseMetaData metadata = TestUtils.getLiveConnection().getMetaData();
 		assertNotNull(metadata);
 	}
      
     @Test
-	public void checkCatalogs() throws SQLException {
+	public void catalogsExists() throws SQLException {
 		DatabaseMetaData metadata = TestUtils.getLiveConnection().getMetaData();
 		ResultSet rs = metadata.getCatalogs();
 		assertNotNull(rs);
@@ -41,7 +41,7 @@ public class EsConnectionLiveTestUnit
 	}
     
     @Test
-	public void checkSchemas() throws SQLException {
+	public void schemasExists() throws SQLException {
 		DatabaseMetaData metadata = TestUtils.getLiveConnection().getMetaData();
 		ResultSet rs = metadata.getSchemas();
 		assertNotNull(rs);
@@ -51,7 +51,7 @@ public class EsConnectionLiveTestUnit
 	}
     
     @Test
-	public void checkTablesMetaData() throws SQLException {
+	public void tablesMetaDataExists() throws SQLException {
 		DatabaseMetaData metadata = TestUtils.getLiveConnection().getMetaData();
 		ResultSet rs = metadata.getTables(null, null, null, null);
 		assertNotNull(rs);
@@ -61,7 +61,7 @@ public class EsConnectionLiveTestUnit
 	}
     
     @Test
-	public void checkViews() throws SQLException {
+	public void viewMetaDataExists() throws SQLException {
 		DatabaseMetaData metadata = TestUtils.getLiveConnection()	.getMetaData();
 		ResultSet rs = metadata.getTables(null, null, "VIEW", null);
 		assertNotNull(rs);

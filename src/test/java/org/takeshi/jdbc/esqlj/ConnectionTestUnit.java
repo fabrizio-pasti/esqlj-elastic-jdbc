@@ -11,13 +11,13 @@ import org.fpasti.jdbc.esqlj.Configuration;
 import org.fpasti.jdbc.esqlj.support.ElasticInstance.HttpProtocol;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.takeshi.jdbc.esqlj.test.TestUtils;
+import org.takeshi.jdbc.esqlj.testUtils.TestUtils;
 
 /**
 * @author  Fabrizio Pasti - fabrizio.pasti@gmail.com
 */
 
-public class EsConnectionTestUnit {
+public class ConnectionTestUnit {
 
 	@ParameterizedTest(name = "{1} = {0}")
 	@CsvSource(delimiter = ';', value = {

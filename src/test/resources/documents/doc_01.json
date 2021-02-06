@@ -1,6 +1,6 @@
 {
     "keywordField": "keyword01",
-    "timestamp": "2021-01-01T01:10:20.001Z",
+    "timestampField": "2021-01-01T01:10:20.001Z",
     "doubleField": 1.0,
     "integerField": 1,
     "longField": 1,

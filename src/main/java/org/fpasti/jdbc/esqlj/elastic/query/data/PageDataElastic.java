@@ -2,6 +2,7 @@ package org.fpasti.jdbc.esqlj.elastic.query.data;
 
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TimeZone;
@@ -80,9 +81,11 @@ public class PageDataElastic {
 	private Object resolveField(ElasticField field, Object value) {
 		value = resolveType(field, value);
 		
-		Field selectField = ((ElasticFieldExt)field).getSelectField();
-		if(selectField.getFormatter() != null) {
-			return selectField.getFormatter().resolveValue(value);
+		if(field instanceof ElasticFieldExt) {
+			Field selectField = ((ElasticFieldExt)field).getSelectField();
+			if(selectField.getFormatter() != null) {
+				return selectField.getFormatter().resolveValue(value);
+			}
 		}
 		
 		return value;
@@ -98,7 +101,7 @@ public class PageDataElastic {
 			case DATE:
 			case DATE_NANOS:
 				try {
-					return sdfTimestamp.parse((String)value);
+					return sdfTimestamp.parse((String)value).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
 				} catch (ParseException e) {
 					// log error
 					return null;

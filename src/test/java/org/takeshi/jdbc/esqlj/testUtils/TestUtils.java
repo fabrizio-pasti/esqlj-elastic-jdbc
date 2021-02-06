@@ -1,4 +1,4 @@
-package org.takeshi.jdbc.esqlj.test;
+package org.takeshi.jdbc.esqlj.testUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -11,6 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Properties;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -123,4 +124,12 @@ public class TestUtils {
         return contentBuilder.toString();
 	}
 	
+	public static String getURL() {
+		return systemProperties[0];
+	}
+
+	public static String resolveTestIndex(String txt) {
+		return txt.replace("testIndex", "\"".concat(ElasticTestService.CURRENT_INDEX).concat("\""));
+	}
+
 }
