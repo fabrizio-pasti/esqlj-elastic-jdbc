@@ -25,7 +25,7 @@ import org.takeshi.jdbc.esqlj.testUtils.TestUtils;
 @ExtendWith(ElasticLiveEnvironment.class)
 public class TestLiveQueryWhere
 {
-	/*@Test
+	@Test
 	public void selectWhere001() throws SQLException {
 		Statement stmt = TestUtils.getLiveConnection().createStatement();
 		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT keywordField from testIndex WHERE keywordField='keyword01'"));
@@ -493,7 +493,7 @@ public class TestLiveQueryWhere
 		assertEquals(rs.getString(1), "doc_01");
 		rs.close();
 		stmt.close();
-	}*/
+	}
 	
 	@Test
 	public void selectWhere042() throws SQLException {
