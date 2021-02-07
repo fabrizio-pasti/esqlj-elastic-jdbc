@@ -1,0 +1,52 @@
+{
+	"index_patterns": [
+		"esqlj-test-*"
+	],
+	"settings": {
+		"index": {
+			"number_of_shards": "1",
+			"number_of_replicas": "1"
+		}
+	},
+	"mappings": {
+		"_source": {
+			"enabled": true
+		},
+		"properties": {
+			"keywordField": {
+				"type": "keyword"
+			},
+			"timestampField": {
+				"type": "date"
+			},
+			"doubleField": {
+				"type": "double"
+			},
+			"integerField": {
+				"type": "integer"
+			},
+			"longField": {
+				"type": "long"
+			},
+			"booleanField": {
+				"type": "boolean"
+			},
+			"geoPointField": {
+				"type": "geo_point"
+			},
+			"textField": {
+				"type": "text"
+			},			
+			"object": {
+				"properties": {
+					"keywordObjectField": {
+						"type": "keyword"
+					}
+				}
+			}
+		}
+	},
+	"aliases": {
+		"alias-esqlj-test": {}
+	}
+}

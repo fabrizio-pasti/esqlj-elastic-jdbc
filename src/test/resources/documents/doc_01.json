@@ -1,0 +1,16 @@
+{
+    "keywordField": "keyword01",
+    "timestampField": "2020-05-25T20:10:20.001Z",
+    "doubleField": 1.0,
+    "integerField": 1,
+    "longField": 1,
+    "booleanField": true,
+    "geoPointField": {
+        "lat": 45.436232491410955,
+        "lon": 9.240137471155652
+    },
+    "textField": "Text for document 01",
+    "object": {
+        "keywordObjectField": "keywordObjectField01"
+    }
+}
