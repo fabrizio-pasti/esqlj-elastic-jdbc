@@ -1,4 +1,4 @@
-package org.takeshi.jdbc.esqlj;
+package org.fpasti.jdbc.esqlj;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -9,11 +9,11 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDateTime;
 
+import org.fpasti.jdbc.esqlj.testUtils.ElasticLiveEnvironment;
+import org.fpasti.jdbc.esqlj.testUtils.ElasticLiveUnit;
+import org.fpasti.jdbc.esqlj.testUtils.TestUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.takeshi.jdbc.esqlj.testUtils.ElasticLiveEnvironment;
-import org.takeshi.jdbc.esqlj.testUtils.ElasticLiveUnit;
-import org.takeshi.jdbc.esqlj.testUtils.TestUtils;
 
 /**
 * @author  Fabrizio Pasti - fabrizio.pasti@gmail.com

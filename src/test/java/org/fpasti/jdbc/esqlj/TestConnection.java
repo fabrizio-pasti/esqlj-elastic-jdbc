@@ -1,4 +1,4 @@
-package org.takeshi.jdbc.esqlj;
+package org.fpasti.jdbc.esqlj;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -11,9 +11,9 @@ import java.util.Properties;
 import org.fpasti.jdbc.esqlj.Configuration;
 import org.fpasti.jdbc.esqlj.ConfigurationPropertyEnum;
 import org.fpasti.jdbc.esqlj.support.ElasticInstance.HttpProtocol;
+import org.fpasti.jdbc.esqlj.testUtils.TestUtils;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.takeshi.jdbc.esqlj.testUtils.TestUtils;
 
 /**
 * @author  Fabrizio Pasti - fabrizio.pasti@gmail.com

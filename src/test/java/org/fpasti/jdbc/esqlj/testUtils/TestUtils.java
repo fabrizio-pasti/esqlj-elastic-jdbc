@@ -1,4 +1,4 @@
-package org.takeshi.jdbc.esqlj.testUtils;
+package org.fpasti.jdbc.esqlj.testUtils;
 
 import java.io.BufferedReader;
 import java.io.File;

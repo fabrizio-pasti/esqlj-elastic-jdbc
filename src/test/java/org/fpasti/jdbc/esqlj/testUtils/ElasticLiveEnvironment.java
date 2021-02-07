@@ -1,4 +1,4 @@
-package org.takeshi.jdbc.esqlj.testUtils;
+package org.fpasti.jdbc.esqlj.testUtils;
 
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
