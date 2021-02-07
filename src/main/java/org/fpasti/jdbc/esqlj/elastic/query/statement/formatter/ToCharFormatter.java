@@ -1,7 +1,6 @@
 package org.fpasti.jdbc.esqlj.elastic.query.statement.formatter;
 
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import org.fpasti.jdbc.esqlj.support.ToDateUtils;
