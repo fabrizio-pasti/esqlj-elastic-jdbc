@@ -139,14 +139,20 @@ You can use both column name or column alias in expression.
 | TO_DATE(`date`, `mask_date`) | Supported mask: YEAR, YYYY, YY, MM, MONTH, MON, DDD, DD, HH24, HH12, HH, MI, SS, DAY, XFF, FFF, FF, F, PM, TZR, TZH. Example TO_DATE('2020/01/01', 'YYYY/MM/DD')
 | EXTRACT(`PERIOD` FROM `column`) [=, !=, >, >=, <, <=] `numeric_value` | PERIOD can be valued with `YEAR`, `MONTH`, `DAY`, `HOUR`, `MINUTE`, `SECOND`
 
+### Order
+
+Example:
+SELECT * FROM `column` ORDER BY keywordField, integerField
+
 ### Limit
 
-You can append at the end of query a limitator of retrieved rows:
+Example:
 SELECT * FROM `column` LIMIT 100
 
 
+## Compatibility
 
-
+Tested on 7.4.2 and 7.10.0 ElasticSearch release
 
 ## About me
 Fabrizio Pasti

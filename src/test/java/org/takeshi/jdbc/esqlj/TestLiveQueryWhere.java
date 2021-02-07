@@ -23,9 +23,9 @@ import org.takeshi.jdbc.esqlj.testUtils.TestUtils;
 
 @ElasticLiveUnit
 @ExtendWith(ElasticLiveEnvironment.class)
-public class QueryWhereLiveTestUnit
+public class TestLiveQueryWhere
 {
-	@Test
+	/*@Test
 	public void selectWhere001() throws SQLException {
 		Statement stmt = TestUtils.getLiveConnection().createStatement();
 		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT keywordField from testIndex WHERE keywordField='keyword01'"));
@@ -472,6 +472,35 @@ public class QueryWhereLiveTestUnit
 		}
 		assertEquals(rs.getRow(), 1);
 		rs.close();
+		stmt.close();
+	}
+	
+	@Test
+	public void selectWhere041() throws SQLException {
+		Statement stmt = TestUtils.getLiveConnection().createStatement();
+		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT _id from testIndex  WHERE integerField<=6 ORDER BY keywordField DESC"));
+		rs.next();
+		assertEquals(rs.getString(1), "doc_06");
+		rs.next();
+		assertEquals(rs.getString(1), "doc_05");
+		rs.next();
+		assertEquals(rs.getString(1), "doc_04");
+		rs.next();
+		assertEquals(rs.getString(1), "doc_03");
+		rs.next();
+		assertEquals(rs.getString(1), "doc_02");
+		rs.next();
+		assertEquals(rs.getString(1), "doc_01");
+		rs.close();
+		stmt.close();
+	}*/
+	
+	@Test
+	public void selectWhere042() throws SQLException {
+		Statement stmt = TestUtils.getLiveConnection().createStatement();
+		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT _id from testIndex LIMIT 2"));
+		while(rs.next()) {}
+		assertEquals(rs.getRow(), 2);
 		stmt.close();
 	}
 }

@@ -19,7 +19,7 @@ import org.takeshi.jdbc.esqlj.testUtils.TestUtils;
 * @author  Fabrizio Pasti - fabrizio.pasti@gmail.com
 */
 
-public class ConnectionTestUnit {
+public class TestConnection {
 
 	@ParameterizedTest(name = "{1} = {0}")
 	@CsvSource(delimiter = ';', value = {

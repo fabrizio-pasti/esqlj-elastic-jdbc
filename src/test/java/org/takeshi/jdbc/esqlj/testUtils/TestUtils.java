@@ -60,12 +60,20 @@ public class TestUtils {
     	if(connection != null) {
     		return connection;
     	}
+    	
     	String testConfig = getProperty(ENV_PROP_ESQLJ_TEST_CONFIG);
     	if(testConfig == null) {
     		return null;
     	}
+    	
+    	if(info == null) {
+    		info = new Properties();
+    	}
+    	info.put(ConfigurationPropertyEnum.CFG_TEST_MODE.name, false);
+    	
     	DriverManager.registerDriver(new EsDriver());
-    	systemProperties = testConfig.split("\\|"); 
+    	
+    	systemProperties = testConfig.split("\\|");
     	connection = (EsConnection) DriverManager.getConnection(systemProperties[0], info);
         return connection;
     }

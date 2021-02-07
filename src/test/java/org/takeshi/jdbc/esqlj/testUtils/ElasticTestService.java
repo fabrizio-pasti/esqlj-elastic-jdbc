@@ -32,9 +32,7 @@ public class ElasticTestService {
 	
 	public static void setup(EsConnection connection, boolean createAndDestroy) throws Exception {
 		cleanUp(connection.getElasticClient());
-		
 		setCurrentIndex(createAndDestroy);
-		
 		boolean createTemplateAndPostDocs = createAndDestroy ? true : !checkIfStaticIndexJustPresent(connection.getElasticClient());
 		if(createTemplateAndPostDocs) {
 			addIndexTemplate(connection.getElasticClient());

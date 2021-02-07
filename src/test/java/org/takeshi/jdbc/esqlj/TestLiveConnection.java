@@ -21,7 +21,7 @@ import org.takeshi.jdbc.esqlj.testUtils.TestUtils;
 
 @ElasticLiveUnit
 @ExtendWith(ElasticLiveEnvironment.class)
-public class ConnectionLiveTestUnit
+public class TestLiveConnection
 {
     
     @Test

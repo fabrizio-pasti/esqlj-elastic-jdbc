@@ -12,7 +12,6 @@ public class ElasticLiveEnvironment implements BeforeAllCallback, ExtensionConte
             initialized = true;
             context.getRoot().getStore(ExtensionContext.Namespace.GLOBAL).put("ElasticLiveEnvironment", instance);
             TestUtils.setupElastic();
-            System.out.println("Started Test suite");
         }
     }
 
@@ -24,7 +23,6 @@ public class ElasticLiveEnvironment implements BeforeAllCallback, ExtensionConte
     @Override
     public void close() throws Exception {
     	TestUtils.tearOffElastic();
-    	System.out.println("Test suite end");
     }
 
 }

@@ -22,7 +22,7 @@ import org.takeshi.jdbc.esqlj.testUtils.TestUtils;
 
 @ElasticLiveUnit
 @ExtendWith(ElasticLiveEnvironment.class)
-public class ResultSetMetadataLiveTest
+public class TestLiveResultSetMetadata
 {
 
 	private static Statement stmt;

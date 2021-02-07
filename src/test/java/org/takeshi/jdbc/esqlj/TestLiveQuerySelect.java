@@ -21,7 +21,7 @@ import org.takeshi.jdbc.esqlj.testUtils.TestUtils;
 
 @ElasticLiveUnit
 @ExtendWith(ElasticLiveEnvironment.class)
-public class QuerySelectLiveTestUnit
+public class TestLiveQuerySelect
 {
 	@Test
 	public void selectStar() throws SQLException {

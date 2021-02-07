@@ -47,12 +47,6 @@
 			<version>3.11</version>
 			<scope>test</scope>
 		</dependency>
-
-		<!-- dependency> <groupId>junit</groupId> <artifactId>junit</artifactId> 
-			<version>4.13.1</version> <scope>test</scope> </dependency> <dependency> 
-			<groupId>pl.pragmatists</groupId> <artifactId>JUnitParams</artifactId> <version>1.1.1</version> 
-			<scope>test</scope> </dependency> <dependency> <groupId>org.apache.commons</groupId> 
-			<artifactId>commons-lang3</artifactId> <version>3.4</version> </dependency -->
 	</dependencies>
 
 	<build>
@@ -81,7 +75,6 @@
 				<artifactId>maven-shade-plugin</artifactId>
 				<version>3.2.4</version>
 				<configuration>
-					<!-- put your configurations here -->
 				</configuration>
 				<executions>
 					<execution>
@@ -94,20 +87,15 @@
 			</plugin>
 
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-report-plugin</artifactId>
-				<version>2.6</version>
+			    <groupId>org.apache.maven.plugins</groupId>
+			    <artifactId>maven-surefire-plugin</artifactId>
+			    <version>2.22.2</version>
 			</plugin>
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>3.2.0</version>
-				<configuration>
-					<additionalparam>-Xdoclint:none</additionalparam>
-					<additionalOptions>-Xdoclint:none</additionalOptions>
-					<additionalJOption>-Xdoclint:none</additionalJOption>
-				</configuration>
+				<artifactId>maven-surefire-report-plugin</artifactId>
+				<version>2.6</version>
 			</plugin>
 
 			<plugin>
@@ -120,19 +108,6 @@
 				</configuration>
 			</plugin>
 
-
-			<plugin>
-				<groupId>org.apache.felix</groupId>
-				<artifactId>maven-bundle-plugin</artifactId>
-				<configuration>
-					<instructions>
-						<Bundle-SymbolicName>org.xerial.sqlite-jdbc;singleton:=true</Bundle-SymbolicName>
-						<Import-Package>
-							*;resolution:=optional
-						</Import-Package>
-					</instructions>
-				</configuration>
-			</plugin>
 		</plugins>
 		<pluginManagement>
 			<plugins>

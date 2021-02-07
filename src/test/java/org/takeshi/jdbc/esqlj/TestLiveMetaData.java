@@ -19,7 +19,7 @@ import org.takeshi.jdbc.esqlj.testUtils.TestUtils;
 
 @ElasticLiveUnit
 @ExtendWith(ElasticLiveEnvironment.class)
-public class MetaDataLiveTestUnit
+public class TestLiveMetaData
 {
 
 	@Test
