@@ -8,8 +8,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Properties;
 
-import org.fpasti.jdbc.esqlj.Configuration;
-import org.fpasti.jdbc.esqlj.ConfigurationPropertyEnum;
 import org.fpasti.jdbc.esqlj.support.ElasticInstance.HttpProtocol;
 import org.fpasti.jdbc.esqlj.testUtils.TestUtils;
 import org.junit.jupiter.params.ParameterizedTest;
