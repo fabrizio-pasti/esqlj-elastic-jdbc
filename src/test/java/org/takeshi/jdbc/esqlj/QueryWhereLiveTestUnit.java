@@ -24,7 +24,7 @@ import org.takeshi.jdbc.esqlj.testUtils.TestUtils;
 @ElasticLiveUnit
 @ExtendWith(ElasticLiveEnvironment.class)
 public class QueryWhereLiveTestUnit
-{/*
+{
 	@Test
 	public void selectWhere001() throws SQLException {
 		Statement stmt = TestUtils.getLiveConnection().createStatement();
@@ -467,18 +467,6 @@ public class QueryWhereLiveTestUnit
 	public void selectWhere040() throws SQLException {
 		Statement stmt = TestUtils.getLiveConnection().createStatement();
 		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT _id from testIndex WHERE timestampField BETWEEN TO_DATE('2020/01/01', 'yyyy/mm/dd') AND TO_DATE('2020/12/31', 'yyyy/mm/dd')"));
-		while(rs.next()) {
-			assertEquals(rs.getString(1), "doc_01");
-		}
-		assertEquals(rs.getRow(), 1);
-		rs.close();
-		stmt.close();
-	}*/
-
-	@Test
-	public void selectWhere041() throws SQLException {
-		Statement stmt = TestUtils.getLiveConnection().createStatement();
-		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT _id from testIndex WHERE timestampField BETWEEN TO_DATE('2020/01/01', 'YYYY/MM/DD') AND TO_DATE('2020/12/31', 'YYYY/MM/DD')"));
 		while(rs.next()) {
 			assertEquals(rs.getString(1), "doc_01");
 		}
