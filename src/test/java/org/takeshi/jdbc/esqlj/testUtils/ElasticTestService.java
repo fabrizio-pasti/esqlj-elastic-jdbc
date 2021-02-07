@@ -11,6 +11,8 @@ import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.support.master.AcknowledgedResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.core.CountRequest;
+import org.elasticsearch.client.core.CountResponse;
 import org.elasticsearch.client.indices.GetIndexRequest;
 import org.elasticsearch.client.indices.IndexTemplatesExistRequest;
 import org.elasticsearch.client.indices.PutIndexTemplateRequest;
@@ -26,19 +28,22 @@ public class ElasticTestService {
 	private static final String ELASTIC_BASE_INDEX_CREATE_ONLY = "esqlj-test-static-010";
 	
 	public static String CURRENT_INDEX;
+	public static int NUMBER_OF_DOCS;
 	
 	public static void setup(EsConnection connection, boolean createAndDestroy) throws Exception {
 		cleanUp(connection.getElasticClient());
 		
 		setCurrentIndex(createAndDestroy);
-		boolean continueFlow = createAndDestroy ? true : !checkIfStaticIndexJustPresent(connection.getElasticClient());
 		
-		if(continueFlow) {
+		boolean createTemplateAndPostDocs = createAndDestroy ? true : !checkIfStaticIndexJustPresent(connection.getElasticClient());
+		if(createTemplateAndPostDocs) {
 			addIndexTemplate(connection.getElasticClient());
 			postDocuments(connection.getElasticClient(), createAndDestroy);
 		}
+		
+		retrieveNumberOfDocs(connection.getElasticClient());
 	}
-	
+
 	public static void tearOff(EsConnection connection) throws IOException {
 		cleanUp(connection.getElasticClient());
 	}
@@ -91,4 +96,9 @@ public class ElasticTestService {
 		return client.indices().exists(request, RequestOptions.DEFAULT);
 	}
 
+	private static void retrieveNumberOfDocs(RestHighLevelClient client) throws IOException {
+		CountRequest countRequest = new CountRequest(CURRENT_INDEX);
+		CountResponse res = client.count(countRequest, RequestOptions.DEFAULT);
+		NUMBER_OF_DOCS = new Long(res.getCount()).intValue();
+	}
 }

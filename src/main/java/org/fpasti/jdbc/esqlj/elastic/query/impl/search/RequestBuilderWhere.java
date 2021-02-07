@@ -1,4 +1,4 @@
-package org.fpasti.jdbc.esqlj.elastic.query.impl.search;
+	package org.fpasti.jdbc.esqlj.elastic.query.impl.search;
 
 
 import java.sql.SQLException;

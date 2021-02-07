@@ -28,10 +28,9 @@ Optional parameters:
 | userName | Credential user name | -
 | password | Credential password | -
 | includeTextFieldsByDefault | Include text typed fields by default on select * | false
-| indexMetaDataCache | Cache retrieved index structure. Strongly suggested for select on Elastic 'alias' | false
+| indexMetaDataCache | Cache retrieved index structure. Select execution engine requires to know index / alias structure, retrieve this information it could be an heavy operation especially for alias or starred index query. Best choice to enable it on unmutable index | true
 | queryScrollFromRows | Number of rows fetched on first pagination | 500
 | queryScrollFetchSize | Fetched rows on next pagination | 500
-| queryScrollTimeoutMinutes | Timeout between pagination expressed in minutes | 3
 | queryScrollTimeoutMinutes | Timeout between pagination expressed in minutes | 3
 | queryScrollOnlyByScrollApi | If false apply the scroll strategy that best fit the query (see Pagination paragraph below) | true
 | sharedConnection | If true rest client will be statically shared between all connection (use it if you don't have the requirement to connect to different Elastic clusters | true
@@ -41,6 +40,8 @@ Optional parameters:
 
 Elastic indices are managed like SQL Tables.
 Elastic aliases are managed like SQL Views. 
+
+Query on index / alias containing special character like '*', '-', '.' need to be double quoted.
 
 Document identifier "_id" is returned like a column and mapped like primary key on metadata info
 

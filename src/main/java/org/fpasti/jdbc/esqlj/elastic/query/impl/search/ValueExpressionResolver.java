@@ -51,6 +51,13 @@ public class ValueExpressionResolver {
 			case MULTIPLICATION:
 				Multiplication multiplication = (Multiplication)expression;
 				return multiplication(evaluateValueExpression(multiplication.getLeftExpression()), evaluateValueExpression(multiplication.getRightExpression()));
+			case COLUMN:
+				Column column = (Column)expression;
+				if(column.getColumnName().equalsIgnoreCase("SYSDATE")) {
+					Function fSysDate = new Function();
+					fSysDate.setName("SYSDATE");
+					return resolveFunction((Function)fSysDate);
+				}
 			default:
 				throw new SQLException(String.format("Unmanaged expression: %s", ExpressionEnum.resolveByInstance(expression).name()));
 		}
@@ -67,14 +74,22 @@ public class ValueExpressionResolver {
 				return ToDateUtils.resolveToDate((String)evaluateValueExpression(parameters.getExpressions().get(0)), (String)evaluateValueExpression(parameters.getExpressions().get(1)));
 			case "NOW":
 			case "GETDATE":
+			case "CURDATE":
+			case "SYSDATE":
 				return LocalDateTime.now(ZoneId.systemDefault());
 			case "TRUNC":
 				if(parameters.getExpressions().get(0) instanceof Column && ((Column)parameters.getExpressions().get(0)).getColumnName().equalsIgnoreCase("SYSDATE")) {
 					return LocalDateTime.now(ZoneId.systemDefault());
+				} else if(parameters.getExpressions().get(0) instanceof Function) {
+					Function nestedFunction = (Function)parameters.getExpressions().get(0);
+					if(nestedFunction.getName().equalsIgnoreCase("SYSDATE")  
+							|| nestedFunction.getName().equalsIgnoreCase("GETDATE")
+							|| nestedFunction.getName().equalsIgnoreCase("CURDATE")
+							|| nestedFunction.getName().equalsIgnoreCase("NOW")) {
+						return LocalDateTime.now(ZoneId.systemDefault());
+					}
 				}
 				throw new SQLSyntaxErrorException(String.format("'%s' unsupported", function.toString()));
-			case "CURDATE":
-				return LocalDateTime.now(ZoneId.systemDefault());
 		}
 		throw new SQLSyntaxErrorException(String.format("Function '%s' unsupported", function.getName()));
 	}

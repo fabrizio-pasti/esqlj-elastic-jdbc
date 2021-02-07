@@ -131,7 +131,7 @@ public class TestUtils {
 	}
 
 	public static String resolveTestIndex(String txt) {
-		return txt.replace("testIndex", "\"".concat(ElasticTestService.CURRENT_INDEX).concat("\""));
+		return txt.replace("testIndexStar", "\"".concat(ElasticTestService.CURRENT_INDEX).concat("*\"")).replace("testIndex", "\"".concat(ElasticTestService.CURRENT_INDEX).concat("\""));
 	}
 
 }

@@ -43,6 +43,24 @@ public class SimpleSelectLiveTestUnit
 	}
 	
 	@Test
+	public void selectWithStarIndex() throws SQLException {
+		Statement stmt = TestUtils.getLiveConnection().createStatement();
+		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT * from testIndexStar"));
+		rs.next();
+		assertEquals(rs.getRow(), 1);
+		assertNotNull(rs.getObject(1));
+		assertNotNull(rs.getObject(2));
+		assertNotNull(rs.getObject(3));
+		assertNotNull(rs.getObject(4));
+		assertNotNull(rs.getObject(5));
+		assertNotNull(rs.getObject(6));
+		assertNotNull(rs.getObject(7));
+		assertNull(rs.getObject(8));
+		assertNotNull(rs.getObject(9));
+		assertNotNull(rs.getObject(10));
+	}
+	
+	@Test
 	public void selectColumns() throws SQLException {
 		Statement stmt = TestUtils.getLiveConnection().createStatement();
 		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT timestampField, keywordField from testIndex"));

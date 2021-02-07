@@ -184,7 +184,7 @@ public class ElasticQuery extends AbstractQuery {
 
 	@Override
 	public int getCurrentRowIndex() throws SQLException {
-		return pageData.getCurrentRowIndex() + 1;
+		return pageData.getCurrentRowIndex() + (pageData.getCurrentRowIndex() == pageData.getSize() ? 0 : 1);
 	}
 	
 	@Override
