@@ -1,7 +1,6 @@
 package org.takeshi.jdbc.esqlj;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -22,13 +21,67 @@ import org.takeshi.jdbc.esqlj.testUtils.TestUtils;
 @ExtendWith(ElasticLiveEnvironment.class)
 public class MetaDataLiveTestUnit
 {
-	
+
 	@Test
-	public void selectWithAlias() throws SQLException {
+	public void simpleSelect() throws SQLException {
 		Statement stmt = TestUtils.getLiveConnection().createStatement();
-		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT keywordField alias from testIndex"));
+		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT keywordField from testIndex"));
 		ResultSetMetaData rsm = rs.getMetaData();
 		assertEquals(rsm.getColumnName(1), "keywordField");
-		assertEquals(rsm.getColumnLabel(1), "alias");
+		assertEquals(rsm.getColumnLabel(1), "keywordField");
+	}
+	
+	@Test
+	public void selectStart() throws SQLException {
+		Statement stmt = TestUtils.getLiveConnection().createStatement();
+		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT * from testIndex"));
+		ResultSetMetaData rsm = rs.getMetaData();
+		assertEquals(rsm.getColumnName(1), "booleanField");
+		assertEquals(rsm.getColumnName(2), "doubleField");
+		assertEquals(rsm.getColumnName(3), "geoPointField");
+		assertEquals(rsm.getColumnName(4), "integerField");
+		assertEquals(rsm.getColumnName(5), "keywordField");
+		assertEquals(rsm.getColumnName(6), "longField");
+		assertEquals(rsm.getColumnName(7), "object.keywordObjectField");
+		assertEquals(rsm.getColumnName(8), "textField");
+		assertEquals(rsm.getColumnName(9), "timestampField");
+		assertEquals(rsm.getColumnName(10), "_id");
+		assertEquals(rsm.getColumnCount(), 10);
+	}
+
+	@Test
+	public void simpleSelectWithAlias() throws SQLException {
+		Statement stmt = TestUtils.getLiveConnection().createStatement();
+		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT keywordField keywordFieldAlias from testIndex"));
+		ResultSetMetaData rsm = rs.getMetaData();
+		assertEquals(rsm.getColumnName(1), "keywordField");
+		assertEquals(rsm.getColumnLabel(1), "keywordFieldAlias");
+	}
+	
+	@Test
+	public void simpleSelectWithAliasWithAs() throws SQLException {
+		Statement stmt = TestUtils.getLiveConnection().createStatement();
+		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT keywordField AS keywordFieldAlias from testIndex"));
+		ResultSetMetaData rsm = rs.getMetaData();
+		assertEquals(rsm.getColumnName(1), "keywordField");
+		assertEquals(rsm.getColumnLabel(1), "keywordFieldAlias");
+	}
+
+	@Test
+	public void selectWithDoubleQuotedColumn() throws SQLException {
+		Statement stmt = TestUtils.getLiveConnection().createStatement();
+		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT \"keywordField\" from testIndex"));
+		ResultSetMetaData rsm = rs.getMetaData();
+		assertEquals(rsm.getColumnName(1), "keywordField");
+		assertEquals(rsm.getColumnLabel(1), "keywordField");
+	}
+	
+	@Test
+	public void selectWithDoubleQuotedAlias() throws SQLException {
+		Statement stmt = TestUtils.getLiveConnection().createStatement();
+		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT keywordField AS \"keywordFieldAlias\" from testIndex"));
+		ResultSetMetaData rsm = rs.getMetaData();
+		assertEquals(rsm.getColumnName(1), "keywordField");
+		assertEquals(rsm.getColumnLabel(1), "keywordFieldAlias");
 	}
 }

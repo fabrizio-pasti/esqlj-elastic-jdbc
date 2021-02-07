@@ -2,7 +2,6 @@ package org.takeshi.jdbc.esqlj;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.sql.ResultSet;
@@ -22,7 +21,7 @@ import org.takeshi.jdbc.esqlj.testUtils.TestUtils;
 
 @ElasticLiveUnit
 @ExtendWith(ElasticLiveEnvironment.class)
-public class SimpleSelectLiveTestUnit
+public class QuerySelectLiveTestUnit
 {
 	@Test
 	public void selectStar() throws SQLException {
@@ -37,7 +36,7 @@ public class SimpleSelectLiveTestUnit
 		assertNotNull(rs.getObject(5));
 		assertNotNull(rs.getObject(6));
 		assertNotNull(rs.getObject(7));
-		assertNull(rs.getObject(8));
+		assertNotNull(rs.getObject(8));
 		assertNotNull(rs.getObject(9));
 		assertNotNull(rs.getObject(10));
 	}
@@ -55,7 +54,7 @@ public class SimpleSelectLiveTestUnit
 		assertNotNull(rs.getObject(5));
 		assertNotNull(rs.getObject(6));
 		assertNotNull(rs.getObject(7));
-		assertNull(rs.getObject(8));
+		assertNotNull(rs.getObject(8));
 		assertNotNull(rs.getObject(9));
 		assertNotNull(rs.getObject(10));
 	}
@@ -72,4 +71,25 @@ public class SimpleSelectLiveTestUnit
 		assertEquals(rs.getObject(2).getClass(), String.class);
 	}
 	
+	@Test
+	public void selectColumnDoubleQuoted() throws SQLException {
+		Statement stmt = TestUtils.getLiveConnection().createStatement();
+		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT \"keywordField\" from testIndex WHERE keywordField='keyword01'"));
+		assertEquals(rs.next(), true);
+		assertEquals(rs.getString(1), "keyword01");
+		assertEquals(rs.getRow(), 1);
+		rs.close();
+		stmt.close();
+	}
+	
+	@Test
+	public void selectColumnWithDoubleQuotedAlias() throws SQLException {
+		Statement stmt = TestUtils.getLiveConnection().createStatement();
+		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT timestampField, keywordField AS \"keywordFieldAlias\" from testIndex WHERE keywordField='keyword01'"));
+		assertEquals(rs.next(), true);
+		assertEquals(rs.getString(2), "keyword01");
+		assertEquals(rs.getRow(), 1);
+		rs.close();
+		stmt.close();
+	}
 }

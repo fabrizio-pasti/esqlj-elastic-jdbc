@@ -28,7 +28,7 @@ public class ElasticTestService {
 	private static final String ELASTIC_BASE_INDEX_CREATE_ONLY = "esqlj-test-static-010";
 	
 	public static String CURRENT_INDEX;
-	public static int NUMBER_OF_DOCS;
+	private static Integer NUMBER_OF_DOCS;
 	
 	public static void setup(EsConnection connection, boolean createAndDestroy) throws Exception {
 		cleanUp(connection.getElasticClient());
@@ -41,7 +41,6 @@ public class ElasticTestService {
 			postDocuments(connection.getElasticClient(), createAndDestroy);
 		}
 		
-		retrieveNumberOfDocs(connection.getElasticClient());
 	}
 
 	public static void tearOff(EsConnection connection) throws IOException {
@@ -96,9 +95,17 @@ public class ElasticTestService {
 		return client.indices().exists(request, RequestOptions.DEFAULT);
 	}
 
-	private static void retrieveNumberOfDocs(RestHighLevelClient client) throws IOException {
-		CountRequest countRequest = new CountRequest(CURRENT_INDEX);
-		CountResponse res = client.count(countRequest, RequestOptions.DEFAULT);
-		NUMBER_OF_DOCS = new Long(res.getCount()).intValue();
+	public static int getNumberOfDocs() {
+		if(NUMBER_OF_DOCS == null) {
+			CountRequest countRequest = new CountRequest(CURRENT_INDEX);
+			CountResponse res;
+			try {
+				res = TestUtils.getLiveConnection().getElasticClient().count(countRequest, RequestOptions.DEFAULT);
+			} catch (Exception e) {
+				throw new RuntimeException("Failed to get number of documents on testing index");
+			} 
+			NUMBER_OF_DOCS = new Long(res.getCount()).intValue();
+		}
+		return NUMBER_OF_DOCS;
 	}
 }

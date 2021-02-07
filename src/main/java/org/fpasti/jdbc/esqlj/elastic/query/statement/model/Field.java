@@ -19,7 +19,7 @@ public class Field {
 	
 	public Field(String name, String alias, String index) {
 		this.name = name.replace("\"", "");
-		this.alias = alias;
+		this.alias = alias != null ? alias.replace("\"", "") : null;
 		this.index = index;
 	}
 

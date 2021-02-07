@@ -66,7 +66,7 @@ public class PageDataElastic {
 						data.add(null);
 					}
 				} else if(req.isSourceFieldsToRetrieve()) {
-					data.add(searchResponse.getHits().getAt(0).getSourceAsMap().get(field.getFullName()));
+					data.add(searchHit.getSourceAsMap().get(field.getFullName()));
 				} else {
 					data.add(null);
 				}

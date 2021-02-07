@@ -14,6 +14,7 @@ public class EvaluateQueryResult {
 		private List<QueryBuilder> queryBuilders = new ArrayList<QueryBuilder>();
 		private List<QueryBuilder> notQueryBuilders = new ArrayList<QueryBuilder>();
 		private TermsQuery termsQuery = new TermsQuery();
+		private boolean reverseNegateOnNot;
 		
 		public EvaluateQueryResult() {
 		}
@@ -92,6 +93,14 @@ public class EvaluateQueryResult {
 
 		public boolean isAnd() {
 			return and;
+		}
+
+		public boolean isReverseNegateOnNot() {
+			return reverseNegateOnNot;
+		}
+
+		public void setReverseNegateOnNot(boolean reverseNegateOnNot) {
+			this.reverseNegateOnNot = reverseNegateOnNot;
 		}
 	
 	}

@@ -41,15 +41,15 @@ Optional parameters:
 Elastic indices are managed like SQL Tables.
 Elastic aliases are managed like SQL Views. 
 
-Query on index / alias containing special character like '*', '-', '.' need to be double quoted.
+Query on index / alias containing special character like '*', '-', '.' need to be double quoted. For example 'SELECT * FROM ".test-index*"'
+Field and alias containing special characters like '-' must also to be double quoted.
 
-Document identifier "_id" is returned like a column and mapped like primary key on metadata info
+Document identifier "_id" is returned like a column and mapped on MetaData like primary key. This column is also available on Where condition for matching query (=, !=)
 
-Like where filter is implemented using terms wildcard Elastic Query (https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-wildcard-query.html)
-
-Select joining actually not supported.
+Like filter is implemented by Wildcard Elastic Query (https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-wildcard-query.html)
 
 
+About SQL implementation see below section 'Support matrix and conventions'
 
 ## Types
 
@@ -97,12 +97,56 @@ ESQLJ_TEST_CONFIG="jdbc:esqlj:http://<elastic_address>:<elastic_port>|<createAnd
 | Parameters | Actions | Scope
 |--- |--- |---
 | createAndDestroy | Create index 'esqlj-test-volatile-\<uuid\>' and at the end of execution of test units delete it | Continuous Delivery/Deployment
-| createOnly | Create index 'esqlj-test-static-<release.version>'. If it's just present preserve it. (Will be required a manual delete of index).| Development stage
+| createOnly | Create index 'esqlj-test-static-\<release.version\>'. If it's just present preserve it. (Will be required a manual delete of index).| Development stage
 
 Sample configuration:
 ESQLJ_TEST_CONFIG="jdbc:esqlj:http://10.77.154.32:9080|createOnly"
 
 If ESQLJ_TEST_CONFIG isn't declared, all tests depending from live connection will be skipped. 
+
+## Support matrix and conventions
+
+### From clause
+Supported: column, alias, *
+
+### Where condition
+
+The column must to be declared typically on left of expression (`value`=column is managed like invalid from esqlj)
+You can use both column name or column alias in expression.
+
+| Expression condition | Notes
+|--- |--- 
+| `column` = `value` | 
+| `column` != `value` | 
+| `column` > `numeric_value` | 
+| `column` >= `numeric_value` | 
+| `column` < `numeric_value` | 
+| `column` <= `numeric_value` | 
+| `column` LIKE `expression` | Implemented by Wildcard ElasticSearch filter. See ElasticSearch documentation about its usage
+| `column` IS NULL |
+| `column` IS NOT NULL |
+| `column` BETWEEN `a` AND `b` | `a` and `b` could be NUMBER, STRING, date expressed by TO_DATE('date', 'mask_date'), EXTRACT function
+
+#### Functions
+
+| Function name | Notes
+|--- |--- 
+| SYSDATE | Current date time
+| SYSDATE() | Current date time
+| NOW() | Current date time
+| GETDATE() | Current date time
+| TRUNC(SYSDATE\|SYSDATE()) | Current date
+| TO_DATE(`date`, `mask_date`) | Supported mask: YEAR, YYYY, YY, MM, MONTH, MON, DDD, DD, HH24, HH12, HH, MI, SS, DAY, XFF, FFF, FF, F, PM, TZR, TZH. Example TO_DATE('2020/01/01', 'YYYY/MM/DD')
+| EXTRACT(`PERIOD` FROM `column`) [=, !=, >, >=, <, <=] `numeric_value` | PERIOD can be valued with `YEAR`, `MONTH`, `DAY`, `HOUR`, `MINUTE`, `SECOND`
+
+### Limit
+
+You can append at the end of query a limitator of retrieved rows:
+SELECT * FROM `column` LIMIT 100
+
+
+
+
 
 ## About me
 Fabrizio Pasti
