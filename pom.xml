@@ -2,14 +2,14 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	
+
 	<name>esqlj</name>
 	<groupId>org.takeshi.jdbc</groupId>
 	<artifactId>esqlj</artifactId>
 	<version>0.1.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<url>http://maven.apache.org</url>
-	
+
 	<developers>
 		<developer>
 			<id>fabrizio.pasti@gmail.com</id>
@@ -18,7 +18,7 @@
 			<url>https://github.com/fabrizio-pasti</url>
 		</developer>
 	</developers>
-	
+
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
@@ -30,34 +30,29 @@
 			<version>7.10.2</version>
 		</dependency>
 		<dependency>
-		    <groupId>com.github.jsqlparser</groupId>
-		    <artifactId>jsqlparser</artifactId>
-		    <version>4.0</version>
-		</dependency>		
-		
+			<groupId>com.github.jsqlparser</groupId>
+			<artifactId>jsqlparser</artifactId>
+			<version>4.0</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter</artifactId>
 			<version>5.7.1</version>
 			<scope>test</scope>
 		</dependency>
-		<!-- dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.13.1</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>pl.pragmatists</groupId>
-			<artifactId>JUnitParams</artifactId>
-			<version>1.1.1</version>
-			<scope>test</scope>
-		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
-			<version>3.4</version>
-		</dependency-->
+			<version>3.11</version>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- dependency> <groupId>junit</groupId> <artifactId>junit</artifactId> 
+			<version>4.13.1</version> <scope>test</scope> </dependency> <dependency> 
+			<groupId>pl.pragmatists</groupId> <artifactId>JUnitParams</artifactId> <version>1.1.1</version> 
+			<scope>test</scope> </dependency> <dependency> <groupId>org.apache.commons</groupId> 
+			<artifactId>commons-lang3</artifactId> <version>3.4</version> </dependency -->
 	</dependencies>
 
 	<build>

@@ -6,8 +6,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Properties;
 
 import org.fpasti.jdbc.esqlj.Configuration;
+import org.fpasti.jdbc.esqlj.ConfigurationPropertyEnum;
 import org.fpasti.jdbc.esqlj.support.ElasticInstance.HttpProtocol;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -40,12 +42,14 @@ public class ConnectionTestUnit {
 		"false; jdbc:esqlj:http://10.53.137.170:9200,elastic.server.com:9200"
 		})
 	public void checkUrl(boolean valid, String url) throws SQLException {
+		Properties properties = new Properties();
+		properties.put(ConfigurationPropertyEnum.CFG_SHARED_CONNECTION.getConfigName(), false);
 		if (valid) {
-			Connection connection = TestUtils.getTestConnection(url, null);
+			Connection connection = TestUtils.getTestConnection(url, properties);
 			assertNotNull(connection);
 		} else {
 			SQLException e = assertThrows(SQLException.class, () -> {
-				TestUtils.getTestConnection(url, null);
+				TestUtils.getTestConnection(url, properties);
 			});
 			assertEquals(e.getMessage(), "Invalid connection string");
 		}
@@ -58,11 +62,13 @@ public class ConnectionTestUnit {
 	"jdbc:esqlj:https://elastic.server.com:9201, https, elastic.server.com, 9201"
 	})
 	public void checkUrl2(String url, String protocol, String server, int port) throws SQLException {
-		HttpProtocol httpProtocol = HttpProtocol.https;;
+		HttpProtocol httpProtocol = HttpProtocol.https;
+		Properties properties = new Properties();
+		properties.put(ConfigurationPropertyEnum.CFG_SHARED_CONNECTION.getConfigName(), false);
 		if(protocol.equals("http")) {
 			httpProtocol = HttpProtocol.http;
 		} 
-		TestUtils.getTestConnection(url, null);
+		TestUtils.getTestConnection(url, properties);
 		assertEquals(Configuration.getUrls().get(0).getProtocol(), httpProtocol);
 		assertEquals(Configuration.getUrls().get(0).getServer(), server);
 		assertEquals(Configuration.getUrls().get(0).getPort(), port);

@@ -54,15 +54,4 @@ public class SimpleSelectLiveTestUnit
 		assertEquals(rs.getObject(2).getClass(), String.class);
 	}
 	
-	@Test
-	public void selectWithAlias() throws SQLException {
-		Statement stmt = TestUtils.getLiveConnection().createStatement();
-		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT keywordField alias from testIndex"));
-		rs.next();
-		assertNotNull(rs.getObject(1));
-		assertNotNull(rs.getObject(2));
-		assertThrows(IndexOutOfBoundsException.class,() -> rs.getObject(3));
-		assertEquals(rs.getObject(1).getClass(), LocalDateTime.class);
-		assertEquals(rs.getObject(2).getClass(), String.class);
-	}
 }

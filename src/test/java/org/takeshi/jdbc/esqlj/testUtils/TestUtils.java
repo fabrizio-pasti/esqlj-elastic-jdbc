@@ -80,7 +80,9 @@ public class TestUtils {
     }
 
 	public static void setupElastic() throws Exception {
-		EsConnection connection = getLiveConnection(null);
+		Properties properties = new Properties();
+		properties.put(ConfigurationPropertyEnum.CFG_SHARED_CONNECTION.getConfigName(), false);
+		EsConnection connection = getLiveConnection(properties);
 		
 		switch(systemProperties[1]) {
 			case SETUP_MODE_CREATE_AND_DESTROY:

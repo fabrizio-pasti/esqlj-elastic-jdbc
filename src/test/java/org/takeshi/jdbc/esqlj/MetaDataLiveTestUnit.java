@@ -1,16 +1,13 @@
 package org.takeshi.jdbc.esqlj;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.takeshi.jdbc.esqlj.testUtils.ElasticLiveEnvironment;
@@ -25,11 +22,6 @@ import org.takeshi.jdbc.esqlj.testUtils.TestUtils;
 @ExtendWith(ElasticLiveEnvironment.class)
 public class MetaDataLiveTestUnit
 {
-	
-	@Test
-	public void metaDataURL() throws SQLException {
-		assertTrue(TestUtils.getURL().startsWith("jdbc:esqlj:".concat(TestUtils.getLiveConnection().getMetaData().getURL())));
-	}
 	
 	@Test
 	public void selectWithAlias() throws SQLException {

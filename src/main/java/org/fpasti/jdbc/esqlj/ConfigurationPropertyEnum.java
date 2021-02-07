@@ -34,4 +34,8 @@ public enum ConfigurationPropertyEnum {
 	        return Arrays.stream(values()).filter(e -> e.name.equals(name)).findFirst().orElse(null);
 	    }
 		
+		public String getConfigName() {
+			return name;
+		}
+		
 	}
