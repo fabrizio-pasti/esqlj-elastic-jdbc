@@ -54,22 +54,22 @@ By default the maximum number of document fields that can be retrieved is set to
 This explains - for example - because by default .kibana_* index containing almost 500 fields return an error on 'select *'.  
 For increasing this configuration threshold change this Elastic setting according to your needs: 'index.max_docvalue_fields_search'
 
-Change behaviour on indices that start with 'my-index':
+Change max doc threshold on indices that start with 'my-index':
 ```
 PUT /my-index*/_settings
 {
   "index" : {
-    "index.max_docvalue_fields_search" : 500
+    "max_docvalue_fields_search" : 500
   }
 }
 ```
 
-Change behaviour on all indices:
+Change max doc threshold on all indices:
 ```
 PUT /*/_settings
 {
   "index" : {
-    "index.max_docvalue_fields_search" : 500
+    "max_docvalue_fields_search" : 500
   }
 }
 ```
