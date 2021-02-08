@@ -38,9 +38,11 @@ Optional parameters:
 
 ## Concepts
 
-Elastic indices are managed like SQL Tables.  Elastic aliases are managed like SQL Views. 
+Elastic indices are managed like SQL Tables.  
+Elastic aliases are managed like SQL Views. 
 
-Query on index / alias containing special character like '*', '-', '.' need to be double quoted. For example 'SELECT * FROM ".test-index*"'  Field and alias containing special characters like '-' must also to be double quoted.
+Query on index / alias containing special character like '*', '-', '.' need to be double quoted. For example 'SELECT * FROM ".test-index*"'  
+Field and alias containing special characters like '-' must also to be double quoted.
 
 Document identifier "_id" is returned like a column and mapped on MetaData like primary key. This column is also available on Where condition for matching query (=, !=)
 
@@ -108,7 +110,9 @@ Still on the subject of scrolling by order, the driver will automatically try to
 Pay attention: Scroll API consume resources on server. It's a best practice to fetch all required data as soon as possible. The scroll link will be automatically released from esql at the end of data retrieve.
 
 ## Testing
-Most of test units require a live Elastic instance.  The activation of these units is commanded by a system variable named "ESQLJ_TEST_CONFIG".  The environment variabile must concatenate a valid esqlj JDBC url connection string and the load strategy of the documents requested by query inside units:
+Most of test units require a live Elastic instance.  
+The activation of these units is commanded by a system variable named "ESQLJ_TEST_CONFIG".  
+The environment variabile must concatenate a valid esqlj JDBC url connection string and the load strategy of the documents requested by query inside units:
 
 ```
 ESQLJ_TEST_CONFIG="jdbc:esqlj:http://<elastic_address>:<elastic_port>|<createAndDestroy or createOnly>
@@ -131,7 +135,7 @@ Supported: column, alias, *
 
 ### Where condition
 
-The column must to be declared typically on left of expression (`value`=column is managed like invalid from esqlj)
+The column must to be declared typically on left of expression (`value`=column is managed like invalid from esqlj)  
 You can use both column name or column alias in expression.
 
 | Expression condition | Notes
