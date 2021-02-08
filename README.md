@@ -51,7 +51,7 @@ Document identifier "_id" is returned like a column and mapped on MetaData like 
 About SQL implementation see below section 'Support matrix and conventions'
 
 By default the maximum number of document fields that can be retrieved is set to 100.  
-This explain for example because by system configuration default .kibana_* index containing almost 500 fields return an error on 'select *'. For increasing this configuration threshold change this Elastic setting according to your needs: index.max_docvalue_fields_search
+This explain - for example - because by system configuration default .kibana_* index containing almost 500 fields return an error on 'select *'. For increasing this configuration threshold change this Elastic setting according to your needs: index.max_docvalue_fields_search
 
 Change behaviour on indices that start with 'my-index':
 PUT /my-index*/_settings
