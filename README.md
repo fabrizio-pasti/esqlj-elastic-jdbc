@@ -38,11 +38,9 @@ Optional parameters:
 
 ## Concepts
 
-Elastic indices are managed like SQL Tables.
-Elastic aliases are managed like SQL Views. 
+Elastic indices are managed like SQL Tables.  Elastic aliases are managed like SQL Views. 
 
-Query on index / alias containing special character like '*', '-', '.' need to be double quoted. For example 'SELECT * FROM ".test-index*"'
-Field and alias containing special characters like '-' must also to be double quoted.
+Query on index / alias containing special character like '*', '-', '.' need to be double quoted. For example 'SELECT * FROM ".test-index*"'  Field and alias containing special characters like '-' must also to be double quoted.
 
 Document identifier "_id" is returned like a column and mapped on MetaData like primary key. This column is also available on Where condition for matching query (=, !=)
 
