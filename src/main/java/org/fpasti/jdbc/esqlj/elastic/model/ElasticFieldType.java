@@ -10,6 +10,7 @@ import java.util.Arrays;
 
 public enum ElasticFieldType {
 
+		BINARY("binary", "NUMBER", Byte.class, Types.TINYINT, 3, null, null, false, false, true, false, false),
 		BOOLEAN("boolean", "BOOL", Boolean.class, Types.BOOLEAN, 1, null, null, false, false, true, false, false),
 		BYTE("short", "NUMBER", Byte.class, Types.TINYINT, 3, null, null, false, false, true, false, false),
 		CONSTANT_KEYWORD("constant_keyword", "VARCHAR", String.class, Types.VARCHAR, 10922, "'", "'", true, false, true, false, false),
@@ -17,6 +18,7 @@ public enum ElasticFieldType {
 		DATE_NANOS("date_nanos", "TIMESTAMP", LocalDateTime.class, Types.TIMESTAMP, 19, "'", "'", true, false, true, false, false),
 		DOC_ID("doc_id", "VARCHAR", String.class, Types.VARCHAR, 512, "'", "'", true, false, true, false, true),
 		DOUBLE("double", "NUMBER", Double.class, Types.DOUBLE, 76, null, null, false, false, true, false, false),
+		FLATTENED("flattened", "STRUCT", Object.class, Types.STRUCT, 0, null, null, false, false, true, false, false),
 		FLOAT("float", "NUMBER", Float.class, Types.FLOAT, 38, null, null, false, false, true, false, false),
 		GEO_POINT("geo_point", "STRUCT", EsGeoPoint.class, Types.STRUCT, 0, "'", "'", false, false, true, true, false),
 		HALF_FLOAT("half_float", "NUMBER", Float.class, Types.FLOAT, 16, null, null, false, false, true, false, false),

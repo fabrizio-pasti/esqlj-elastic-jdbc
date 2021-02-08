@@ -158,7 +158,7 @@ public class AbstractOneShotQuery extends AbstractQuery {
 	@Override
 	public ResultSetMetaData getResultSetMetaData() {
 		if(resultSetMetaData == null) {
-			resultSetMetaData = new EsResultSetMetaData(getSource(), getColumnNames(), fetchTypesByData(getColumnNames(), pageData.getDataRows()));
+			resultSetMetaData = new EsResultSetMetaData(getSource(), getColumnNames(), getColumnNames(), fetchTypesByData(getColumnNames(), pageData.getDataRows()));
 		}
 		return resultSetMetaData;
 	}

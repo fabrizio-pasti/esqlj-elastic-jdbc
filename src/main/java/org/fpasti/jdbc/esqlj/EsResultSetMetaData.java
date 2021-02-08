@@ -16,16 +16,11 @@ public class EsResultSetMetaData implements ResultSetMetaData {
 	private String source;
 	private List<String> labelNames;
 	private List<String> columnNames;
-	
-	
-	public EsResultSetMetaData(String source, List<String> labelNames, List<ElasticFieldType> columnTypes) {
+		
+	public EsResultSetMetaData(String source, List<String> labelNames, List<String> columnNames, List<ElasticFieldType> columnTypes) {
 		this.source = source;
 		this.labelNames = labelNames;
 		this.columnTypes = columnTypes;
-	}
-	
-	public EsResultSetMetaData(String source, List<String> labelNames, List<String> columnNames, List<ElasticFieldType> columnTypes) {
-		this(source, labelNames, columnTypes);
 		this.columnNames = columnNames;
 	}
 
