@@ -40,7 +40,7 @@ public class RequestBuilderFields {
 	private static void addFieldsToRequest(SqlStatementSelect query, RequestInstance req) {
 		List<String> sourceFields = !Configuration.getConfiguration(ConfigurationPropertyEnum.CFG_INCLUDE_TEXT_FIELDS_BY_DEFAULT, Boolean.class) && (query.getFields() == null || query.getFields().size() == 0) ?  null : new ArrayList<String>();
 		req.getFields().forEach((name, field) -> {
-			if(!field.isDocField()) {
+			if(!field.isDocValue()) {
 				if(sourceFields != null) {
 					sourceFields.add(field.getFullName());
 				}

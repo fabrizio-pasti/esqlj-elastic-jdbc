@@ -29,9 +29,9 @@ public class TestLiveQueryWhere
 	public void selectWhere001() throws SQLException {
 		Statement stmt = TestUtils.getLiveConnection().createStatement();
 		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT keywordField from testIndex WHERE keywordField='keyword01'"));
-		assertEquals(rs.next(), true);
-		assertEquals(rs.getString(1), "keyword01");
-		assertEquals(rs.next(), false);
+		assertEquals(true, rs.next());
+		assertEquals("keyword01", rs.getString(1));
+		assertEquals(false, rs.next());
 		rs.close();
 		stmt.close();
 	}
@@ -40,7 +40,7 @@ public class TestLiveQueryWhere
 	public void selectWhere002() throws SQLException {
 		Statement stmt = TestUtils.getLiveConnection().createStatement();
 		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT keywordField from testIndex WHERE keywordField='keyword01...'"));
-		assertEquals(rs.next(), false);
+		assertEquals(false, rs.next());
 		rs.close();
 		stmt.close();
 	}
@@ -50,9 +50,9 @@ public class TestLiveQueryWhere
 		Statement stmt = TestUtils.getLiveConnection().createStatement();
 		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT keywordField from testIndex WHERE NOT keywordField='keyword01'"));
 		while(rs.next()) {
-			assertNotEquals(rs.getString(1), "keyword01");
+			assertNotEquals("keyword01", rs.getString(1));
 		}
-		assertEquals(rs.getRow(), ElasticTestService.getNumberOfDocs() - 1);
+		assertEquals(ElasticTestService.getNumberOfDocs() - 1, rs.getRow());
 		rs.close();
 		stmt.close();
 	}
@@ -64,7 +64,7 @@ public class TestLiveQueryWhere
 		while(rs.next()) {
 			assertTrue(StringUtils.containsAny(rs.getString(1), "keyword01", "keyword02", "keyword03"));
 		}
-		assertEquals(rs.getRow(), 3);
+		assertEquals(3, rs.getRow());
 		rs.close();
 		stmt.close();
 	}
@@ -76,7 +76,7 @@ public class TestLiveQueryWhere
 		while(rs.next()) {
 			assertFalse(rs.getString(1).equals("keyword01"));
 		}
-		assertEquals(rs.getRow(), ElasticTestService.getNumberOfDocs() - 1);
+		assertEquals(ElasticTestService.getNumberOfDocs() - 1, rs.getRow());
 		rs.close();
 		stmt.close();
 	}
@@ -88,7 +88,7 @@ public class TestLiveQueryWhere
 		while(rs.next()) {
 			assertFalse(rs.getString(1).equals("keyword01"));
 		}
-		assertEquals(rs.getRow(), ElasticTestService.getNumberOfDocs() - 3);
+		assertEquals(ElasticTestService.getNumberOfDocs() - 3, rs.getRow());
 		rs.close();
 		stmt.close();
 	}
@@ -109,7 +109,7 @@ public class TestLiveQueryWhere
 		while(rs.next()) {
 			assertTrue(StringUtils.containsAny(rs.getString(1), "keyword01", "keyword02"));
 		}
-		assertEquals(rs.getRow(), 2);
+		assertEquals(2, rs.getRow());
 		rs.close();
 		stmt.close();
 	}
@@ -119,9 +119,9 @@ public class TestLiveQueryWhere
 		Statement stmt = TestUtils.getLiveConnection().createStatement();
 		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT keywordField from testIndex WHERE integerField=1 AND keywordField='keyword02' OR keywordField='keyword02'"));
 		while(rs.next()) {
-			assertEquals(rs.getString(1), "keyword02");
+			assertEquals("keyword02", rs.getString(1));
 		}
-		assertEquals(rs.getRow(), 1);
+		assertEquals(1, rs.getRow());
 		rs.close();
 		stmt.close();
 	}
@@ -133,7 +133,7 @@ public class TestLiveQueryWhere
 		while(rs.next()) {
 			assertTrue(StringUtils.containsAny(rs.getString(1), "keyword01", "keyword02"));
 		}
-		assertEquals(rs.getRow(), 2);
+		assertEquals(2, rs.getRow());
 		rs.close();
 		stmt.close();
 	}
@@ -145,7 +145,7 @@ public class TestLiveQueryWhere
 		while(rs.next()) {
 			assertFalse(rs.getString(1).equals("keyword01"));
 		}
-		assertEquals(rs.getRow(), ElasticTestService.getNumberOfDocs() - 1);
+		assertEquals(ElasticTestService.getNumberOfDocs() - 1, rs.getRow());
 		rs.close();
 		stmt.close();
 	}
@@ -154,7 +154,7 @@ public class TestLiveQueryWhere
 	public void selectWhere012() throws SQLException {
 		Statement stmt = TestUtils.getLiveConnection().createStatement();
 		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT keywordField from testIndex WHERE keywordField='keyword01' AND timestampField>TO_DATE('2020/06/01', 'yyyy/mm/dd')"));
-		assertEquals(rs.next(), false);
+		assertEquals(false, rs.next());
 		rs.close();
 		stmt.close();
 	}
@@ -166,7 +166,7 @@ public class TestLiveQueryWhere
 		while(rs.next()) {
 			assertTrue(StringUtils.containsAny(rs.getString(1), "keyword02", "keyword03"));
 		}
-		assertEquals(rs.getRow(), 2);
+		assertEquals(2, rs.getRow());
 		rs.close();
 		stmt.close();
 	}
@@ -178,7 +178,7 @@ public class TestLiveQueryWhere
 		while(rs.next()) {
 			assertTrue(rs.getString(1).equals("keyword02"));
 		}
-		assertEquals(rs.getRow(), 1);
+		assertEquals(1, rs.getRow());
 		rs.close();
 		stmt.close();
 	}
@@ -190,7 +190,7 @@ public class TestLiveQueryWhere
 		while(rs.next()) {
 			assertTrue(StringUtils.containsAny(rs.getString(1), "keyword02", "keyword05"));
 		}
-		assertEquals(rs.getRow(), 2);
+		assertEquals(2, rs.getRow());
 		rs.close();
 		stmt.close();
 	}
@@ -200,7 +200,7 @@ public class TestLiveQueryWhere
 		Statement stmt = TestUtils.getLiveConnection().createStatement();
 		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT keywordField from testIndex WHERE timestampField<SYSDATE"));
 		while(rs.next()) {}
-		assertEquals(rs.getRow(), ElasticTestService.getNumberOfDocs());
+		assertEquals(ElasticTestService.getNumberOfDocs(), rs.getRow());
 		rs.close();
 		stmt.close();
 	}
@@ -210,7 +210,7 @@ public class TestLiveQueryWhere
 		Statement stmt = TestUtils.getLiveConnection().createStatement();
 		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT keywordField from testIndex WHERE timestampField<SYSDATE()"));
 		while(rs.next()) {}
-		assertEquals(rs.getRow(), ElasticTestService.getNumberOfDocs());
+		assertEquals(ElasticTestService.getNumberOfDocs(), rs.getRow());
 		rs.close();
 		stmt.close();
 	}
@@ -220,7 +220,7 @@ public class TestLiveQueryWhere
 		Statement stmt = TestUtils.getLiveConnection().createStatement();
 		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT keywordField from testIndex WHERE timestampField<NOW()"));
 		while(rs.next()) {}
-		assertEquals(rs.getRow(), ElasticTestService.getNumberOfDocs());
+		assertEquals(ElasticTestService.getNumberOfDocs(), rs.getRow());
 		rs.close();
 		stmt.close();
 	}
@@ -230,7 +230,7 @@ public class TestLiveQueryWhere
 		Statement stmt = TestUtils.getLiveConnection().createStatement();
 		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT keywordField from testIndex WHERE timestampField<GETDATE()"));
 		while(rs.next()) {}
-		assertEquals(rs.getRow(), ElasticTestService.getNumberOfDocs());
+		assertEquals(ElasticTestService.getNumberOfDocs(), rs.getRow());
 		rs.close();
 		stmt.close();
 	}
@@ -240,7 +240,7 @@ public class TestLiveQueryWhere
 		Statement stmt = TestUtils.getLiveConnection().createStatement();
 		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT keywordField from testIndex WHERE timestampField<TRUNC(SYSDATE)"));
 		while(rs.next()) {}
-		assertEquals(rs.getRow(), ElasticTestService.getNumberOfDocs());
+		assertEquals(ElasticTestService.getNumberOfDocs(), rs.getRow());
 		rs.close();
 		stmt.close();
 	}
@@ -250,7 +250,7 @@ public class TestLiveQueryWhere
 		Statement stmt = TestUtils.getLiveConnection().createStatement();
 		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT keywordField from testIndex WHERE timestampField<TRUNC(SYSDATE())"));
 		while(rs.next()) {}
-		assertEquals(rs.getRow(), ElasticTestService.getNumberOfDocs());
+		assertEquals(ElasticTestService.getNumberOfDocs(), rs.getRow());
 		rs.close();
 		stmt.close();
 	}
@@ -260,7 +260,7 @@ public class TestLiveQueryWhere
 		Statement stmt = TestUtils.getLiveConnection().createStatement();
 		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT keywordField from testIndex WHERE timestampField<TRUNC(NOW())"));
 		while(rs.next()) {}
-		assertEquals(rs.getRow(), ElasticTestService.getNumberOfDocs());
+		assertEquals(ElasticTestService.getNumberOfDocs(), rs.getRow());
 		rs.close();
 		stmt.close();
 	}
@@ -269,9 +269,9 @@ public class TestLiveQueryWhere
 	public void selectWhere023() throws SQLException {
 		Statement stmt = TestUtils.getLiveConnection().createStatement();
 		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT \"keywordField\" from testIndex WHERE keywordField='keyword01'"));
-		assertEquals(rs.next(), true);
-		assertEquals(rs.getString(1), "keyword01");
-		assertEquals(rs.getRow(), 1);
+		assertEquals(true, rs.next());
+		assertEquals("keyword01", rs.getString(1));
+		assertEquals(1, rs.getRow());
 		rs.close();
 		stmt.close();
 	}
@@ -281,7 +281,7 @@ public class TestLiveQueryWhere
 		Statement stmt = TestUtils.getLiveConnection().createStatement();
 		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT \"keywordField\" from testIndex WHERE keywordField LIKE 'keyword*'"));
 		while(rs.next()) {}
-		assertEquals(rs.getRow(), ElasticTestService.getNumberOfDocs());
+		assertEquals(ElasticTestService.getNumberOfDocs(), rs.getRow());
 		rs.close();
 		stmt.close();
 	}
@@ -291,7 +291,7 @@ public class TestLiveQueryWhere
 		Statement stmt = TestUtils.getLiveConnection().createStatement();
 		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT \"keywordField\" from testIndex WHERE keywordField NOT LIKE 'keyword*'"));
 		while(rs.next()) {}
-		assertEquals(rs.getRow(), ElasticTestService.getNumberOfDocs());
+		assertEquals(ElasticTestService.getNumberOfDocs(), rs.getRow());
 		rs.close();
 		stmt.close();
 	}
@@ -301,9 +301,9 @@ public class TestLiveQueryWhere
 		Statement stmt = TestUtils.getLiveConnection().createStatement();
 		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT \"keywordField\" from testIndex WHERE textField LIKE '*04'"));
 		while(rs.next()) {
-			assertEquals(rs.getString(1), "keyword04");
+			assertEquals("keyword04", rs.getString(1));
 		}
-		assertEquals(rs.getRow(), 1);
+		assertEquals(1, rs.getRow());
 		rs.close();
 		stmt.close();
 	}
@@ -313,9 +313,9 @@ public class TestLiveQueryWhere
 		Statement stmt = TestUtils.getLiveConnection().createStatement();
 		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT _id from testIndex WHERE textField LIKE '*04'"));
 		while(rs.next()) {
-			assertEquals(rs.getString(1), "doc_04");
+			assertEquals("doc_04", rs.getString(1));
 		}
-		assertEquals(rs.getRow(), 1);
+		assertEquals(1, rs.getRow());
 		rs.close();
 		stmt.close();
 	}
@@ -325,9 +325,9 @@ public class TestLiveQueryWhere
 		Statement stmt = TestUtils.getLiveConnection().createStatement();
 		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT _id from testIndex WHERE textField LIKE '*04'"));
 		while(rs.next()) {
-			assertEquals(rs.getString(1), "doc_04");
+			assertEquals("doc_04", rs.getString(1));
 		}
-		assertEquals(rs.getRow(), 1);
+		assertEquals(1, rs.getRow());
 		rs.close();
 		stmt.close();
 	}
@@ -337,9 +337,9 @@ public class TestLiveQueryWhere
 		Statement stmt = TestUtils.getLiveConnection().createStatement();
 		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT _id from testIndex WHERE _id != 'doc_04'"));
 		while(rs.next()) {
-			assertNotEquals(rs.getString(1), "doc_04");
+			assertNotEquals("doc_04", rs.getString(1));
 		}
-		assertEquals(rs.getRow(), ElasticTestService.getNumberOfDocs() - 1);
+		assertEquals(ElasticTestService.getNumberOfDocs() - 1, rs.getRow());
 		rs.close();
 		stmt.close();
 	}
@@ -349,9 +349,9 @@ public class TestLiveQueryWhere
 		Statement stmt = TestUtils.getLiveConnection().createStatement();
 		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT _id from testIndex WHERE _id='doc_04' OR _id!='doc_01'"));
 		while(rs.next()) {
-			assertNotEquals(rs.getString(1), "doc_01");
+			assertNotEquals("doc_01", rs.getString(1));
 		}
-		assertEquals(rs.getRow(), ElasticTestService.getNumberOfDocs() - 1);
+		assertEquals(ElasticTestService.getNumberOfDocs() - 1, rs.getRow());
 		rs.close();
 		stmt.close();
 	}
@@ -361,9 +361,9 @@ public class TestLiveQueryWhere
 		Statement stmt = TestUtils.getLiveConnection().createStatement();
 		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT _id from testIndex WHERE _id='doc_04' OR _id!='doc_01' AND _id!='doc_02'"));
 		while(rs.next()) {
-			assertNotEquals(rs.getString(1), StringUtils.containsAny(rs.getString(1), "doc_01", "doc_02"));
+			assertNotEquals(StringUtils.containsAny(rs.getString(1), "doc_01", "doc_02"), rs.getString(1));
 		}
-		assertEquals(rs.getRow(), ElasticTestService.getNumberOfDocs() - 2);
+		assertEquals(ElasticTestService.getNumberOfDocs() - 2, rs.getRow());
 		rs.close();
 		stmt.close();
 	}
@@ -373,9 +373,9 @@ public class TestLiveQueryWhere
 		Statement stmt = TestUtils.getLiveConnection().createStatement();
 		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT _id from testIndex WHERE \"object.keywordObjectField\" IS NULL"));
 		while(rs.next()) {
-			assertEquals(rs.getString(1), "doc_06");
+			assertEquals("doc_06", rs.getString(1));
 		}
-		assertEquals(rs.getRow(), 1);
+		assertEquals(1, rs.getRow());
 		rs.close();
 		stmt.close();
 	}
@@ -385,9 +385,9 @@ public class TestLiveQueryWhere
 		Statement stmt = TestUtils.getLiveConnection().createStatement();
 		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT _id from testIndex WHERE \"object.keywordObjectField\" IS NOT NULL"));
 		while(rs.next()) {
-			assertNotEquals(rs.getString(1), "doc_06");
+			assertNotEquals("doc_06", rs.getString(1));
 		}
-		assertEquals(rs.getRow(), ElasticTestService.getNumberOfDocs() - 1);
+		assertEquals(ElasticTestService.getNumberOfDocs() - 1, rs.getRow());
 		rs.close();
 		stmt.close();
 	}
@@ -397,9 +397,9 @@ public class TestLiveQueryWhere
 		Statement stmt = TestUtils.getLiveConnection().createStatement();
 		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT _id from testIndex WHERE EXTRACT(YEAR FROM timestampField)=2020"));
 		while(rs.next()) {
-			assertEquals(rs.getString(1), "doc_01");
+			assertEquals("doc_01", rs.getString(1));
 		}
-		assertEquals(rs.getRow(), 1);
+		assertEquals(1, rs.getRow());
 		rs.close();
 		stmt.close();
 	}
@@ -409,9 +409,9 @@ public class TestLiveQueryWhere
 		Statement stmt = TestUtils.getLiveConnection().createStatement();
 		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT _id from testIndex WHERE EXTRACT(MONTH FROM timestampField)=5"));
 		while(rs.next()) {
-			assertEquals(rs.getString(1), "doc_01");
+			assertEquals("doc_01", rs.getString(1));
 		}
-		assertEquals(rs.getRow(), 1);
+		assertEquals(1, rs.getRow());
 		rs.close();
 		stmt.close();
 	}
@@ -421,9 +421,9 @@ public class TestLiveQueryWhere
 		Statement stmt = TestUtils.getLiveConnection().createStatement();
 		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT _id from testIndex WHERE EXTRACT(DAY FROM timestampField)=25"));
 		while(rs.next()) {
-			assertEquals(rs.getString(1), "doc_01");
+			assertEquals("doc_01", rs.getString(1));
 		}
-		assertEquals(rs.getRow(), 1);
+		assertEquals(1, rs.getRow());
 		rs.close();
 		stmt.close();
 	}
@@ -435,7 +435,7 @@ public class TestLiveQueryWhere
 		while(rs.next()) {
 			assertTrue(StringUtils.containsAny(rs.getString(1), "doc_01", "doc_06"));
 		}
-		assertEquals(rs.getRow(), 2);
+		assertEquals(2, rs.getRow());
 		rs.close();
 		stmt.close();
 	}
@@ -447,7 +447,7 @@ public class TestLiveQueryWhere
 		while(rs.next()) {
 			assertTrue(StringUtils.containsAny(rs.getString(1), "doc_01", "doc_05", "doc_06"));
 		}
-		assertEquals(rs.getRow(), 3);
+		assertEquals(3, rs.getRow());
 		rs.close();
 		stmt.close();
 	}
@@ -468,9 +468,9 @@ public class TestLiveQueryWhere
 		Statement stmt = TestUtils.getLiveConnection().createStatement();
 		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT _id from testIndex WHERE timestampField BETWEEN TO_DATE('2020/01/01', 'yyyy/mm/dd') AND TO_DATE('2020/12/31', 'yyyy/mm/dd')"));
 		while(rs.next()) {
-			assertEquals(rs.getString(1), "doc_01");
+			assertEquals("doc_01", rs.getString(1));
 		}
-		assertEquals(rs.getRow(), 1);
+		assertEquals(1, rs.getRow());
 		rs.close();
 		stmt.close();
 	}
@@ -480,17 +480,17 @@ public class TestLiveQueryWhere
 		Statement stmt = TestUtils.getLiveConnection().createStatement();
 		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT _id from testIndex  WHERE integerField<=6 ORDER BY keywordField DESC"));
 		rs.next();
-		assertEquals(rs.getString(1), "doc_06");
+		assertEquals("doc_06", rs.getString(1));
 		rs.next();
-		assertEquals(rs.getString(1), "doc_05");
+		assertEquals("doc_05", rs.getString(1));
 		rs.next();
-		assertEquals(rs.getString(1), "doc_04");
+		assertEquals("doc_04", rs.getString(1));
 		rs.next();
-		assertEquals(rs.getString(1), "doc_03");
+		assertEquals("doc_03", rs.getString(1));
 		rs.next();
-		assertEquals(rs.getString(1), "doc_02");
+		assertEquals("doc_02", rs.getString(1));
 		rs.next();
-		assertEquals(rs.getString(1), "doc_01");
+		assertEquals("doc_01", rs.getString(1));
 		rs.close();
 		stmt.close();
 	}
@@ -500,7 +500,7 @@ public class TestLiveQueryWhere
 		Statement stmt = TestUtils.getLiveConnection().createStatement();
 		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT _id from testIndex LIMIT 2"));
 		while(rs.next()) {}
-		assertEquals(rs.getRow(), 2);
+		assertEquals(2, rs.getRow());
 		stmt.close();
 	}
 }

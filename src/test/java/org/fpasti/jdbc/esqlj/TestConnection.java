@@ -49,7 +49,7 @@ public class TestConnection {
 			SQLException e = assertThrows(SQLException.class, () -> {
 				TestUtils.getTestConnection(url, properties);
 			});
-			assertEquals(e.getMessage(), "Invalid connection string");
+			assertEquals("Invalid connection string", e.getMessage());
 		}
 	}
 
@@ -67,8 +67,8 @@ public class TestConnection {
 			httpProtocol = HttpProtocol.http;
 		} 
 		TestUtils.getTestConnection(url, properties);
-		assertEquals(Configuration.getUrls().get(0).getProtocol(), httpProtocol);
-		assertEquals(Configuration.getUrls().get(0).getServer(), server);
-		assertEquals(Configuration.getUrls().get(0).getPort(), port);
+		assertEquals(httpProtocol, Configuration.getUrls().get(0).getProtocol());
+		assertEquals(server, Configuration.getUrls().get(0).getServer());
+		assertEquals(port, Configuration.getUrls().get(0).getPort());
 	}
 }

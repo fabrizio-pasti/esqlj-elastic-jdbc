@@ -10,6 +10,7 @@ public class ElasticField implements Comparable<ElasticField> {
 		private String name;
 		private ElasticFieldType type;
 		private Long size;
+		private boolean docValue;
 
 		public ElasticField(String fullName, ElasticFieldType type) {
 			super();
@@ -18,9 +19,10 @@ public class ElasticField implements Comparable<ElasticField> {
 			this.type = type;
 		}
 		
-		public ElasticField(String fullName, ElasticFieldType type, Long size) {
+		public ElasticField(String fullName, ElasticFieldType type, Long size, boolean docValue) {
 			this(fullName, type);
 			this.size = size;
+			this.docValue = docValue;
 		}
 
 		public String getFullName() {
@@ -44,7 +46,11 @@ public class ElasticField implements Comparable<ElasticField> {
 			return this.fullName.compareTo(o.getFullName());
 		}
 		
-		public boolean isDocField() {
-			return !type.equals(ElasticFieldType.TEXT);
+		public boolean isSourceField() {
+			return type.equals(ElasticFieldType.TEXT);
+		}
+
+		public boolean isDocValue() {
+			return docValue;
 		}
 	}

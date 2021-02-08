@@ -27,7 +27,7 @@ public class Executor {
 		} catch(SQLException se) {
 			throw se;
 		} catch (Exception e) {
-			throw new SQLException(e.getMessage());
+			throw new SQLException(e.getCause() != null ? e.getCause().getMessage() : e.getMessage());
 		}
 	}
 	

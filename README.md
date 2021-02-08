@@ -6,11 +6,14 @@ esqlj not use at all SQL Elastic implementation, Elastic integration is built on
 ## Project status
 Beta stage. 
 
-SQL Layers: implemented DQL, not implemented DDL and DML
+SQL Layers: implemented DQL.  
+DDL and DML not implemented
 
 ## Driver class
 
 ### org.fpasti.jdbc.esqlj.EsDriver
+
+JDBC Driver `jar` inot yet available on public repository. It's available for now
 
 ## JDBC Connections string
 
@@ -76,17 +79,19 @@ PUT /*/_settings
 
 In the future there will no longer be possible query system indices.
 
+Boolean fields in where clause: use constants `true` and `false` to express conditions on boolean typed columns.  For example:
+``` SELECT * from \"esqlj-test-static-010\" WHERE booleanField=true ``` 
+
 ## DBeaver
 
 
 
 ## Types
 
-Mapping of Elastic types to SQL types:
+Mapping of supported Elastic types to SQL types:
 
 | Elastic on index type | Metadata declared SQL Type | Java effective type 
 |--- |--- |---
-| binary | TINYINT | Byte
 | boolean | BOOL | Boolean
 | date  | TIMESTAMP | LocalDateTime
 | date_nanos | TIMESTAMP | LocalDateTime

@@ -58,14 +58,14 @@ public class PageDataElastic {
 			req.getFields().forEach((name, field) -> {
 				if(field.getFullName().equals(ElasticField.DOC_ID_ALIAS)) {
 					data.add(searchHit.getId());
-				} else if(field.isDocField()) {
+				} else if(field.isDocValue()) {
 					DocumentField docField = searchHit.field(field.getFullName());
 					if(docField != null) {
 						data.add(resolveField(field, docField.getValue())); // only first field value is managed
 					} else {
 						data.add(null);
 					}
-				} else if(req.isSourceFieldsToRetrieve()) {
+				} else if(field.isSourceField() && req.isSourceFieldsToRetrieve()) {
 					data.add(searchHit.getSourceAsMap().get(field.getFullName()));
 				} else {
 					data.add(null);

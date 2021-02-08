@@ -35,12 +35,6 @@ public class MetaDataService {
 		retrieveElasticInfo();
 	}
 
-	/*synchronized (objectCache) {
-                            if (objectCache.containsKey(parent)) {
-                                // Already cached
-                                continue;
-                            }
-                        }*/
 	private void retrieveElasticInfo() throws SQLException {
 		try {
 			MainResponse response = client.info(RequestOptions.DEFAULT);
@@ -66,8 +60,10 @@ public class MetaDataService {
 
 	public IndexMetaData getIndexMetaData(String index) throws SQLException {
 		if(Configuration.getConfiguration(ConfigurationPropertyEnum.CFG_INDEX_METADATA_CACHE, Boolean.class)) {
-			if(!cacheIndexMetaData.containsKey(index)) {
-				cacheIndexMetaData.put(index, new IndexMetaData(index, getIndexFields(index)));
+			synchronized(cacheIndexMetaData) {
+				if(!cacheIndexMetaData.containsKey(index)) {
+					cacheIndexMetaData.put(index, new IndexMetaData(index, getIndexFields(index)));
+				}
 			}
 			
 			return cacheIndexMetaData.get(index);
@@ -93,10 +89,13 @@ public class MetaDataService {
 					Map<String, Object> metadataMap = metadata.sourceAsMap();
 					if(metadataMap.size() > 0 && !managedFields.stream().anyMatch(field::equals)) {
 						Map<String, Object> fieldMap = (Map<String, Object>)metadataMap.get(field.substring(field.lastIndexOf('.') + 1));
+
+						ElasticFieldType fieldType = ElasticFieldType.resolveByElasticType((String)fieldMap.get("type"));
 						fields.put(field, new ElasticField(
 								field, 
-								ElasticFieldType.resolveByElasticType((String)fieldMap.get("type")),
-								fieldMap.get("ignore_above") != null ? new Long((Integer)fieldMap.get("ignore_above")) : null));
+								fieldType,
+								fieldMap.get("ignore_above") != null ? new Long((Integer)fieldMap.get("ignore_above")) : null,
+								fieldMap.get("doc_values") != null ? (boolean)fieldMap.get("doc_values") : isDocValue(fieldType)));
 						managedFields.add(field);
 					}			
 				});
@@ -105,6 +104,17 @@ public class MetaDataService {
 			return fields.entrySet().stream().sorted(Map.Entry.comparingByKey()).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,(oldValue, newValue) -> oldValue, LinkedHashMap::new));
 		} catch(IOException e) {
 			throw new SQLException(e.getMessage());
+		}
+	}
+
+	private boolean isDocValue(ElasticFieldType fieldType) {
+		switch(fieldType) {
+			case TEXT:
+				return false;
+			case BINARY:
+				return false;
+			default:
+				return true;
 		}
 	}
 	

@@ -27,8 +27,8 @@ public class TestLiveMetaData
 		Statement stmt = TestUtils.getLiveConnection().createStatement();
 		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT keywordField from testIndex"));
 		ResultSetMetaData rsm = rs.getMetaData();
-		assertEquals(rsm.getColumnName(1), "keywordField");
-		assertEquals(rsm.getColumnLabel(1), "keywordField");
+		assertEquals("keywordField", rsm.getColumnName(1));
+		assertEquals("keywordField", rsm.getColumnLabel(1));
 	}
 	
 	@Test
@@ -36,17 +36,17 @@ public class TestLiveMetaData
 		Statement stmt = TestUtils.getLiveConnection().createStatement();
 		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT * from testIndex"));
 		ResultSetMetaData rsm = rs.getMetaData();
-		assertEquals(rsm.getColumnName(1), "booleanField");
-		assertEquals(rsm.getColumnName(2), "doubleField");
-		assertEquals(rsm.getColumnName(3), "geoPointField");
-		assertEquals(rsm.getColumnName(4), "integerField");
-		assertEquals(rsm.getColumnName(5), "keywordField");
-		assertEquals(rsm.getColumnName(6), "longField");
-		assertEquals(rsm.getColumnName(7), "object.keywordObjectField");
-		assertEquals(rsm.getColumnName(8), "textField");
-		assertEquals(rsm.getColumnName(9), "timestampField");
-		assertEquals(rsm.getColumnName(10), "_id");
-		assertEquals(rsm.getColumnCount(), 10);
+		assertEquals("booleanField", rsm.getColumnName(1));
+		assertEquals("doubleField", rsm.getColumnName(2));
+		assertEquals("geoPointField", rsm.getColumnName(3));
+		assertEquals("integerField", rsm.getColumnName(4));
+		assertEquals("keywordField", rsm.getColumnName(5));
+		assertEquals("longField", rsm.getColumnName(6));
+		assertEquals("object.keywordObjectField", rsm.getColumnName(7));
+		assertEquals("textField", rsm.getColumnName(8));
+		assertEquals("timestampField", rsm.getColumnName(9));
+		assertEquals("_id", rsm.getColumnName(10));
+		assertEquals(10, rsm.getColumnCount());
 	}
 
 	@Test
@@ -54,8 +54,8 @@ public class TestLiveMetaData
 		Statement stmt = TestUtils.getLiveConnection().createStatement();
 		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT keywordField keywordFieldAlias from testIndex"));
 		ResultSetMetaData rsm = rs.getMetaData();
-		assertEquals(rsm.getColumnName(1), "keywordField");
-		assertEquals(rsm.getColumnLabel(1), "keywordFieldAlias");
+		assertEquals("keywordField", rsm.getColumnName(1));
+		assertEquals("keywordFieldAlias", rsm.getColumnLabel(1));
 	}
 	
 	@Test
@@ -63,8 +63,8 @@ public class TestLiveMetaData
 		Statement stmt = TestUtils.getLiveConnection().createStatement();
 		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT keywordField AS keywordFieldAlias from testIndex"));
 		ResultSetMetaData rsm = rs.getMetaData();
-		assertEquals(rsm.getColumnName(1), "keywordField");
-		assertEquals(rsm.getColumnLabel(1), "keywordFieldAlias");
+		assertEquals("keywordField", rsm.getColumnName(1));
+		assertEquals("keywordFieldAlias", rsm.getColumnLabel(1));
 	}
 
 	@Test

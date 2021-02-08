@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.util.UUID;
 
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
+import org.elasticsearch.action.admin.indices.flush.FlushRequest;
+import org.elasticsearch.action.admin.indices.flush.FlushResponse;
 import org.elasticsearch.action.admin.indices.template.delete.DeleteIndexTemplateRequest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
@@ -37,6 +39,7 @@ public class ElasticTestService {
 		if(createTemplateAndPostDocs) {
 			addIndexTemplate(connection.getElasticClient());
 			postDocuments(connection.getElasticClient(), createAndDestroy);
+			flushIndex(connection.getElasticClient());
 		}
 		
 	}
@@ -105,5 +108,15 @@ public class ElasticTestService {
 			NUMBER_OF_DOCS = new Long(res.getCount()).intValue();
 		}
 		return NUMBER_OF_DOCS;
+	}
+	
+	private static void flushIndex(RestHighLevelClient client) throws Exception {
+		FlushRequest request = new FlushRequest(CURRENT_INDEX); 
+		request.waitIfOngoing(true);
+		request.force(true);
+		FlushResponse res = client.indices().flush(request, RequestOptions.DEFAULT);
+		if(res.getFailedShards() > 0) {
+			throw new Exception("Failed to flush test index on Elastic");
+		}		
 	}
 }

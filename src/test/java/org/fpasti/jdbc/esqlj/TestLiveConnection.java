@@ -36,7 +36,7 @@ public class TestLiveConnection
 		ResultSet rs = metadata.getCatalogs();
 		assertNotNull(rs);
 		rs.next();
-		assertEquals(rs.getString(1), "");
+		assertEquals("", rs.getString(1));
 		assertFalse(rs.next());
 	}
     
@@ -56,7 +56,7 @@ public class TestLiveConnection
 		ResultSet rs = metadata.getTables(null, null, null, null);
 		assertNotNull(rs);
 		assertTrue(rs.getMetaData().getColumnCount() == 10);
-		assertEquals(rs.getMetaData().getColumnLabel(3), "TABLE_NAME");
+		assertEquals("TABLE_NAME", rs.getMetaData().getColumnLabel(3));
 		assertTrue(rs.getMetaData().getColumnType(3) == java.sql.Types.VARCHAR);
 	}
     
@@ -66,7 +66,7 @@ public class TestLiveConnection
 		ResultSet rs = metadata.getTables(null, null, "VIEW", null);
 		assertNotNull(rs);
 		assertTrue(rs.getMetaData().getColumnCount() == 10);
-		assertEquals(rs.getMetaData().getColumnLabel(3), "TABLE_NAME");
+		assertEquals("TABLE_NAME", rs.getMetaData().getColumnLabel(3));
 		assertTrue(rs.getMetaData().getColumnType(3) == java.sql.Types.VARCHAR);
 	}
     

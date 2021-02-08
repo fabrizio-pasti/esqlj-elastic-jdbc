@@ -57,6 +57,10 @@ public class ValueExpressionResolver {
 					Function fSysDate = new Function();
 					fSysDate.setName("SYSDATE");
 					return resolveFunction((Function)fSysDate);
+				} else if(column.getColumnName().equalsIgnoreCase("TRUE")) {
+					return true;
+				} else if(column.getColumnName().equalsIgnoreCase("FALSE")) {
+					return false;
 				}
 			default:
 				throw new SQLException(String.format("Unmanaged expression: %s", ExpressionEnum.resolveByInstance(expression).name()));
