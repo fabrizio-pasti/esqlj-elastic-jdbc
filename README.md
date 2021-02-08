@@ -46,7 +46,7 @@ Field and alias containing special characters like '-' must also to be double qu
 
 Document identifier "_id" is returned like a column and mapped on MetaData like primary key. This column is also available on Where condition for matching query (=, !=)
 
-Like filter is implemented by Wildcard Elastic Query (https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-wildcard-query.html)
+'Like' filter is implemented by Wildcard Elastic Query (https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-wildcard-query.html)
 
 About SQL implementation see below section 'Support matrix and conventions'
 
