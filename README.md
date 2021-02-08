@@ -74,7 +74,7 @@ PUT /*/_settings
 }
 ```
 
-In the future there will no longer be possible query system index.
+In the future there will no longer be possible query system indices.
 
 ## DBeaver
 
