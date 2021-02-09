@@ -13,7 +13,7 @@ DDL and DML not implemented
 
 ### org.fpasti.jdbc.esqlj.EsDriver
 
-JDBC Driver `jar` inot yet available on public repository. It's available for now
+JDBC Driver `jar` inot yet available on public repository. It's available for here on 
 
 ## JDBC Connections string
 
