@@ -85,7 +85,7 @@ Boolean fields in where clause: use constants `true` and `false` to express cond
 ## DBeaver
 
 ![DBeaver navigator panel](docs/img_readme_01.png)  
-**tables are ElasticSearch index and views are ElasticSearch aliases**
+**Tables are ElasticSearch index and views are ElasticSearch aliases**
 
 ![DBeaver navigator panel](docs/img_readme_02.png)  
 **Fields in index**
@@ -96,6 +96,17 @@ Boolean fields in where clause: use constants `true` and `false` to express cond
 ![DBeaver navigator panel](docs/img_readme_04.png)
 **Sample SQL query**
 
+### How to configure DBeaver to use esqlj driver (without Elastic login)
+- Create a new connection of type ElasticSearch
+- Click "Edit Driver Settings"
+- Change:
+  - Class Name: `org.fpasti.jdbc.esqlj.EsDriver`
+  - URL Template: `jdbc:esqlj:http://{host}:{port}`
+  - Remove all jars and add `esqlj-<rel>.jar`
+  - Click "OK" to confirm
+- Change if required host and port and Test Connection
+- OK
+  
 ## Types
 
 Mapping of supported Elastic types to SQL types:
