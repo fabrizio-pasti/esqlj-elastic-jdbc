@@ -45,7 +45,9 @@ public class EsStatement implements Statement {
 
 	@Override
 	public void close() throws SQLException {
-		resultSet.close();
+		if(resultSet != null) {
+			resultSet.close();
+		}
 	}
 
 	@Override
