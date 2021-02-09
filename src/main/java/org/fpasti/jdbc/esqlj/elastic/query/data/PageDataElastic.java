@@ -12,6 +12,7 @@ import org.elasticsearch.common.document.DocumentField;
 import org.elasticsearch.search.SearchHit;
 import org.fpasti.jdbc.esqlj.elastic.model.ElasticField;
 import org.fpasti.jdbc.esqlj.elastic.model.ElasticFieldExt;
+import org.fpasti.jdbc.esqlj.elastic.model.EsGeoPoint;
 import org.fpasti.jdbc.esqlj.elastic.query.impl.search.RequestInstance;
 import org.fpasti.jdbc.esqlj.elastic.query.model.DataRow;
 import org.fpasti.jdbc.esqlj.elastic.query.model.PageDataState;
@@ -98,6 +99,8 @@ public class PageDataElastic {
 					return value;
 				}
 				return null;
+			case GEO_POINT:
+				return resolveGeoPoint(value);
 			case DATE:
 			case DATE_NANOS:
 				try {
@@ -109,6 +112,16 @@ public class PageDataElastic {
 			default:
 				return value;
 		}
+	}
+
+	private Object resolveGeoPoint(Object value) {
+		if(value == null) {
+			return null;
+		}
+		
+		String[] gp = ((String)value).split(",");
+		return new EsGeoPoint(Double.parseDouble(gp[0]), Double.parseDouble(gp[1]));
+		
 	}
 
 	public DataRow getCurrentRow() throws SQLException {
