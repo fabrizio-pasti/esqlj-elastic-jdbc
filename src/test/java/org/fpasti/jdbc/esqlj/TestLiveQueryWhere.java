@@ -503,4 +503,13 @@ public class TestLiveQueryWhere
 		assertEquals(2, rs.getRow());
 		stmt.close();
 	}
+	
+	@Test
+	public void selectWhere043() throws SQLException {
+		Statement stmt = TestUtils.getLiveConnection().createStatement();
+		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT * from testIndex WHERE booleanField=true"));
+		while(rs.next()) {}
+		assertEquals(3, rs.getRow());
+		stmt.close();
+	}
 }
