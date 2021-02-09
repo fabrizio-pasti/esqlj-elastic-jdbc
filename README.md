@@ -36,7 +36,7 @@ Optional parameters:
 | queryScrollFetchSize | Fetched rows on next pagination | 500
 | queryScrollTimeoutMinutes | Timeout between pagination expressed in minutes | 3
 | queryScrollOnlyByScrollApi | If false apply the scroll strategy that best fit the query (see Pagination paragraph below) | true
-| sharedConnection | If true rest client will be statically shared between all connection (use it if you don't have the requirement to connect to different Elastic clusters) | true
+| sharedConnection | If true rest client will be statically shared between all connection (use it if you don't have the requirement to connect to different Elastic clusters inside same JVM) | true
 
 
 ## Concepts
