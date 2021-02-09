@@ -13,7 +13,7 @@ DDL and DML not implemented
 
 ### org.fpasti.jdbc.esqlj.EsDriver
 
-JDBC Driver artifact is not yet published on any public Maven repository. It's available directly here on GitHub Releases
+JDBC Driver artifact isn't published on any public Maven repository
 
 ## JDBC Connections string
 
@@ -185,7 +185,7 @@ Mapping of supported Elastic types to SQL types:
 
 By default esqlj implements a scrolling strategy on query through Elastic Scroll API. Optionally it's possibile to activate the less expensive scroll by order, but if you want to activate this functionality pay attention to include in every query a sorting on at least one tiebreaker field (in future it's no longer possible to query by doc id, it could be a best practice to store identifier also in document field).  It's in discussion an RFC on Elastic product about the introduction of an automatic tiebreaker in query result. But for now if you enable this feature and miss to add a sorting on a tiebreaker fields some rows could be skipped between paginations of data.
 
-Still on the subject of scrolling by order, the driver will automatically try to use the Point in time API if Elastic 7.10 is detected. (It's required to use the linked compiled JAR for using this feature because Rest high level API seems doesn't implements it for now..)
+Still on the subject of scrolling by order, the driver doesn't use Point in Time API for Rest High level API lack of support 
 
 Pay attention: Scroll API consume resources on server. It's a best practice to fetch all required data as soon as possible. The scroll link will be automatically released from esql at the end of data retrieve.
 
