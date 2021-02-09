@@ -7,7 +7,7 @@ esqlj not use at all SQL Elastic implementation, Elastic integration is built on
 ## Project status
 Not production ready 
 
-SQL Layers: implemented DQL.  
+SQL Layers: partially implemented DQL.  
 DDL and DML not implemented
 
 ## Driver class
