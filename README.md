@@ -84,6 +84,8 @@ Boolean fields in where clause: use constants `true` and `false` to express cond
 
 ## DBeaver
 
+A sample usage of esqlj in DBeaver:
+
 ![DBeaver navigator panel](docs/img_readme_01.png)  
 **Tables are ElasticSearch index and views are ElasticSearch aliases**
 
@@ -106,7 +108,28 @@ Boolean fields in where clause: use constants `true` and `false` to express cond
   - Click "OK" to confirm
 - Change if required host and port and Test Connection
 - OK
-  
+
+## Sample usage from Java
+
+Add driver dependency in pom.xml:
+
+``` <dependency>
+			<groupId>org.takeshi.jdbc</groupId>
+			<artifactId>esqlj</artifactId>
+			<version>0.1.0-SNAPSHOT</version>
+		</dependency>```
+    
+```
+  DriverManager.registerDriver(new EsDriver());
+  Connection connection = DriverManager.getConnection("jdbc:esqlj:http://localhost:9200");
+  try {
+			stmt = connection.createStatement();
+      rs = stmt.executeQuery("SELECT * from \"esqlj-test-static-010\" WHERE booleanField=1");
+      
+			ResultSetMetaData rsm = rs.getMetaData();
+      
+```
+
 ## Types
 
 Mapping of supported Elastic types to SQL types:
