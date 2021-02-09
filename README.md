@@ -122,11 +122,34 @@ Add driver dependency in pom.xml:
 ```
   DriverManager.registerDriver(new EsDriver());
   Connection connection = DriverManager.getConnection("jdbc:esqlj:http://localhost:9200");
-  try {
+  Statement stmt = null;
+		ResultSet rs = null;
+
+		try {
 			stmt = connection.createStatement();
-      rs = stmt.executeQuery("SELECT * from \"esqlj-test-static-010\" WHERE booleanField=1");
-      
+			rs = stmt.executeQuery("SELECT * from \"esqlj-test-static-010\" WHERE booleanField=true");
+			
+			// print out column & fields
 			ResultSetMetaData rsm = rs.getMetaData();
+			for(int i = 1; i <= rs.getMetaData().getColumnCount(); i++) {
+				System.out.println(String.format("%d: Column: %s, Column Alias: %s, Type: %s", i, rsm.getColumnName(i), rsm.getColumnLabel(i), rsm.getColumnTypeName(i)));
+			}
+			
+			// iterate over query res
+			while (rs.next()) {
+				System.out.println(String.format("_id: %s : doubleField: %f - keywordField: %s - textField: %s", rs.getString(10), rs.getDouble(2), rs.getObject(5), rs.getString(8)));
+			}
+
+		} catch (SQLException ex) {
+			System.out.println("SQLException: " + ex.getMessage());
+		} finally {
+			if(stmt != null) {
+				stmt.close();
+			}
+			if(connection != null) {
+				connection.close();
+			}
+		}
       
 ```
 
