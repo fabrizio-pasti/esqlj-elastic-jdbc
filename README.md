@@ -84,7 +84,17 @@ Boolean fields in where clause: use constants `true` and `false` to express cond
 
 ## DBeaver
 
+![DBeaver navigator panel](docs/img_readme_01.png)  
+**tables are ElasticSearch index and views are ElasticSearch aliases**
 
+![DBeaver navigator panel](docs/img_readme_02.png)  
+**Fields in index**
+
+![DBeaver navigator panel](docs/img_readme_03.png)  
+**Document on index**
+
+![DBeaver navigator panel](docs/img_readme_04.png)
+**Sample SQL query**
 
 ## Types
 
