@@ -87,7 +87,7 @@ Boolean fields in where clause: use constants `true` and `false` to express cond
 A sample usage of esqlj in DBeaver:
 
 ![DBeaver navigator panel](docs/img_readme_01.png)  
-**Tables are ElasticSearch index and views are ElasticSearch aliases**
+**Tables are Elasticsearch index and views are Elasticsearch aliases**
 
 ![DBeaver navigator panel](docs/img_readme_02.png)  
 **Fields in index**
@@ -99,7 +99,7 @@ A sample usage of esqlj in DBeaver:
 **Sample SQL query**
 
 ### How to configure DBeaver to use esqlj driver (without Elastic login)
-- Create a new connection of type ElasticSearch
+- Create a new connection of type Elasticsearch
 - Click "Edit Driver Settings"
 - Change:
   - Class Name: `org.fpasti.jdbc.esqlj.EsDriver`
@@ -201,7 +201,7 @@ ESQLJ_TEST_CONFIG="jdbc:esqlj:http://<elastic_address>:<elastic_port>|<createAnd
 | Parameters | Actions | Scope
 |--- |--- |---
 | createAndDestroy | Test units create index 'esqlj-test-volatile-\<uuid\>' on start and delete it on finish | Continuous Delivery/Deployment
-| createOnly | Test units create index 'esqlj-test-static-\<release.version\>' and not delete it on finish. If it's just present on ElasticSearch it will be preserved. (Will be required a manual delete of it from system).| Development stage
+| createOnly | Test units create index 'esqlj-test-static-\<release.version\>' and not delete it on finish. If it's just present on Elasticsearch it will be preserved. (Will be required a manual delete of it from system).| Development stage
 
 Sample configuration:
 ESQLJ_TEST_CONFIG="jdbc:esqlj:http://10.77.154.32:9080|createOnly"
@@ -226,7 +226,7 @@ You can use both column name or column alias in expression.
 | `column` >= `numeric_value` | 
 | `column` < `numeric_value` | 
 | `column` <= `numeric_value` | 
-| `column` LIKE `expression` | Implemented by Wildcard ElasticSearch filter. See ElasticSearch documentation about its usage
+| `column` LIKE `expression` | Implemented by Wildcard Elasticsearch filter. See Elasticsearch documentation about its usage
 | `column` IS NULL |
 | `column` IS NOT NULL |
 | `column` BETWEEN `a` AND `b` | `a` and `b` could be NUMBER, STRING, date expressed by TO_DATE('date', 'mask_date'), EXTRACT function
@@ -256,7 +256,7 @@ SELECT * FROM `column` LIMIT 100
 
 ## Compatibility
 
-Tested on 7.4.2 and 7.10.0 ElasticSearch release
+Tested on 7.4.2 and 7.10.0 Elasticsearch release
 
 ## About me
 Fabrizio Pasti
