@@ -31,7 +31,7 @@ Optional parameters:
 | userName | Credential user name | -
 | password | Credential password | -
 | includeTextFieldsByDefault | Include text typed fields by default on select * | false
-| indexMetaDataCache | Cache retrieved index structure. Select execution engine requires to know index / alias structure, retrieving these information it could be an heavy operation especially for alias or starred index query. Best choice to enable it on unmutable index | true
+| indexMetaDataCache | Cache retrieved index structure. Select execution engine requires to know index / alias structure; retrieving these information it could be an heavy operation especially for alias or starred index query. Best choice to enable it on unmutable index | true
 | queryScrollFromRows | Number of rows fetched on first pagination | 500
 | queryScrollFetchSize | Fetched rows on next pagination | 500
 | queryScrollTimeoutMinutes | Timeout between pagination expressed in minutes | 3
