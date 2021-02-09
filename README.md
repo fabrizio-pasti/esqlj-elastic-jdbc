@@ -1,10 +1,11 @@
 # esqlj-elastic-jdbc
-A JDBC driver for Elastic fully open source.
+A JDBC driver for Elastic released under Apache License 2.0
 
-esqlj not use at all SQL Elastic implementation, Elastic integration is built on top of Elastic Rest High Level API
+
+esqlj not use at all SQL Elastic implementation, Elastic integration is built on top of Elastic Rest High Level API. See Elastic licenses in folder `licenses/elastic-licenses`
 
 ## Project status
-Beta stage. 
+Not production ready 
 
 SQL Layers: implemented DQL.  
 DDL and DML not implemented
@@ -13,16 +14,16 @@ DDL and DML not implemented
 
 ### org.fpasti.jdbc.esqlj.EsDriver
 
-JDBC Driver `jar` inot yet available on public repository. It's available for now
+JDBC Driver artifact isn't published on any public Maven repository
 
 ## JDBC Connections string
 
-JDBC url must to be follow this syntax:
+JDBC url must to follow this syntax:
 
 ```
 jdbc:esqlj:http<s>://<elastic_address_1>:<elastic_port_1>,http://<elastic_address_2>:<elastic_port_2>,...;param1=paramValue1;...
 ```
-It's possible to declare a pool of connections listing the url of Elastic instances:
+It's possible to declare a pool of connections listing the url of Elastic instances separated by a comma.
 
 Optional parameters:
 
@@ -31,12 +32,12 @@ Optional parameters:
 | userName | Credential user name | -
 | password | Credential password | -
 | includeTextFieldsByDefault | Include text typed fields by default on select * | false
-| indexMetaDataCache | Cache retrieved index structure. Select execution engine requires to know index / alias structure, retrieve this information it could be an heavy operation especially for alias or starred index query. Best choice to enable it on unmutable index | true
+| indexMetaDataCache | Cache retrieved index structure. Select execution engine requires to know index / alias structure; retrieving these information it could be an heavy operation especially for alias or starred index query. Best choice to enable it on unmutable index | true
 | queryScrollFromRows | Number of rows fetched on first pagination | 500
 | queryScrollFetchSize | Fetched rows on next pagination | 500
 | queryScrollTimeoutMinutes | Timeout between pagination expressed in minutes | 3
 | queryScrollOnlyByScrollApi | If false apply the scroll strategy that best fit the query (see Pagination paragraph below) | true
-| sharedConnection | If true rest client will be statically shared between all connection (use it if you don't have the requirement to connect to different Elastic clusters | true
+| sharedConnection | If true rest client will be statically shared between all connection (use it if you don't have the requirement to connect to different Elastic clusters inside same JVM) | true
 
 
 ## Concepts
@@ -84,8 +85,10 @@ Boolean fields in where clause: use constants `true` and `false` to express cond
 
 ## DBeaver
 
+A sample usage of esqlj in DBeaver:
+
 ![DBeaver navigator panel](docs/img_readme_01.png)  
-**Tables are ElasticSearch index and views are ElasticSearch aliases**
+**Tables are Elasticsearch index and views are Elasticsearch aliases**
 
 ![DBeaver navigator panel](docs/img_readme_02.png)  
 **Fields in index**
@@ -97,7 +100,7 @@ Boolean fields in where clause: use constants `true` and `false` to express cond
 **Sample SQL query**
 
 ### How to configure DBeaver to use esqlj driver (without Elastic login)
-- Create a new connection of type ElasticSearch
+- Create a new connection of type Elasticsearch
 - Click "Edit Driver Settings"
 - Change:
   - Class Name: `org.fpasti.jdbc.esqlj.EsDriver`
@@ -106,7 +109,53 @@ Boolean fields in where clause: use constants `true` and `false` to express cond
   - Click "OK" to confirm
 - Change if required host and port and Test Connection
 - OK
-  
+
+## Sample usage from Java
+
+Add driver dependency in pom.xml:
+
+``` 
+<dependency>
+	<groupId>org.fpasti</groupId>
+	<artifactId>esqlj</artifactId>
+	<version>0.1.0</version>
+</dependency>
+```
+    
+```
+DriverManager.registerDriver(new EsDriver());
+Connection connection = DriverManager.getConnection("jdbc:esqlj:http://localhost:9200");
+Statement stmt = null;
+ResultSet rs = null;
+
+try {
+	stmt = connection.createStatement();
+	rs = stmt.executeQuery("SELECT * from \"esqlj-test-static-010\" WHERE booleanField=true");
+
+	// print out column & fields
+	ResultSetMetaData rsm = rs.getMetaData();
+	for(int i = 1; i <= rs.getMetaData().getColumnCount(); i++) {
+		System.out.println(String.format("%d: Column: %s, Column Alias: %s, Type: %s", i, rsm.getColumnName(i), rsm.getColumnLabel(i), rsm.getColumnTypeName(i)));
+	}
+
+	// iterate over query res
+	while (rs.next()) {
+		System.out.println(String.format("_id: %s : doubleField: %f - keywordField: %s - textField: %s", rs.getString(10), rs.getDouble(2), rs.getObject(5), rs.getString(8)));
+	}
+
+} catch (SQLException ex) {
+	System.out.println("SQLException: " + ex.getMessage());
+} finally {
+	if(stmt != null) {
+		stmt.close();
+	}
+	if(connection != null) {
+		connection.close();
+	}
+}
+```
+#### PreparedStatement actually unimplemented
+
 ## Types
 
 Mapping of supported Elastic types to SQL types:
@@ -137,7 +186,7 @@ Mapping of supported Elastic types to SQL types:
 
 By default esqlj implements a scrolling strategy on query through Elastic Scroll API. Optionally it's possibile to activate the less expensive scroll by order, but if you want to activate this functionality pay attention to include in every query a sorting on at least one tiebreaker field (in future it's no longer possible to query by doc id, it could be a best practice to store identifier also in document field).  It's in discussion an RFC on Elastic product about the introduction of an automatic tiebreaker in query result. But for now if you enable this feature and miss to add a sorting on a tiebreaker fields some rows could be skipped between paginations of data.
 
-Still on the subject of scrolling by order, the driver will automatically try to use the Point in time API if Elastic 7.10 is detected. (It's required to use the linked compiled JAR for using this feature because Rest high level API seems doesn't implements it for now..)
+Still on the subject of scrolling by order, the driver doesn't use Point in Time API for Rest High level API lack of supports. 
 
 Pay attention: Scroll API consume resources on server. It's a best practice to fetch all required data as soon as possible. The scroll link will be automatically released from esql at the end of data retrieve.
 
@@ -153,7 +202,7 @@ ESQLJ_TEST_CONFIG="jdbc:esqlj:http://<elastic_address>:<elastic_port>|<createAnd
 | Parameters | Actions | Scope
 |--- |--- |---
 | createAndDestroy | Test units create index 'esqlj-test-volatile-\<uuid\>' on start and delete it on finish | Continuous Delivery/Deployment
-| createOnly | Test units create index 'esqlj-test-static-\<release.version\>' and not delete it on finish. If it's just present on ElasticSearch it will be preserved. (Will be required a manual delete of it from system).| Development stage
+| createOnly | Test units create index 'esqlj-test-static-\<release.version\>' and not delete it on finish. If it's just present on Elasticsearch it will be preserved. (Will be required a manual delete of it from system).| Development stage
 
 Sample configuration:
 ESQLJ_TEST_CONFIG="jdbc:esqlj:http://10.77.154.32:9080|createOnly"
@@ -178,7 +227,7 @@ You can use both column name or column alias in expression.
 | `column` >= `numeric_value` | 
 | `column` < `numeric_value` | 
 | `column` <= `numeric_value` | 
-| `column` LIKE `expression` | Implemented by Wildcard ElasticSearch filter. See ElasticSearch documentation about its usage
+| `column` LIKE `expression` | Implemented by Wildcard Elasticsearch filter. See Elasticsearch documentation about its usage
 | `column` IS NULL |
 | `column` IS NOT NULL |
 | `column` BETWEEN `a` AND `b` | `a` and `b` could be NUMBER, STRING, date expressed by TO_DATE('date', 'mask_date'), EXTRACT function
@@ -208,7 +257,7 @@ SELECT * FROM `column` LIMIT 100
 
 ## Compatibility
 
-Tested on 7.4.2 and 7.10.0 ElasticSearch release
+Tested on 7.4.2 and 7.10.0 Elasticsearch release
 
 ## About me
 Fabrizio Pasti
