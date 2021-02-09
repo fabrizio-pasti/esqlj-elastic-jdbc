@@ -122,9 +122,9 @@ Add driver dependency in pom.xml:
 ```
     
 ```
-  DriverManager.registerDriver(new EsDriver());
-  Connection connection = DriverManager.getConnection("jdbc:esqlj:http://localhost:9200");
-  Statement stmt = null;
+DriverManager.registerDriver(new EsDriver());
+Connection connection = DriverManager.getConnection("jdbc:esqlj:http://localhost:9200");
+Statement stmt = null;
 ResultSet rs = null;
 
 try {
