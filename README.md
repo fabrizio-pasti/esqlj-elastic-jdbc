@@ -17,7 +17,7 @@ JDBC Driver artifact is not yet published on any public Maven repository. It's a
 
 ## JDBC Connections string
 
-JDBC url must to be follow this syntax:
+JDBC url must to follow this syntax:
 
 ```
 jdbc:esqlj:http<s>://<elastic_address_1>:<elastic_port_1>,http://<elastic_address_2>:<elastic_port_2>,...;param1=paramValue1;...
