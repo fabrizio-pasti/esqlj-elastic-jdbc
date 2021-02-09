@@ -113,11 +113,13 @@ A sample usage of esqlj in DBeaver:
 
 Add driver dependency in pom.xml:
 
-``` <dependency>
-			<groupId>org.takeshi.jdbc</groupId>
-			<artifactId>esqlj</artifactId>
-			<version>0.1.0-SNAPSHOT</version>
-		</dependency>```
+``` 
+<dependency>
+	<groupId>org.takeshi.jdbc</groupId>
+	<artifactId>esqlj</artifactId>
+	<version>0.1.0-SNAPSHOT</version>
+</dependency>
+```
     
 ```
   DriverManager.registerDriver(new EsDriver());
@@ -150,7 +152,6 @@ Add driver dependency in pom.xml:
 				connection.close();
 			}
 		}
-      
 ```
 
 ## Types
