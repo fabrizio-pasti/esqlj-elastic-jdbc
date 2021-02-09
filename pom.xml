@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<name>esqlj</name>
-	<groupId>com.git.fabrizio-pasti.esqlj-elastic-jdbc</groupId>
+	<groupId>org.fpasti</groupId>
 	<artifactId>esqlj</artifactId>
 	<version>0.1.0</version>
 	<packaging>jar</packaging>
