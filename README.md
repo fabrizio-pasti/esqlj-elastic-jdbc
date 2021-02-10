@@ -39,7 +39,7 @@ Optional parameters:
 | queryScrollFetchSize | Fetched rows on next pagination | 500
 | queryScrollTimeoutMinutes | Timeout between pagination expressed in minutes | 3
 | queryScrollOnlyByScrollApi | If false apply the scroll strategy that best fit the query (see Pagination paragraph below) | true
-| sharedConnection | If true rest client will be statically shared between all connection (use it if you don't have the requirement to connect to different Elastic clusters inside same JVM) | true
+| sharedConnection | If true, rest client will be statically shared between all connection (use it if you don't have the requirement to connect to different Elastic clusters inside same JVM) | true
 
 
 ## Concepts
@@ -56,7 +56,7 @@ Document identifier "_id" is returned like a column and mapped on MetaData like 
 
 About SQL implementation see below section 'Support matrix and conventions'
 
-By default the maximum number of document fields that can be retrieved is set to 100.  
+By default on Elastic server the maximum number of document fields that can be retrieved is set to 100.  
 This explains - for example - because by default .kibana_* index containing almost 500 fields return an error on 'select *'.  
 For increasing this configuration threshold change this Elastic setting according to your needs: 'index.max_docvalue_fields_search'
 
