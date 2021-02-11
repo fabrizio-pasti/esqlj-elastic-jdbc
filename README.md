@@ -216,21 +216,32 @@ Supported: column, alias, *
 
 ### Where condition
 
-The column must to be declared typically on left of expression (`value`=column is managed like invalid from esqlj)  
+
 You can use both column name or column alias in expression.
 
 | Expression condition | Notes
 |--- |--- 
-| `column` = `value` | 
-| `column` != `value` | 
-| `column` > `numeric_value` | 
-| `column` >= `numeric_value` | 
-| `column` < `numeric_value` | 
-| `column` <= `numeric_value` | 
-| `column` LIKE `expression` | Implemented by Wildcard Elasticsearch filter. See Elasticsearch documentation about its usage
-| `column` IS NULL |
-| `column` IS NOT NULL |
-| `column` BETWEEN `a` AND `b` | `a` and `b` could be NUMBER, STRING, date expressed by TO_DATE('date', 'mask_date'), EXTRACT function
+| `left expression` = `value` | 
+| `left expression` != `value` | 
+| `left expression` > `numeric_value` | 
+| `left expression` >= `numeric_value` | 
+| `left expression` < `numeric_value` | 
+| `left expression` <= `numeric_value` | 
+| `left expression` LIKE `expression` | Implemented by Wildcard Elasticsearch filter. See Elasticsearch documentation about its usage
+| `left expression` IS NULL |
+| `left expression` IS NOT NULL |
+| `left expression` BETWEEN `a` AND `b` | `a` and `b` could be NUMBER, STRING, date expressed by TO_DATE('date', 'mask_date'), EXTRACT function
+| `left expression` IN (`value1`, `value2`, ...) |
+
+#### Admitted left expression
+
+| Expression
+|--- 
+| `column`
+| `alias`
+| EXTRACT(`period` from `column`)
+
+`value`=column is managed like invalid from esqlj
 
 #### Functions
 
