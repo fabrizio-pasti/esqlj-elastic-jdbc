@@ -245,15 +245,15 @@ You can use both column name or column alias in expression.
 
 #### Functions
 
-| Function name | Notes
+| Function name | Admitted on | Notes
 |--- |--- 
-| SYSDATE | Current date time
-| SYSDATE() | Current date time
-| NOW() | Current date time
-| GETDATE() | Current date time
-| TRUNC(SYSDATE\|SYSDATE()) | Current date
-| TO_DATE(`date`, `mask_date`) | Supported mask: YEAR, YYYY, YY, MM, MONTH, MON, DDD, DD, HH24, HH12, HH, MI, SS, DAY, XFF, FFF, FF, F, PM, TZR, TZH. Example TO_DATE('2020/01/01', 'YYYY/MM/DD')
-| EXTRACT(`PERIOD` FROM `column`) | PERIOD can be valued with `YEAR`, `MONTH`, `DAY`, `HOUR`, `MINUTE`, `SECOND`. Usage example: EXTRACT(YEAR FROM timestamp)!=2020
+| SYSDATE | Right expression | Current date time
+| SYSDATE() | Right expression | Current date time
+| NOW() | Right expression | Current date time
+| GETDATE() | Right expression | Current date time
+| TRUNC(SYSDATE\|SYSDATE()) | Right expression | Current date
+| TO_DATE(`date`, `mask_date`) | Right expression | Supported mask: YEAR, YYYY, YY, MM, MONTH, MON, DDD, DD, HH24, HH12, HH, MI, SS, DAY, XFF, FFF, FF, F, PM, TZR, TZH. Example TO_DATE('2020/01/01', 'YYYY/MM/DD')
+| EXTRACT(`PERIOD` FROM `column`) | Left expression |PERIOD can be valued with `YEAR`, `MONTH`, `DAY`, `HOUR`, `MINUTE`, `SECOND`. Usage example: EXTRACT(YEAR FROM timestamp)!=2020
 
 ### Order
 
