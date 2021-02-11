@@ -246,7 +246,7 @@ You can use both column name or column alias in expression.
 #### Functions
 
 | Function name | Admitted on | Notes
-|--- |--- 
+|--- |--- |--- 
 | SYSDATE | Right expression | Current date time
 | SYSDATE() | Right expression | Current date time
 | NOW() | Right expression | Current date time
