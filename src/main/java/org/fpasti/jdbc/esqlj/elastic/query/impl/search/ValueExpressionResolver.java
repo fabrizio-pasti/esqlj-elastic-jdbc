@@ -4,8 +4,12 @@ import java.sql.SQLException;
 import java.sql.SQLSyntaxErrorException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.fpasti.jdbc.esqlj.elastic.query.statement.model.ExpressionEnum;
+import org.fpasti.jdbc.esqlj.support.EsWrapException;
 import org.fpasti.jdbc.esqlj.support.ToDateUtils;
 
 import net.sf.jsqlparser.expression.DoubleValue;
@@ -26,7 +30,7 @@ import net.sf.jsqlparser.schema.Column;
 
 public class ValueExpressionResolver {
 
-	public static Object evaluateValueExpression(Expression expression) throws SQLException {
+	public static Object evaluateValueExpression(Object expression) throws EsWrapException {
 		switch(ExpressionEnum.resolveByInstance(expression)) {	
 			case DOUBLE_VALUE:
 				DoubleValue doubleValue = (DoubleValue)expression;
@@ -62,18 +66,21 @@ public class ValueExpressionResolver {
 				} else if(column.getColumnName().equalsIgnoreCase("FALSE")) {
 					return false;
 				}
+			case EXPRESSION_LIST:
+				ExpressionList expressionList = (ExpressionList)expression;
+				return expressionList.getExpressions().stream().map(valueExpression -> evaluateValueExpression(valueExpression)).collect(Collectors.toList());
 			default:
-				throw new SQLException(String.format("Unmanaged expression: %s", ExpressionEnum.resolveByInstance(expression).name()));
+				throw new EsWrapException(new SQLException(String.format("Unmanaged expression: %s", ExpressionEnum.resolveByInstance(expression).name())));
 		}
 	}
 	
-	private static Object resolveFunction(Function function) throws SQLException {
+	private static Object resolveFunction(Function function) throws EsWrapException {
 		ExpressionList parameters = (ExpressionList)function.getParameters();
 		
 		switch(function.getName().toUpperCase()) {
 			case "TO_DATE":
 				if(parameters.getExpressions().size() != 2) {
-					throw new SQLSyntaxErrorException("TO_DATE with invalid number of parameters");
+					throw new EsWrapException(new SQLSyntaxErrorException("TO_DATE with invalid number of parameters"));
 				}
 				return ToDateUtils.resolveToDate((String)evaluateValueExpression(parameters.getExpressions().get(0)), (String)evaluateValueExpression(parameters.getExpressions().get(1)));
 			case "NOW":
@@ -93,9 +100,9 @@ public class ValueExpressionResolver {
 						return LocalDateTime.now(ZoneId.systemDefault());
 					}
 				}
-				throw new SQLSyntaxErrorException(String.format("'%s' unsupported", function.toString()));
+				throw new EsWrapException(new SQLSyntaxErrorException(String.format("'%s' unsupported", function.toString())));
 		}
-		throw new SQLSyntaxErrorException(String.format("Function '%s' unsupported", function.getName()));
+		throw new EsWrapException(new SQLSyntaxErrorException(String.format("Function '%s' unsupported", function.getName())));
 	}
 	
 	private static Object addition(Object a, Object b) {

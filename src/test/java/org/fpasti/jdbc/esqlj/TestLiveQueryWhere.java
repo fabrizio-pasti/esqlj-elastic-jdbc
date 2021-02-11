@@ -512,4 +512,29 @@ public class TestLiveQueryWhere
 		assertEquals(3, rs.getRow());
 		stmt.close();
 	}
+	
+	
+	@Test
+	public void selectWhere044() throws SQLException {
+		Statement stmt = TestUtils.getLiveConnection().createStatement();
+		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT _id from \"esqlj-test-static-010\" WHERE keywordField IN ('keyword01', 'keyword02', 'keyboardXX')"));
+		while(rs.next()) {
+			assertTrue(StringUtils.containsAny(rs.getString(1), "doc_01", "doc_02"));
+		}
+		assertEquals(2, rs.getRow());
+		rs.close();
+		stmt.close();
+	}
+	
+	@Test
+	public void selectWhere045() throws SQLException {
+		Statement stmt = TestUtils.getLiveConnection().createStatement();
+		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT _id from \"esqlj-test-static-010\" WHERE EXTRACT(MINUTE FROM timestampField) IN (10, 11)"));
+		while(rs.next()) {
+			assertTrue(StringUtils.containsAny(rs.getString(1), "doc_01", "doc_02", "doc_05", "doc_06"));
+		}
+		assertEquals(4, rs.getRow());
+		rs.close();
+		stmt.close();
+	}
 }

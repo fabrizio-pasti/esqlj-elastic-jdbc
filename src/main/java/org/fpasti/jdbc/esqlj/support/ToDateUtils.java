@@ -50,13 +50,13 @@ public class ToDateUtils {
 		}
 	}
 	
-	public static LocalDateTime resolveToDate(String date, String mask) throws SQLSyntaxErrorException {
+	public static LocalDateTime resolveToDate(String date, String mask) throws EsWrapException {
 		String format = convertToJavaFormat(mask); 
 		SimpleDateFormat sdf = new SimpleDateFormat(format);
 		try {
 			return sdf.parse(date).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
 		} catch (ParseException e) {
-			throw new SQLSyntaxErrorException(String.format("Failed to parse date '%s' with mask '%s'. Check supported formatters", date, mask));
+			throw new EsWrapException(new SQLSyntaxErrorException(String.format("Failed to parse date '%s' with mask '%s'. Check supported formatters", date, mask)));
 		}
 	}
 	

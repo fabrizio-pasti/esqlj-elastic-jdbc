@@ -29,6 +29,13 @@ public class TermsQuery {
 		notEqualObjects.get(field).add(nEqO);
 	}
 
+	public void addEqualObjects(String field, List<Object> eqObjs) {
+		if (!equalObjects.containsKey(field)) {
+			equalObjects.put(field, new ArrayList<Object>());
+		}
+		equalObjects.get(field).addAll(eqObjs);
+	}
+	
 	public Map<String, List<Object>> getEqualObjects() {
 		return equalObjects;
 	}

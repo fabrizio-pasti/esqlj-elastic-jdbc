@@ -51,12 +51,16 @@ public class EvaluateQueryResult {
 			return termsQuery;
 		}
 		
-		public void setEqualTerm(String term, Object value) {
+		public void addEqualTerm(String term, Object value) {
 			termsQuery.addEqualObject(term, value);
 		}
 
-		public void setNotEqualTerm(String term, Object value) {
+		public void addNotEqualTerm(String term, Object value) {
 			termsQuery.addNotEqualObject(term, value);
+		}
+		
+		public void addEqualTerms(String term, List<Object> values) {
+			termsQuery.addEqualObjects(term, values);
 		}
 
 		public EvaluateQueryResult merge(boolean and, EvaluateQueryResult resAndRight) {

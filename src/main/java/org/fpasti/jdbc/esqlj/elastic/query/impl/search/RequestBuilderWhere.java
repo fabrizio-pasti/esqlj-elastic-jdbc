@@ -26,8 +26,10 @@ import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
 import net.sf.jsqlparser.expression.operators.conditional.OrExpression;
 import net.sf.jsqlparser.expression.operators.relational.Between;
 import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
+import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
 import net.sf.jsqlparser.expression.operators.relational.GreaterThan;
 import net.sf.jsqlparser.expression.operators.relational.GreaterThanEquals;
+import net.sf.jsqlparser.expression.operators.relational.InExpression;
 import net.sf.jsqlparser.expression.operators.relational.IsNullExpression;
 import net.sf.jsqlparser.expression.operators.relational.LikeExpression;
 import net.sf.jsqlparser.expression.operators.relational.MinorThan;
@@ -78,6 +80,7 @@ public class RequestBuilderWhere {
 		req.getSearchSourceBuilder().query(qb);
 	}
 	
+	@SuppressWarnings("unchecked")
 	private static EvaluateQueryResult evaluateQueryExpression(Expression expression, SqlStatementSelect select) throws SQLException {
 		switch(ExpressionEnum.resolveByInstance(expression)) {
 			case AND_EXPRESSION:
@@ -155,7 +158,7 @@ public class RequestBuilderWhere {
 					return resolveExtract(equalsTo.getLeftExpression(), equalsTo.getRightExpression(), "==", select);
 				}
 				EvaluateQueryResult etQr = new EvaluateQueryResult();
-				etQr.setEqualTerm(getColumn(equalsTo.getLeftExpression(), select), ValueExpressionResolver.evaluateValueExpression(equalsTo.getRightExpression()));
+				etQr.addEqualTerm(getColumn(equalsTo.getLeftExpression(), select), ValueExpressionResolver.evaluateValueExpression(equalsTo.getRightExpression()));
 				return etQr;
 			case NOT_EQUALS_TO:
 				NotEqualsTo notEqualsTo = (NotEqualsTo)expression;
@@ -163,7 +166,7 @@ public class RequestBuilderWhere {
 					return resolveExtract(notEqualsTo.getLeftExpression(), notEqualsTo.getRightExpression(), "!=", select);
 				}
 				EvaluateQueryResult netQr = new EvaluateQueryResult();
-				netQr.setNotEqualTerm(getColumn(notEqualsTo.getLeftExpression(), select), ValueExpressionResolver.evaluateValueExpression(notEqualsTo.getRightExpression()));
+				netQr.addNotEqualTerm(getColumn(notEqualsTo.getLeftExpression(), select), ValueExpressionResolver.evaluateValueExpression(notEqualsTo.getRightExpression()));
 				return netQr;
 			case IS_NULL_EXPRESSION:
  				IsNullExpression isNullExpression = (IsNullExpression)expression;
@@ -192,18 +195,39 @@ public class RequestBuilderWhere {
 			case LIKE_EXPRESSION:
 				LikeExpression likeExpression = (LikeExpression)expression;
 				return new EvaluateQueryResult(QueryBuilders.wildcardQuery(getColumn(likeExpression.getLeftExpression(), select), (String)ValueExpressionResolver.evaluateValueExpression(likeExpression.getRightExpression())));
+			case IN_EXPRESSION:
+				InExpression inExpression = (InExpression)expression;
+				if(inExpression.getLeftExpression() instanceof ExtractExpression) {
+					return resolveExtract(inExpression.getLeftExpression(), inExpression.getRightItemsList(), "==", select);
+				}
+				EvaluateQueryResult etQrIe = new EvaluateQueryResult();
+				etQrIe.addEqualTerms(getColumn(inExpression.getLeftExpression(), select), (List<Object>)ValueExpressionResolver.evaluateValueExpression(inExpression.getRightItemsList()));
+				return etQrIe;
 			default:
 				throw new SQLException(String.format("Unmanaged expression: %s", ExpressionEnum.resolveByInstance(expression).name()));
 		}
 	}
 
-	private static EvaluateQueryResult resolveExtract(Expression extractExpression, Expression valueExpression, String operator, SqlStatementSelect select) throws SQLException {
+	private static EvaluateQueryResult resolveExtract(Expression extractExpression, Object valueExpression, String operator, SqlStatementSelect select) throws SQLException {
 		ExtractExpression extract = (ExtractExpression)extractExpression;
 		ElasticScriptMethodEnum scriptDateMethod = null;
 		try {
 			scriptDateMethod = ElasticScriptMethodEnum.valueOf(extract.getName());
 		} catch(IllegalArgumentException e) {
 			throw new SQLSyntaxErrorException(String.format("Unsupported extract params '%s'", extract.getName()));
+		}
+
+		if(ExpressionEnum.resolveByInstance(valueExpression) == ExpressionEnum.EXPRESSION_LIST) {
+			ExpressionList expressionList = (ExpressionList)valueExpression;
+			Map<String, Object> params = new HashMap<String, Object>();
+			String scriptExpression = "";
+			for(int i = 0; i < expressionList.getExpressions().size(); i++) {
+				Expression expression = expressionList.getExpressions().get(i);
+				params.put(String.format("param%d", i), ValueExpressionResolver.evaluateValueExpression(expression));
+				scriptExpression = scriptExpression.concat(scriptExpression.length() == 0 ? "" : " || ").concat(String.format("doc.%s.value.%s %s params.param%d", getColumn(extract.getExpression(), select), scriptDateMethod.getMethod(), operator, i));
+			}
+			Script script = new Script(Script.DEFAULT_SCRIPT_TYPE, Script.DEFAULT_SCRIPT_LANG, scriptExpression, params);
+			return new EvaluateQueryResult(QueryBuilders.scriptQuery(script));
 		}
 		
 		Map<String, Object> params = new HashMap<String, Object>();
