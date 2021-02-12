@@ -48,7 +48,8 @@ Elastic aliases are managed like SQL Views.
 Query on index / alias containing special character like '*', '-', '.' need to be double quoted. For example 'SELECT * FROM ".test-index*"'  
 Field and alias containing special characters like '-' must also to be double quoted.
 
-Document identifier "_id" is returned like a column and mapped on MetaData like primary key. This column is also available on Where condition for matching query (=, !=)
+Document identifier "_id" is returned like a column of type string in not aggregating query and mapped on MetaData like primary key. This column is also available on Where condition for matching query (=, !=)
+Search score "_score" is returned like a colum of type float in not aggregating query.
 
 'Like' filter is implemented by Wildcard Elastic Query (https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-wildcard-query.html)
 
@@ -140,7 +141,7 @@ try {
 
 	// iterate over query res
 	while (rs.next()) {
-		System.out.println(String.format("_id: %s : doubleField: %f - keywordField: %s - textField: %s", rs.getString(10), rs.getDouble(2), rs.getObject(5), rs.getString(8)));
+		System.out.println(String.format("_id: %s : doubleField: %f - keywordField: %s - textField: %s - score: %f", rs.getString(10), rs.getDouble(2), rs.getObject(5), rs.getString(8), rs.getFloat(11)));
 	}
 
 } catch (SQLException ex) {
@@ -212,10 +213,9 @@ If ESQLJ_TEST_CONFIG isn't declared, all tests depending from live connection wi
 ## Support matrix and conventions
 
 ### From clause
-Supported: column, alias, *
+Supported: column (Elastic document field), alias, *, document identifier (_id), search score (_score)
 
 ### Where condition
-
 
 You can use both column name or column alias in expression.
 
