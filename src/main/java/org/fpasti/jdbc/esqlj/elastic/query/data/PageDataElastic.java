@@ -57,9 +57,7 @@ public class PageDataElastic {
 			SearchHit searchHit = searchResponse.getHits().getHits()[i];
 			List<Object> data = new ArrayList<Object>();
 			req.getFields().forEach((name, field) -> {
-				if(field.getFullName().equals(ElasticField.DOC_ID_ALIAS)) {
-					data.add(searchHit.getId());
-				} else if(field.isDocValue()) {
+				if(field.isDocValue()) {
 					DocumentField docField = searchHit.field(field.getFullName());
 					if(docField != null) {
 						data.add(resolveField(field, docField.getValue())); // only first field value is managed
@@ -68,6 +66,10 @@ public class PageDataElastic {
 					}
 				} else if(field.isSourceField() && req.isSourceFieldsToRetrieve()) {
 					data.add(searchHit.getSourceAsMap().get(field.getFullName()));
+				} else if(field.getFullName().equals(ElasticField.DOC_ID_ALIAS)) {
+					data.add(searchHit.getId());
+				} else if(field.getFullName().equals(ElasticField.DOC_SCORE)) {
+					data.add(searchHit.getScore());
 				} else {
 					data.add(null);
 				}

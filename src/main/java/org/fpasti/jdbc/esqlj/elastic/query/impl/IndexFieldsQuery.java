@@ -30,6 +30,7 @@ public class IndexFieldsQuery extends AbstractOneShotQuery {
 			insertRow(index, field);
 		});
 		insertRow(index, new ElasticField(ElasticField.DOC_ID_ALIAS, ElasticFieldType.DOC_ID));
+		insertRow(index, new ElasticField(ElasticField.DOC_SCORE, ElasticFieldType.DOC_SCORE));
 	}
 
 	private void insertRow(String index, ElasticField field) {

@@ -46,7 +46,8 @@ public class TestLiveMetaData
 		assertEquals("textField", rsm.getColumnName(8));
 		assertEquals("timestampField", rsm.getColumnName(9));
 		assertEquals("_id", rsm.getColumnName(10));
-		assertEquals(10, rsm.getColumnCount());
+		assertEquals("_score", rsm.getColumnName(11));
+		assertEquals(11, rsm.getColumnCount());
 	}
 
 	@Test

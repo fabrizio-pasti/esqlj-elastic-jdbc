@@ -53,7 +53,8 @@ public class TestLiveResultSetMetadata
 		"7, object.keywordObjectField, 12, VARCHAR",
 		"8, textField, 12, VARCHAR",
 		"9, timestampField, 93, TIMESTAMP",
-		"10, _id, 12, VARCHAR"
+		"10, _id, 12, VARCHAR",
+		"11, _score, 6, NUMBER"
 		})
 	public void resultSetMetaData(int column, String name, int type, String typeName) throws SQLException {		
 		assertEquals(rsm.getColumnName(column), name);

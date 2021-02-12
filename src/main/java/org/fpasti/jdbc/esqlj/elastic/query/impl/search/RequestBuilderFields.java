@@ -31,6 +31,7 @@ public class RequestBuilderFields {
 		if(req.isStarSelect()) {
 			req.setFields(req.getIndexMetaData().getFields());
 			req.getFields().put(ElasticField.DOC_ID_ALIAS, getDocIdField());
+			req.getFields().put(ElasticField.DOC_SCORE, getDocScoreField());
 		} else {
 			req.setFields(select.getFields().stream().map(f -> ElasticFieldExt.promoteInstance(resolveField(req.getIndexMetaData(), f), f)).collect(Collectors.toMap(ElasticFieldExt::getColumnName, Function.identity(), (o1, o2) -> o1, LinkedHashMap::new)));
 			req.setColumnNames(select.getFields().stream().map(field -> field.getName()).collect(Collectors.toList()));
@@ -58,6 +59,9 @@ public class RequestBuilderFields {
 		if(f.getName().equals(ElasticField.DOC_ID_ALIAS)) {
 			return getDocIdField();
 		}
+		if(f.getName().equals(ElasticField.DOC_SCORE)) {
+			return getDocScoreField();
+		}
 		if(!indexMetaData.getFields().containsKey(f.getName())) {
 			throw new EsRuntimeException(String.format("Unrecognized field %s", f.getName()));
 		}
@@ -67,6 +71,10 @@ public class RequestBuilderFields {
 	
 	private static ElasticField getDocIdField() {
 		return new ElasticField(ElasticField.DOC_ID_ALIAS, ElasticFieldType.DOC_ID);
+	}
+	
+	private static ElasticField getDocScoreField() {
+		return new ElasticField(ElasticField.DOC_SCORE, ElasticFieldType.DOC_SCORE);
 	}
 
 }

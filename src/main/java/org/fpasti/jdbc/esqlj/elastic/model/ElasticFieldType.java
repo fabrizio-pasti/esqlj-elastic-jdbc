@@ -17,6 +17,7 @@ public enum ElasticFieldType {
 		DATE("date", "TIMESTAMP", LocalDateTime.class, Types.TIMESTAMP, 19, "'", "'", true, false, true, false, false),
 		DATE_NANOS("date_nanos", "TIMESTAMP", LocalDateTime.class, Types.TIMESTAMP, 19, "'", "'", true, false, true, false, false),
 		DOC_ID("doc_id", "VARCHAR", String.class, Types.VARCHAR, 512, "'", "'", true, false, true, false, true),
+		DOC_SCORE("doc_score", "NUMBER", Float.class, Types.FLOAT, 38, null, null, false, false, true, false, false),
 		DOUBLE("double", "NUMBER", Double.class, Types.DOUBLE, 76, null, null, false, false, true, false, false),
 		FLATTENED("flattened", "STRUCT", Object.class, Types.STRUCT, 0, null, null, false, false, true, false, false),
 		FLOAT("float", "NUMBER", Float.class, Types.FLOAT, 38, null, null, false, false, true, false, false),

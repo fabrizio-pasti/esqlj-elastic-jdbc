@@ -537,4 +537,15 @@ public class TestLiveQueryWhere
 		rs.close();
 		stmt.close();
 	}
+	
+	@Test
+	public void selectWhere046() throws SQLException {
+		Statement stmt = TestUtils.getLiveConnection().createStatement();
+		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT _id, _score from \"esqlj-test-static-010\" WHERE keywordField LIKE 'keyword*'"));
+		while(rs.next()) {
+			assertTrue(rs.getFloat(2) > 0);
+		}
+		rs.close();
+		stmt.close();
+	}
 }
