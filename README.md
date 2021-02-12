@@ -48,7 +48,8 @@ Elastic aliases are managed like SQL Views.
 Query on index / alias containing special character like '*', '-', '.' need to be double quoted. For example 'SELECT * FROM ".test-index*"'  
 Field and alias containing special characters like '-' must also to be double quoted.
 
-Document identifier "_id" is returned like a column and mapped on MetaData like primary key. This column is also available on Where condition for matching query (=, !=)
+Document identifier "_id" is returned like a column of type string in not aggregating query, and mapped on MetaData like primary key. This column is also available on Where condition for matching query (=, !=).  
+Search score "_score" is returned like a colum of type float in not aggregating query.
 
 'Like' filter is implemented by Wildcard Elastic Query (https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-wildcard-query.html)
 
@@ -140,7 +141,7 @@ try {
 
 	// iterate over query res
 	while (rs.next()) {
-		System.out.println(String.format("_id: %s : doubleField: %f - keywordField: %s - textField: %s", rs.getString(10), rs.getDouble(2), rs.getObject(5), rs.getString(8)));
+		System.out.println(String.format("_id: %s : doubleField: %f - keywordField: %s - textField: %s - score: %f", rs.getString(10), rs.getDouble(2), rs.getObject(5), rs.getString(8), rs.getFloat(11)));
 	}
 
 } catch (SQLException ex) {
@@ -212,37 +213,47 @@ If ESQLJ_TEST_CONFIG isn't declared, all tests depending from live connection wi
 ## Support matrix and conventions
 
 ### From clause
-Supported: column, alias, *
+Supported: column (Elastic document field), alias, *, document identifier (_id), search score (_score)
 
 ### Where condition
 
-The column must to be declared typically on left of expression (`value`=column is managed like invalid from esqlj)  
 You can use both column name or column alias in expression.
 
 | Expression condition | Notes
 |--- |--- 
-| `column` = `value` | 
-| `column` != `value` | 
-| `column` > `numeric_value` | 
-| `column` >= `numeric_value` | 
-| `column` < `numeric_value` | 
-| `column` <= `numeric_value` | 
-| `column` LIKE `expression` | Implemented by Wildcard Elasticsearch filter. See Elasticsearch documentation about its usage
-| `column` IS NULL |
-| `column` IS NOT NULL |
-| `column` BETWEEN `a` AND `b` | `a` and `b` could be NUMBER, STRING, date expressed by TO_DATE('date', 'mask_date'), EXTRACT function
+| `left expression` = `value` | 
+| `left expression` != `value` | 
+| `left expression` > `numeric_value` | 
+| `left expression` >= `numeric_value` | 
+| `left expression` < `numeric_value` | 
+| `left expression` <= `numeric_value` | 
+| `left expression` LIKE `expression` | Implemented by Wildcard Elasticsearch filter. See Elasticsearch documentation about its usage
+| `left expression` IS NULL |
+| `left expression` IS NOT NULL |
+| `left expression` BETWEEN `a` AND `b` | `a` and `b` could be NUMBER, STRING, date expressed by TO_DATE('date', 'mask_date'), EXTRACT function
+| `left expression` IN (`value1`, `value2`, ...) |
+
+#### Admitted left expression
+
+| Expression
+|--- 
+| `column`
+| `alias`
+| EXTRACT(`period` from `column`)
+
+`value`=column is managed like invalid from esqlj
 
 #### Functions
 
-| Function name | Notes
-|--- |--- 
-| SYSDATE | Current date time
-| SYSDATE() | Current date time
-| NOW() | Current date time
-| GETDATE() | Current date time
-| TRUNC(SYSDATE\|SYSDATE()) | Current date
-| TO_DATE(`date`, `mask_date`) | Supported mask: YEAR, YYYY, YY, MM, MONTH, MON, DDD, DD, HH24, HH12, HH, MI, SS, DAY, XFF, FFF, FF, F, PM, TZR, TZH. Example TO_DATE('2020/01/01', 'YYYY/MM/DD')
-| EXTRACT(`PERIOD` FROM `column`) | PERIOD can be valued with `YEAR`, `MONTH`, `DAY`, `HOUR`, `MINUTE`, `SECOND`. Usage example: EXTRACT(YEAR FROM timestamp)!=2020
+| Function name | Admitted on | Notes
+|--- |--- |--- 
+| SYSDATE | Right expression | Current date time
+| SYSDATE() | Right expression | Current date time
+| NOW() | Right expression | Current date time
+| GETDATE() | Right expression | Current date time
+| TRUNC(SYSDATE\|SYSDATE()) | Right expression | Current date
+| TO_DATE(`date`, `mask_date`) | Right expression | Supported mask: YEAR, YYYY, YY, MM, MONTH, MON, DDD, DD, HH24, HH12, HH, MI, SS, DAY, XFF, FFF, FF, F, PM, TZR, TZH. Example TO_DATE('2020/01/01', 'YYYY/MM/DD')
+| EXTRACT(`PERIOD` FROM `column`) | Left expression |PERIOD can be valued with `YEAR`, `MONTH`, `DAY`, `HOUR`, `MINUTE`, `SECOND`. Usage example: EXTRACT(YEAR FROM timestamp)!=2020
 
 ### Order
 
