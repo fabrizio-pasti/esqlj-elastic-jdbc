@@ -48,7 +48,7 @@ Elastic aliases are managed like SQL Views.
 Query on index / alias containing special character like '*', '-', '.' need to be double quoted. For example 'SELECT * FROM ".test-index*"'  
 Field and alias containing special characters like '-' must also to be double quoted.
 
-Document identifier "_id" is returned like a column of type string in not aggregating query and mapped on MetaData like primary key. This column is also available on Where condition for matching query (=, !=)
+Document identifier "_id" is returned like a column of type string in not aggregating query, and mapped on MetaData like primary key. This column is also available on Where condition for matching query (=, !=).  
 Search score "_score" is returned like a colum of type float in not aggregating query.
 
 'Like' filter is implemented by Wildcard Elastic Query (https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-wildcard-query.html)
