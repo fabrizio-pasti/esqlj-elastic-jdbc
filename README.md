@@ -55,10 +55,10 @@ Search score "_score" is returned like a colum of type float in not aggregating 
 
 'Like' SQL filter is implemented by Wildcard Elastic Query (https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-wildcard-query.html)
 
-SQL filtering syntax is very limited. esql supports a custom syntax for filtering documents using Elastic API for full text queries, geo queries, shape queries.
-Actually is implemented only a limited set of these advanced filtering query, this is an example of current implementated Query string search (https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html):
+SQL filtering syntax is very limited. Esql supports a custom syntax for filtering documents using Elastic API full text queries, geo queries, shape queries...
+Actually is implemented only a limited set of these advanced filtering query, this is an example of Query string full text search (https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html):
 
-SELECT _id, _score FROM indexName WHERE _elAPI ::query_string('(new york city) OR (big apple) OR name:/joh?n(ath[oa]n)/', 'field1, field2,city.*', 'minimum_should_match:2') 
+`SELECT _id, _score FROM indexName WHERE _elAPI ::query_string('(new york city) OR (big apple) OR name:/joh?n(ath[oa]n)/', 'field1, field2,city.*', 'minimum_should_match:2') `
 
 About SQL implementation see below section 'Support matrix and conventions'
 
