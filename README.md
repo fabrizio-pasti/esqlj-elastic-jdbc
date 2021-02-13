@@ -241,16 +241,6 @@ You can use both column name or column alias in expression.
 | `left expression` IN (`value1`, `value2`, ...) |
 | _elAPI ::`query type`(`param1`,`param2`,...) | See below for reference about implemented Elastic query
 
-*_elAPI*
-| Elastic query | query_type | Parameters | Elastic reference
-|--- |--- |--- |--- 
-| Query string | query_string | 1: query, 2: search on columns (* for all), 3..x: additional query parameters (see Elastic documentation)| https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html
-
-*_elAPI samples*
-| Query type | Sample
-|--- |--- 
-| Query string | SELECT _id, _score FROM indexName WHERE _elAPI ::query_string('(new york city) OR (big apple) OR name:/joh?n(ath[oa]n)/', 'field1, field2,city.*', 'minimum_should_match:2')"); 
-
 #### Admitted left expression
 
 | Expression
@@ -260,6 +250,19 @@ You can use both column name or column alias in expression.
 | EXTRACT(`period` from `column`)
 
 `value`=column is managed like invalid from esqlj
+
+#### _elAPI
+
+Filtering using raw Elastic API
+
+| Elastic query | query_type | Parameters | Elastic reference
+|--- |--- |--- |--- 
+| Query string | query_string | 1: query, 2: search on columns (* for all), 3..x: additional query parameters (see Elastic documentation)| https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html
+
+*_elAPI samples*
+| Query type | Sample
+|--- |--- 
+| Query string | SELECT _id, _score FROM indexName WHERE _elAPI ::query_string('(new york city) OR (big apple) OR name:/joh?n(ath[oa]n)/', 'field1, field2,city.*', 'minimum_should_match:2')"); 
 
 #### Functions
 
