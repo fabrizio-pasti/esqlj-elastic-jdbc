@@ -53,11 +53,16 @@ Field and alias containing special characters like '-' must also to be double qu
 Document identifier "_id" is returned like a column of type string in not aggregating query, and mapped on MetaData like primary key. This column is also available on Where condition for matching query (=, !=).  
 Search score "_score" is returned like a colum of type float in not aggregating query.
 
-'Like' filter is implemented by Wildcard Elastic Query (https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-wildcard-query.html)
+'Like' SQL filter is implemented by Wildcard Elastic Query (https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-wildcard-query.html)
+
+SQL filtering syntax is very limited. Esql supports a custom syntax for filtering documents using Elastic API full text queries, geo queries, shape queries...
+Actually is implemented only a limited set of these advanced filtering query, this is an example of Query string full text search (https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html):
+
+`SELECT _id, _score FROM indexName WHERE _elAPI ::query_string('(new york city) OR (big apple) OR name:/joh?n(ath[oa]n)/', 'field1, field2,city.*', 'minimum_should_match:2') `
 
 About SQL implementation see below section 'Support matrix and conventions'
 
-By default the maximum number of document fields that can be retrieved is set to 100.  
+By default the maximum number of document fields / columns that can be retrieved is set to 100.  
 This explains - for example - because by default .kibana_* index containing almost 500 fields return an error on 'select *'.  
 For increasing this configuration threshold change this Elastic setting according to your needs: 'index.max_docvalue_fields_search'
 
@@ -234,6 +239,7 @@ You can use both column name or column alias in expression.
 | `left expression` IS NOT NULL |
 | `left expression` BETWEEN `a` AND `b` | `a` and `b` could be NUMBER, STRING, date expressed by TO_DATE('date', 'mask_date'), EXTRACT function
 | `left expression` IN (`value1`, `value2`, ...) |
+| _elAPI ::`query type`(`param1`,`param2`,...) | Elastic raw query. See below for reference
 
 #### Admitted left expression
 
@@ -244,6 +250,25 @@ You can use both column name or column alias in expression.
 | EXTRACT(`period` from `column`)
 
 `value`=column is managed like invalid from esqlj
+
+#### _elAPI
+
+_elApi expression allows you to invoke specific Elastic query API. 
+Syntax usage is `_elAPI` `query type`(`param1`,`param2`,...), where `query type` map the specific requested query and `param1`,`param2`,... allows you to pass parameters to the query.  
+Typically `param1` is the search criteria and `param2` is the column involved in the query. Other parameters are optionals and change according different query types. For example `analyze_wildcard`, `fuzzy_max_expansions` etc. must to be declared in this way:
+`_elAPI query_string('search criteria','field1,field2,object.*','analyze_wildcard:true','fuzzy_max_expansions:15')`
+esqlj will dynamically cast params value type according to expected parameter Elastic query object.
+
+Filtering using raw Elastic API
+
+| Elastic query | query_type | Parameters | Elastic reference
+|--- |--- |--- |--- 
+| Query string | query_string | 1: query, 2: search on columns (* for all), 3..x: additional query parameters (see Elastic documentation)| https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html
+
+*_elAPI samples*
+| Query type | Sample
+|--- |--- 
+| Query string | SELECT _id, _score FROM indexName WHERE _elAPI ::query_string('(new york city) OR (big apple) OR name:/joh?n(ath[oa]n)/', 'field1, field2,city.*', 'minimum_should_match:2') 
 
 #### Functions
 
