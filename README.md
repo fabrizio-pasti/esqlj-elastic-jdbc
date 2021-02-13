@@ -4,7 +4,7 @@ A JDBC driver for Elastic released under Apache License 2.0
 
 esqlj not use at all SQL Elastic implementation, Elastic integration is built on top of Elastic Rest High Level API. See Elastic licenses in folder `licenses/elastic-licenses`
 
-Sql parsing is provided by jsqlparser library (https://github.com/JSQLParser/JSqlParser). See related licenses in folder licenses/JSqlParser
+Sql parsing is provided by jsqlparser library (https://github.com/JSQLParser/JSqlParser). See related licenses in folder `licenses/JSqlParser`
 
 ## Project status
 Not production ready 
