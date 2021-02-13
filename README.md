@@ -255,9 +255,9 @@ You can use both column name or column alias in expression.
 
 _elApi expression allows you to invoke specific Elastic query API. 
 Syntax usage is `_elAPI` `query type`(`param1`,`param2`,...), where `query type` map the specific requested query and `param1`,`param2`,... allows you to pass parameters to the query.  
-Typically `param1` is the search criteria and `param2` is the column involved in the query. Other parameters are optionals and change according different queries. For example `analyze_wildcard`, `fuzzy_max_expansions` etc. can be declared in this way:
+Typically `param1` is the search criteria and `param2` is the column involved in the query. Other parameters are optionals and change according different query types. For example `analyze_wildcard`, `fuzzy_max_expansions` etc. must to be declared in this way:
 `_elAPI query_string('search criteria','field1,field2,object.*','analyze_wildcard:true','fuzzy_max_expansions:15')`
-esqlj will dynamically cast params value type according to expected parameter Elastic object query.
+esqlj will dynamically cast params value type according to expected parameter Elastic query object.
 
 Filtering using raw Elastic API
 
