@@ -239,7 +239,7 @@ You can use both column name or column alias in expression.
 | `left expression` IS NOT NULL |
 | `left expression` BETWEEN `a` AND `b` | `a` and `b` could be NUMBER, STRING, date expressed by TO_DATE('date', 'mask_date'), EXTRACT function
 | `left expression` IN (`value1`, `value2`, ...) |
-| _elAPI ::`query type`(`param1`,`param2`,...) | See below for reference about implemented Elastic query
+| _elAPI ::`query type`(`param1`,`param2`,...) | Elastic raw query. See below for reference
 
 #### Admitted left expression
 
