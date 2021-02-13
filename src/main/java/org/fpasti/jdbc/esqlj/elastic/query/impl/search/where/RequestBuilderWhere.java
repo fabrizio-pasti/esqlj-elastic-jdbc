@@ -1,4 +1,4 @@
-	package org.fpasti.jdbc.esqlj.elastic.query.impl.search;
+	package org.fpasti.jdbc.esqlj.elastic.query.impl.search.where;
 
 
 import java.sql.SQLException;
@@ -11,6 +11,7 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.script.Script;
+import org.fpasti.jdbc.esqlj.elastic.query.impl.search.RequestInstance;
 import org.fpasti.jdbc.esqlj.elastic.query.impl.search.model.ElasticScriptMethodEnum;
 import org.fpasti.jdbc.esqlj.elastic.query.impl.search.model.EvaluateQueryResult;
 import org.fpasti.jdbc.esqlj.elastic.query.impl.search.model.TermsQuery;
@@ -18,6 +19,7 @@ import org.fpasti.jdbc.esqlj.elastic.query.statement.SqlStatementSelect;
 import org.fpasti.jdbc.esqlj.elastic.query.statement.model.ExpressionEnum;
 import org.fpasti.jdbc.esqlj.elastic.query.statement.model.Field;
 
+import net.sf.jsqlparser.expression.CastExpression;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.ExtractExpression;
 import net.sf.jsqlparser.expression.NotExpression;
@@ -203,6 +205,12 @@ public class RequestBuilderWhere {
 				EvaluateQueryResult etQrIe = new EvaluateQueryResult();
 				etQrIe.addEqualTerms(getColumn(inExpression.getLeftExpression(), select), (List<Object>)ValueExpressionResolver.evaluateValueExpression(inExpression.getRightItemsList()));
 				return etQrIe;
+			case CAST_EXPRESSION:
+				CastExpression castExpression = (CastExpression)expression;
+				if(!(castExpression.getLeftExpression() instanceof Column) || !((Column)castExpression.getLeftExpression()).getColumnName().equalsIgnoreCase("_elAPI")) {
+					throw new SQLException("[::] syntax must to be used only with '_elAPI'");
+				}
+				return ElApiExpressionResolver.manageExpression(castExpression.getType());
 			default:
 				throw new SQLException(String.format("Unmanaged expression: %s", ExpressionEnum.resolveByInstance(expression).name()));
 		}

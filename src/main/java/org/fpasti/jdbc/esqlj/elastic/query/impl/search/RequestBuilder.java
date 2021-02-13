@@ -8,6 +8,7 @@ import org.elasticsearch.search.builder.PointInTimeBuilder;
 import org.fpasti.jdbc.esqlj.Configuration;
 import org.fpasti.jdbc.esqlj.ConfigurationPropertyEnum;
 import org.fpasti.jdbc.esqlj.EsConnection;
+import org.fpasti.jdbc.esqlj.elastic.query.impl.search.where.RequestBuilderWhere;
 import org.fpasti.jdbc.esqlj.elastic.query.statement.SqlStatementSelect;
 import org.fpasti.jdbc.esqlj.support.ElasticUtils;
 
