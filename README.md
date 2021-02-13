@@ -220,7 +220,23 @@ If ESQLJ_TEST_CONFIG isn't declared, all tests depending from live connection wi
 ## Support matrix and conventions
 
 ### From clause
-Supported: column (Elastic document field), alias, *, document identifier (_id), search score (_score)
+
+Actually support select element:
+
+| Select element | Notes
+|--- |--- 
+| `column` | Elastic document field
+| `alias` | Alias for field in query result
+| `*` | All document fields
+| `_id` | document identifier (string)
+| `_score` | document query search score (float)
+
+Supported query functions:
+
+| Function | Description | Example 
+|--- |--- |---
+| `COUNT` | Number of documents | Number of documents in index: `SELECT COUNT(*) FROM index`. Number of documents where `field` is not null: `SELECT COUNT(field) FROM index`
+
 
 ### Where condition
 
