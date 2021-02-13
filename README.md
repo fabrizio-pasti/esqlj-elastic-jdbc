@@ -244,12 +244,12 @@ You can use both column name or column alias in expression.
 *_elAPI*
 | Elastic query | query_type | Parameters | Elastic reference
 |--- |--- |--- |--- 
-| Query string | query_string | 1: query, 2: search on columns (* for all), 3..x: additional query parameters (see Elastic documentation)| https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html#query-string-min-should-match
+| Query string | query_string | 1: query, 2: search on columns (* for all), 3..x: additional query parameters (see Elastic documentation)| https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html
 
 *_elAPI samples*
 | Query type | Sample
 |--- |--- 
-| Query string | SELECT _id, _score FROM indexName WHERE _elAPI ::query_string('(new york city) OR (big apple) OR name:/joh?n(ath[oa]n)/', 'field1, field2,city.*', 'minimum_should_match:2')"); // WHERE keywordField ::KITANO(PROVA, 'UNO') 
+| Query string | SELECT _id, _score FROM indexName WHERE _elAPI ::query_string('(new york city) OR (big apple) OR name:/joh?n(ath[oa]n)/', 'field1, field2,city.*', 'minimum_should_match:2')"); 
 
 #### Admitted left expression
 
