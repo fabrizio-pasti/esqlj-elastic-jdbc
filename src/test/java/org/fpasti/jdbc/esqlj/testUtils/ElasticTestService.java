@@ -27,7 +27,7 @@ public class ElasticTestService {
 	private static final String RESOURCES_TEST_INDEX_TEMPLATE_JSON = "test-index-template.json";
 	private static final String ESQLJ_TEST_TEMPLATE = "esqlj-test-template";
 	private static final String ELASTIC_BASE_INDEX_CREATE_AND_DESTROY = "esqlj-test-volatile-";
-	private static final String ELASTIC_BASE_INDEX_CREATE_ONLY = "esqlj-test-static-010";
+	private static final String ELASTIC_BASE_INDEX_CREATE_ONLY = "esqlj-test-static-020";
 	
 	public static String CURRENT_INDEX;
 	private static Integer NUMBER_OF_DOCS;
