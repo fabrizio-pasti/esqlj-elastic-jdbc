@@ -34,7 +34,7 @@ public class SqlStatementSelect extends SqlStatement {
 	private List<Index> indices;
 	private List<QueryColumn> queryColumns;
 	private List<OrderByElement> orderByElements;
-	private List<String> groupByFields;
+	private List<String> groupByColumns;
 	private QueryType queryType = QueryType.DOCS;
 	
 	public SqlStatementSelect(Statement statement) {
@@ -64,12 +64,12 @@ public class SqlStatementSelect extends SqlStatement {
 		return indices.stream().filter(index -> index.getName().equals(name) || (index.getAlias() != null && index.getAlias().equals(name))).findFirst().orElse(null);
 	}
 
-	public QueryColumn getFieldByNameOrAlias(String name) {
+	public QueryColumn getColumnsByNameOrAlias(String name) {
 		return queryColumns.stream().filter(field -> field.getName().equals(name) || (field.getAlias() != null && field.getAlias().equals(name))).findFirst().orElse(null);
 	}
 	
-	public List<String> getGroupByFields() {
-		return groupByFields;
+	public List<String> getGroupByColumns() {
+		return groupByColumns;
 	}
 
 	public QueryType getQueryType() {
@@ -84,13 +84,13 @@ public class SqlStatementSelect extends SqlStatement {
 			indices.addAll(select.getJoins().stream().map(join -> new Index(((Table)((Join)join).getRightItem()).getName(), ((Table)((Join)join).getRightItem()).getAlias() != null ? ((Table)((Join)join).getRightItem()).getAlias().getName()  : null)).collect(Collectors.toList()));
 		}
 		
-		queryColumns = resolveFields();
+		queryColumns = resolveColumns();
 		orderByElements = resolveOrderByElements();
-		groupByFields = select.getGroupBy() != null ? select.getGroupBy().getGroupByExpressions().stream().map(expression -> ((Column)expression).getColumnName()).collect(Collectors.toList()) : new ArrayList<String>();
+		groupByColumns = select.getGroupBy() != null ? select.getGroupBy().getGroupByExpressions().stream().map(expression -> ((Column)expression).getColumnName()).collect(Collectors.toList()) : new ArrayList<String>();
 		resolveAggregationType();
 	}
 
-	private List<QueryColumn> resolveFields() {
+	private List<QueryColumn> resolveColumns() {
 		String index = "root";
 		return select.getSelectItems().stream().map(item -> {
 			if(item instanceof SelectExpressionItem) {
@@ -116,7 +116,7 @@ public class SqlStatementSelect extends SqlStatement {
 		
 		return select.getOrderByElements().stream().map(elem -> {
 			Column c = (Column)elem.getExpression();
-			QueryColumn columnOrAlias = getFieldByNameOrAlias(c.getColumnName());
+			QueryColumn columnOrAlias = getColumnsByNameOrAlias(c.getColumnName());
 			if(columnOrAlias != null) {
 				c.setColumnName(columnOrAlias.getName());
 			} 
@@ -125,7 +125,7 @@ public class SqlStatementSelect extends SqlStatement {
 	}
 		
 	private void resolveAggregationType() {
-		if(getGroupByFields().size() > 0) {
+		if(getGroupByColumns().size() > 0) {
 			queryType = QueryType.AGGR_GROUPED;
 			return;
 		}		

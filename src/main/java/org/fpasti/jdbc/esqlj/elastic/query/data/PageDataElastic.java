@@ -10,6 +10,7 @@ import java.util.TimeZone;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.common.document.DocumentField;
 import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.aggregations.metrics.ParsedValueCount;
 import org.fpasti.jdbc.esqlj.elastic.model.ElasticObject;
 import org.fpasti.jdbc.esqlj.elastic.model.EsGeoPoint;
 import org.fpasti.jdbc.esqlj.elastic.query.impl.search.RequestInstance;
@@ -48,6 +49,7 @@ public class PageDataElastic {
 				manageCountAll(searchResponse);
 				break;
 			case AGGR_COUNT_FIELD:
+				manageCountField(searchResponse);
 				break;
 			case AGGR_GROUPED:
 				break;
@@ -99,6 +101,20 @@ public class PageDataElastic {
 		dataRows = new ArrayList<DataRow>();
 		List<Object> data = new ArrayList<Object>();
 		data.add(res.getHits().getTotalHits().value);
+		dataRows.add(new DataRow(data));
+		fetchedRows = new Long(dataRows.size());
+		state = PageDataState.READY_TO_ITERATE;
+	}
+	
+	private void manageCountField(SearchResponse res) {
+		dataRows = new ArrayList<DataRow>();
+		List<Object> data = new ArrayList<Object>();
+		
+		res.getAggregations().asList().forEach(aggregation -> {
+			ParsedValueCount valueCount = (ParsedValueCount)aggregation;
+			data.add(valueCount.getValue());
+		});
+		
 		dataRows.add(new DataRow(data));
 		fetchedRows = new Long(dataRows.size());
 		state = PageDataState.READY_TO_ITERATE;

@@ -2,7 +2,6 @@ package org.fpasti.jdbc.esqlj.elastic.query.statement.model;
 
 import org.fpasti.jdbc.esqlj.elastic.model.ElasticFieldType;
 import org.fpasti.jdbc.esqlj.elastic.query.statement.StatementUtils;
-import org.fpasti.jdbc.esqlj.elastic.query.statement.aggregation.AggregationTypeResolver;
 import org.fpasti.jdbc.esqlj.elastic.query.statement.formatter.Formatter;
 import org.fpasti.jdbc.esqlj.elastic.query.statement.formatter.FormatterFactory;
 
@@ -19,6 +18,7 @@ public class QueryColumn {
 	private Function aggregatingFunction;
 	private Formatter formatter;
 	private ElasticFieldType aggregatingType;
+	private String aggregatingColumnName;
 	
 	public QueryColumn(String name, String alias, String index) {
 		this.name = name.replace("\"", "");
@@ -32,7 +32,8 @@ public class QueryColumn {
 		this.formatter = FormatterFactory.getFormatter(function);
 		if(function != null && formatter == null) {
 			this.aggregatingFunction = function;
-			this.aggregatingType = function != null && formatter == null ? AggregationTypeResolver.resolveAggregationType(function) : null;
+			this.aggregatingType = StatementUtils.resolveAggregationType(function);
+			this.aggregatingColumnName = function.toString(); // transform invalid characters if required
 		}
 		this.alias = alias != null ? alias : function.toString().replaceAll(" ", "");
 	}
@@ -59,6 +60,10 @@ public class QueryColumn {
 
 	public ElasticFieldType getAggregatingType() {
 		return aggregatingType;
+	}
+
+	public String getAggregatingColumnName() {
+		return aggregatingColumnName;
 	}
 
 }

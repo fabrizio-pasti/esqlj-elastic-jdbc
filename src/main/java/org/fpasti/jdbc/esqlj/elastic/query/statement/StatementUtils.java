@@ -1,7 +1,11 @@
 package org.fpasti.jdbc.esqlj.elastic.query.statement;
 
+import java.sql.SQLSyntaxErrorException;
+
+import org.fpasti.jdbc.esqlj.elastic.model.ElasticFieldType;
 import org.fpasti.jdbc.esqlj.elastic.query.statement.model.ExpressionEnum;
 import org.fpasti.jdbc.esqlj.support.EsRuntimeException;
+import org.fpasti.jdbc.esqlj.support.EsWrapException;
 
 import net.sf.jsqlparser.expression.Function;
 import net.sf.jsqlparser.schema.Column;
@@ -21,10 +25,19 @@ public class StatementUtils {
 			case "TO_CHAR":
 				return ((Column)function.getParameters().getExpressions().get(0)).getColumnName();
 			case "COUNT":
-				return function.toString();
+				return function.getParameters() == null ? function.toString() : function.getParameters().getExpressions().get(0).toString().replace("\"", "");
 			default:
 				throw new EsRuntimeException(String.format("Unsupported select function '%s'", function.getName()));
 		}
+	}
+	
+	public static ElasticFieldType resolveAggregationType(Function function) {
+		switch(function.getMultipartName().get(0)) {
+			case "COUNT":
+				return ElasticFieldType.LONG;
+		}
+		
+		throw new EsWrapException(new SQLSyntaxErrorException(String.format("Unsupported aggregating function '%s'", function.getName())));
 	}
 	
 }

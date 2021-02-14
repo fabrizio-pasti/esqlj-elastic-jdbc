@@ -43,7 +43,8 @@ public class TestLiveQueryAggregation
 		stmt.close();
 	}
 	
-	/*@Test
+	
+	@Test
 	public void selectAggregation003() throws SQLException {
 		Statement stmt = TestUtils.getLiveConnection().createStatement();
 		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT COUNT(keywordField) from testIndex"));
@@ -62,5 +63,16 @@ public class TestLiveQueryAggregation
 		rs.close();
 		stmt.close();
 	}
-*/
+
+	@Test
+	public void selectAggregation005() throws SQLException {
+		Statement stmt = TestUtils.getLiveConnection().createStatement();
+		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT COUNT(keywordField), COUNT(\"object.keywordObjectField\") from testIndex"));
+		assertEquals(true, rs.next());
+		assertEquals(ElasticTestService.getNumberOfDocs(), rs.getLong(1));
+		assertEquals(ElasticTestService.getNumberOfDocs() - 1, rs.getLong(2));
+		assertEquals(false, rs.next());
+		rs.close();
+		stmt.close();
+	}
 }

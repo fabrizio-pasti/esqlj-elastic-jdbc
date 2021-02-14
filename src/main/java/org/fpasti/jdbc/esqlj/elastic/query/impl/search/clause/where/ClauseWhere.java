@@ -334,7 +334,7 @@ public class ClauseWhere {
 		
 		Column column = (Column)expression;
 		String columnName = column.getColumnName().replace("\"", "");
-		QueryColumn columnField = select.getFieldByNameOrAlias(columnName);
+		QueryColumn columnField = select.getColumnsByNameOrAlias(columnName);
 		return columnField != null ? columnField.getName() : columnName;
 	}
 	
