@@ -24,6 +24,7 @@ import org.fpasti.jdbc.esqlj.elastic.model.IndexMetaData;
 import org.fpasti.jdbc.esqlj.elastic.query.data.PageDataElastic;
 import org.fpasti.jdbc.esqlj.elastic.query.model.PaginationType;
 import org.fpasti.jdbc.esqlj.elastic.query.statement.SqlStatementSelect;
+import org.fpasti.jdbc.esqlj.elastic.query.statement.model.QueryType;
 
 /**
 * @author  Fabrizio Pasti - fabrizio.pasti@gmail.com
@@ -127,6 +128,11 @@ public class RequestInstance {
 	}
 
 	private void implementScrollStrategy() {
+		if(!select.getQueryType().equals(QueryType.DOCS)) {
+			paginationMode = PaginationType.NO_SCROLL;
+			return;
+		}
+		
 		if(select.getLimit() != null && select.getLimit() < Configuration.getConfiguration(ConfigurationPropertyEnum.CFG_QUERY_SCROLL_FROM_ROWS, Long.class)) {
 			return;
 		}

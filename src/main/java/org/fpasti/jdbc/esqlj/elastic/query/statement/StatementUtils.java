@@ -16,12 +16,15 @@ public class StatementUtils {
 		return ExpressionEnum.resolveByInstance(epxressionInstance).equals(expressionEnum);
 	}
 	
-	public static String resolveFunctionColumn(Function function) {
+	public static String resolveFunctionColumnName(Function function) {
 		switch(function.getName().toUpperCase()) {
 			case "TO_CHAR":
 				return ((Column)function.getParameters().getExpressions().get(0)).getColumnName();
+			case "COUNT":
+				return function.toString();
 			default:
 				throw new EsRuntimeException(String.format("Unsupported select function '%s'", function.getName()));
 		}
 	}
+	
 }

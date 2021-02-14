@@ -1,8 +1,6 @@
 package org.fpasti.jdbc.esqlj;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.sql.ResultSet;
@@ -12,7 +10,6 @@ import java.sql.Statement;
 import org.apache.commons.lang3.StringUtils;
 import org.fpasti.jdbc.esqlj.testUtils.ElasticLiveEnvironment;
 import org.fpasti.jdbc.esqlj.testUtils.ElasticLiveUnit;
-import org.fpasti.jdbc.esqlj.testUtils.ElasticTestService;
 import org.fpasti.jdbc.esqlj.testUtils.TestUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

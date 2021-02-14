@@ -1,7 +1,5 @@
 package org.fpasti.jdbc.esqlj.elastic.query.statement.formatter;
 
-import org.fpasti.jdbc.esqlj.support.EsRuntimeException;
-
 import net.sf.jsqlparser.expression.Function;
 
 /**
@@ -18,8 +16,8 @@ public class FormatterFactory {
 		switch(function.getName().toUpperCase()) {
 			case "TO_CHAR":
 				return new ToCharFormatter(function);
+			default:
+				return null; 
 		}
-		
-		throw new EsRuntimeException(String.format("Unsupported select function '%s'", function.getName()));
 	}
 }

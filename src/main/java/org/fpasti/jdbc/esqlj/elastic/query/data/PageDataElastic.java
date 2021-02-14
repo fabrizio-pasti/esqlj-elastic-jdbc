@@ -41,8 +41,24 @@ public class PageDataElastic {
 
 	public void pushData(SearchResponse searchResponse) {
 		currentIdxCurrentRow = -1;
-		boolean firstPush = dataRows == null;
 		
+		switch(req.getSelect().getQueryType()) {
+			case DOCS:
+				pushDocuments(searchResponse);
+				break;
+			case AGGR_COUNT_ALL:
+				manageCountAll(searchResponse);
+				break;
+			case AGGR_COUNT_FIELD:
+				break;
+			case AGGR_GROUPED:
+				break;
+		}
+	}
+
+	private void pushDocuments(SearchResponse res) {
+		boolean firstPush = dataRows == null;
+			
 		if(!firstPush) {
 			DataRow dataRow = dataRows.get(dataRows.size() - 1);
 			dataRows = new ArrayList<DataRow>();
@@ -51,14 +67,13 @@ public class PageDataElastic {
 			dataRows = new ArrayList<DataRow>();
 		}
 		
-		int takeNRows = req.getSelect().getLimit() != null ? (searchResponse.getHits().getHits().length + fetchedRows > req.getSelect().getLimit() ? new Long(req.getSelect().getLimit() - fetchedRows).intValue() : searchResponse.getHits().getHits().length) : searchResponse.getHits().getHits().length;
+		int takeNRows = req.getSelect().getLimit() != null ? (res.getHits().getHits().length + fetchedRows > req.getSelect().getLimit() ? new Long(req.getSelect().getLimit() - fetchedRows).intValue() : res.getHits().getHits().length) : res.getHits().getHits().length;
 
 		for(int i = 0; i < takeNRows; i++) {
-			SearchHit searchHit = searchResponse.getHits().getHits()[i];
+			SearchHit searchHit = res.getHits().getHits()[i];
 			List<Object> data = new ArrayList<Object>();
 			req.getFields().forEach((name, field) -> {
-				ElasticFieldExt fieldExt = field instanceof ElasticFieldExt ? (ElasticFieldExt)field : null;
-				if(field.isDocValue()) { // && !(fieldExt != null && fieldExt.isFunctionPresent())
+				if(field.isDocValue()) {
 					DocumentField docField = searchHit.field(field.getFullName());
 					if(docField != null) {
 						data.add(resolveField(field, docField.getValue())); // only first field value is managed
@@ -80,6 +95,15 @@ public class PageDataElastic {
 		
 		fetchedRows += dataRows.size() - (firstPush ? 0 : 1) ;
 		state = state == PageDataState.NOT_INITIALIZED ? PageDataState.READY_TO_ITERATE : PageDataState.ITERATION_STARTED;
+	}
+	
+	private void manageCountAll(SearchResponse res) {
+		dataRows = new ArrayList<DataRow>();
+		List<Object> data = new ArrayList<Object>();
+		data.add(res.getHits().getTotalHits().value);
+		dataRows.add(new DataRow(data));
+		fetchedRows = new Long(dataRows.size());
+		state = PageDataState.READY_TO_ITERATE;
 	}
 	
 	private Object resolveField(ElasticField field, Object value) {

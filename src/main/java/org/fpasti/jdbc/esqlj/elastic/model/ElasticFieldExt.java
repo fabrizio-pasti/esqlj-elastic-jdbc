@@ -11,6 +11,17 @@ public class ElasticFieldExt extends ElasticField {
 	private String columnName;
 	private QueryColumn declaredQueryColumn;
 
+	public ElasticFieldExt(String fullName, ElasticFieldType type) {
+		super(fullName, type);
+		setColumnName(fullName);
+	}
+
+	public ElasticFieldExt(QueryColumn queryColumn) {
+		super(queryColumn.getAlias(), queryColumn.getAggregatingType());
+		setColumnName(queryColumn.getAlias());
+		setDeclaredQueryColumn(queryColumn);
+	}
+
 	public ElasticFieldExt(String fullName, ElasticFieldType type, Long size, boolean docValue) {
 		super(fullName, type, size, docValue);
 	}
@@ -39,8 +50,5 @@ public class ElasticFieldExt extends ElasticField {
 		this.declaredQueryColumn = declaredQueryColumn;
 	}
 	
-	public boolean isFunctionPresent() {
-		return declaredQueryColumn.getFunction() != null;
-	}
 	
 }

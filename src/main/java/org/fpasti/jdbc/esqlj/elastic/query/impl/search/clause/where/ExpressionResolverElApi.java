@@ -12,6 +12,10 @@ import org.fpasti.jdbc.esqlj.support.Utils;
 
 import net.sf.jsqlparser.statement.create.table.ColDataType;
 
+/**
+* @author  Fabrizio Pasti - fabrizio.pasti@gmail.com
+*/
+
 public class ExpressionResolverElApi {
 
 	public static EvaluateQueryResult manageExpression(ColDataType colDataType) throws SQLSyntaxErrorException {

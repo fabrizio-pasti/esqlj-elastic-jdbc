@@ -4,16 +4,13 @@ import java.sql.SQLException;
 import java.sql.SQLSyntaxErrorException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.Collectors;
 
 import org.fpasti.jdbc.esqlj.elastic.query.statement.model.ExpressionEnum;
-import org.fpasti.jdbc.esqlj.support.EsWrapException;
 import org.fpasti.jdbc.esqlj.support.DateUtils;
+import org.fpasti.jdbc.esqlj.support.EsWrapException;
 
 import net.sf.jsqlparser.expression.DoubleValue;
-import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.Function;
 import net.sf.jsqlparser.expression.LongValue;
 import net.sf.jsqlparser.expression.StringValue;

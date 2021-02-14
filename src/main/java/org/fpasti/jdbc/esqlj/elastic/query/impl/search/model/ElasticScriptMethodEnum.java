@@ -1,5 +1,9 @@
 package org.fpasti.jdbc.esqlj.elastic.query.impl.search.model;
 
+/**
+* @author  Fabrizio Pasti - fabrizio.pasti@gmail.com
+*/
+
 public enum ElasticScriptMethodEnum {
 	YEAR("getYear()"),
 	MONTH("getMonthValue()"),

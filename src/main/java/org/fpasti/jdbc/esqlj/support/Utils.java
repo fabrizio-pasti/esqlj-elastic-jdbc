@@ -5,7 +5,6 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -17,6 +16,7 @@ import java.util.function.Function;
  */
 
 public class Utils {
+	@SuppressWarnings("rawtypes")
 	private static final Map<Class, Function<String, ?>> parsersCollection = new HashMap<>();
 
 	static {

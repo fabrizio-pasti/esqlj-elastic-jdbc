@@ -8,10 +8,11 @@ import org.elasticsearch.search.builder.PointInTimeBuilder;
 import org.fpasti.jdbc.esqlj.Configuration;
 import org.fpasti.jdbc.esqlj.ConfigurationPropertyEnum;
 import org.fpasti.jdbc.esqlj.EsConnection;
-import org.fpasti.jdbc.esqlj.elastic.query.impl.search.clause.ClauseSelect;
 import org.fpasti.jdbc.esqlj.elastic.query.impl.search.clause.ClauseSort;
+import org.fpasti.jdbc.esqlj.elastic.query.impl.search.clause.select.ClauseSelect;
 import org.fpasti.jdbc.esqlj.elastic.query.impl.search.clause.where.ClauseWhere;
 import org.fpasti.jdbc.esqlj.elastic.query.statement.SqlStatementSelect;
+import org.fpasti.jdbc.esqlj.elastic.query.statement.model.QueryType;
 import org.fpasti.jdbc.esqlj.support.ElasticUtils;
 
 /**
@@ -33,7 +34,10 @@ public class RequestBuilder {
 	}
 
 	private static void build(EsConnection connection, RequestInstance req, SqlStatementSelect select) throws SQLNonTransientConnectionException {
-		req.getSearchSourceBuilder().size(select.getLimit() != null ? (select.getLimit() > req.getFetchSize() ? req.getFetchSize() : select.getLimit().intValue()) : req.getFetchSize()); 
+		if(select.getQueryType().equals(QueryType.DOCS)) {
+			req.getSearchSourceBuilder().size(select.getLimit() != null ? (select.getLimit() > req.getFetchSize() ? req.getFetchSize() : select.getLimit().intValue()) : req.getFetchSize());
+		}
+		
 		req.getSearchRequest().source(req.getSearchSourceBuilder());
 		
 		switch(req.getPaginationMode()) {

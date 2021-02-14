@@ -1,12 +1,15 @@
 package org.fpasti.jdbc.esqlj.elastic.query.statement;
 
+import java.sql.SQLSyntaxErrorException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.fpasti.jdbc.esqlj.elastic.query.statement.model.QueryColumn;
 import org.fpasti.jdbc.esqlj.elastic.query.statement.model.Index;
+import org.fpasti.jdbc.esqlj.elastic.query.statement.model.QueryColumn;
+import org.fpasti.jdbc.esqlj.elastic.query.statement.model.QueryType;
 import org.fpasti.jdbc.esqlj.support.EsRuntimeException;
+import org.fpasti.jdbc.esqlj.support.EsWrapException;
 
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.Function;
@@ -31,6 +34,8 @@ public class SqlStatementSelect extends SqlStatement {
 	private List<Index> indices;
 	private List<QueryColumn> fields;
 	private List<OrderByElement> orderByFields;
+	private List<String> groupByFields;
+	private QueryType queryType = QueryType.DOCS;
 	
 	public SqlStatementSelect(Statement statement) {
 		super(SqlStatementType.SELECT);
@@ -62,6 +67,14 @@ public class SqlStatementSelect extends SqlStatement {
 	public QueryColumn getFieldByNameOrAlias(String name) {
 		return fields.stream().filter(field -> field.getName().equals(name) || (field.getAlias() != null && field.getAlias().equals(name))).findFirst().orElse(null);
 	}
+	
+	public List<String> getGroupByFields() {
+		return groupByFields;
+	}
+
+	public QueryType getQueryType() {
+		return queryType;
+	}
 
 	private void init() {
 		index = new Index(select.getFromItem().toString().replaceAll("\"", ""), select.getFromItem().getAlias() != null ? select.getFromItem().getAlias().getName().replaceAll("\"", "") : null);
@@ -73,6 +86,8 @@ public class SqlStatementSelect extends SqlStatement {
 		
 		fields = resolveFields();
 		orderByFields = resolveOrderByFields();
+		groupByFields = select.getGroupBy() != null ? select.getGroupBy().getGroupByExpressions().stream().map(expression -> ((Column)expression).getColumnName()).collect(Collectors.toList()) : new ArrayList<String>();
+		resolveAggregationType();
 	}
 
 	private List<QueryColumn> resolveFields() {
@@ -107,6 +122,22 @@ public class SqlStatementSelect extends SqlStatement {
 			} 
 			return elem;
 		}).collect(Collectors.toList());
-	}		
-	
+	}
+		
+	private void resolveAggregationType() {
+		if(getGroupByFields().size() > 0) {
+			queryType = QueryType.AGGR_GROUPED;
+			return;
+		}		
+		
+		if(getFields().get(0).getAggregatingFunction() == null) {
+			return;
+		}
+		
+		if(!getFields().get(0).getAggregatingFunction().getName().equalsIgnoreCase("COUNT")) {
+			throw new EsWrapException(new SQLSyntaxErrorException(String.format("'%s' expressions require 'GROUP BY' expression", getFields().get(0).getAggregatingFunction().getName())));
+		}
+		
+		queryType = getFields().get(0).getAggregatingFunction().isAllColumns() ? QueryType.AGGR_COUNT_ALL : QueryType.AGGR_COUNT_FIELD;  
+	}
 }

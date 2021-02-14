@@ -14,14 +14,12 @@ import org.fpasti.jdbc.esqlj.EsConnection;
 
 public abstract class AbstractQuery {
 	private EsConnection connection;
-	private QueryType queryType;
 	private List<String> columnNames;
 	protected boolean open = true;
 	private String source;
 	
-	public AbstractQuery(EsConnection connection, QueryType queryType, String source, String... columnNames) {
+	public AbstractQuery(EsConnection connection, String source, String... columnNames) {
 		this.source = source;
-		this.queryType = queryType;
 		this.connection = connection;
 		this.columnNames = Arrays.asList(columnNames);
 	}
@@ -93,10 +91,6 @@ public abstract class AbstractQuery {
 	public abstract int findColumnIndex(String columnLabel);
 
 	public abstract boolean isBeforeFirst();
-
-	public QueryType getQueryType() {
-		return queryType;
-	}
 
 	public abstract boolean isEmpty();
 	

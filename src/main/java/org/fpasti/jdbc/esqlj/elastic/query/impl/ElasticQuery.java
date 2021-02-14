@@ -17,7 +17,6 @@ import org.fpasti.jdbc.esqlj.ConfigurationPropertyEnum;
 import org.fpasti.jdbc.esqlj.EsConnection;
 import org.fpasti.jdbc.esqlj.EsResultSetMetaData;
 import org.fpasti.jdbc.esqlj.elastic.query.AbstractQuery;
-import org.fpasti.jdbc.esqlj.elastic.query.QueryType;
 import org.fpasti.jdbc.esqlj.elastic.query.data.PageDataElastic;
 import org.fpasti.jdbc.esqlj.elastic.query.impl.search.RequestBuilder;
 import org.fpasti.jdbc.esqlj.elastic.query.impl.search.RequestInstance;
@@ -39,7 +38,7 @@ public class ElasticQuery extends AbstractQuery {
 	private RequestInstance requestInstance;
 	
 	public ElasticQuery(EsConnection connection, SqlStatementSelect select) throws SQLException {
-		super(connection, QueryType.SCROLLABLE, select.getIndex().getName());
+		super(connection, select.getIndex().getName());
 		this.fetchSize = Configuration.getConfiguration(ConfigurationPropertyEnum.CFG_QUERY_SCROLL_FETCH_SIZE, Integer.class);
 		initialFetch(select);
 	}

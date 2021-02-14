@@ -27,7 +27,7 @@ public class AbstractOneShotQuery extends AbstractQuery {
 	private ResultSetMetaData resultSetMetaData;
 	
 	public AbstractOneShotQuery(EsConnection connection, String source, String... columnNames) {
-		super(connection, QueryType.STATIC, source, columnNames);
+		super(connection, source, columnNames);
 		pageData = new PageDataArray(getColumnNames());
 	}
 
