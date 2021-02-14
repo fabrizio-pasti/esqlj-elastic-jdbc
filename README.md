@@ -316,6 +316,6 @@ Tested on 7.4.2 and 7.10.0 Elasticsearch release
 
 ## About me
 Fabrizio Pasti  
-[fabrizio.pasti@gmail.com]  
-[https://www.linkedin.com/in/fabrizio-pasti-2340a627]
+[fabrizio.pasti@gmail.com](fabrizio.pasti@gmail.com)  
+[https://www.linkedin.com/in/fabrizio-pasti-2340a627](https://www.linkedin.com/in/fabrizio-pasti-2340a627)
 
