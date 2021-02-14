@@ -55,8 +55,8 @@ Search score "_score" is returned like a colum of type float in not aggregating 
 
 'Like' SQL filter is implemented by Wildcard Elastic Query [query-dsl-wildcard-query](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-wildcard-query.html)
 
-SQL filtering syntax is very limited. Esql supports a custom syntax for filtering documents using Elastic API full text queries, geo queries, shape queries...
-Actually is implemented only a limited set of these advanced filtering query, this is an example of Query string full text search [query-dsl-query-string-query](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html):
+SQL filtering syntax is very limited. Esqlj supports a custom syntax for filtering documents using Elastic API full text queries, geo queries, shape queries...
+Actually are implemented only a limited set of these advanced filtering query. This is an example of Query string full text search [query-dsl-query-string-query](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html):
 
 `SELECT _id, _score FROM indexName WHERE _elAPI ::query_string('(new york city) OR (big apple) OR name:/joh?n(ath[oa]n)/', 'field1, field2,city.*', 'minimum_should_match:2') `
 
@@ -272,9 +272,9 @@ You can use both column name or column alias in expression.
 
 _elApi expression allows you to invoke specific Elastic query API.  
 Syntax usage is `_elAPI` `query_type`(`param1`,`param2`,...), where `query_type` maps specific Elastic query, and `param1`,`param2`,... allows you to pass parameters to that query.  
-Typically `param1` is the search criteria and `param2` is the column involved in the query. Other parameters are optionals and change according different query types. For example `analyze_wildcard`, `fuzzy_max_expansions` etc. must to be declared in this way:
-`_elAPI query_string('search criteria','field1,field2,object.*','analyze_wildcard:true','fuzzy_max_expansions:15')`
-esqlj will dynamically cast params value type according to expected parameter Elastic query object.
+Typically `param1` is the search criteria and `param2` is the column involved in the query. Other parameters are optionals and change according different query types. For example `analyze_wildcard`, `fuzzy_max_expansions` etc. These configuration settings must to be declared in this way:
+`_elAPI query_string('search criteria','field1,field2,object.*','analyze_wildcard:true','fuzzy_max_expansions:15')`.
+Esqlj will dynamically cast params value type according to expected parameter Elastic query object.
 
 Currently implemented raw Elastic queries:
 
