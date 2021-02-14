@@ -38,7 +38,7 @@ Optional parameters:
 | queryScrollFromRows | Number of rows fetched on first pagination | 500
 | queryScrollFetchSize | Fetched rows on next pagination | 500
 | queryScrollTimeoutMinutes | Timeout between pagination expressed in minutes | 3
-| queryScrollOnlyByScrollApi | If false apply the scroll strategy that best fit the query (see Pagination paragraph below) | true
+| queryScrollOnlyByScrollApi | If true pagination will be executed by Elastic Scroll API. If false it will be applied the scroll strategy that best fit the query (see Pagination paragraph below) | true
 | sharedConnection | If true rest client will be statically shared between all connection (use it if you don't have the requirement to connect to different Elastic clusters inside same JVM) | true
 
 
@@ -194,7 +194,7 @@ Mapping of supported Elastic types to SQL types:
 
 By default esqlj implements a scrolling strategy on query through Elastic Scroll API. Optionally it's possibile to activate the less expensive scroll by order, but if you want to activate this functionality pay attention to include in every query a sorting on at least one tiebreaker field (in future it's no longer possible to query by doc id, it could be a best practice to store identifier also in document field).  It's in discussion an RFC on Elastic product about the introduction of an automatic tiebreaker in query result. But for now if you enable this feature and miss to add a sorting on a tiebreaker fields some rows could be skipped between paginations of data.
 
-Still on the subject of scrolling by order, the driver doesn't use Point in Time API for Rest High level API lack of supports. 
+Still on the subject of scrolling by order, the driver doesn't use Point in Time API (it seems missing Point in Time support in Elastic Rest High level API). 
 
 Pay attention: Scroll API consume resources on server. It's a best practice to fetch all required data as soon as possible. The scroll link will be automatically released from esql at the end of data retrieve.
 
@@ -283,6 +283,7 @@ Currently implemented raw Elastic queries:
 | Query string | query_string | 1: query, 2: search on columns (* for all), 3..x: additional query parameters (see Elastic documentation)| [query-dsl-query-string-query](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html)
 
 *_elAPI samples*
+
 | Query type | Sample
 |--- |--- 
 | Query string | SELECT _id, _score FROM indexName WHERE _elAPI ::query_string('(new york city) OR (big apple) OR name:/joh?n(ath[oa]n)/', 'field1, field2,city.*', 'minimum_should_match:2') 
