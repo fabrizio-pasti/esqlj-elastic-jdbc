@@ -2,8 +2,10 @@ package org.fpasti.jdbc.esqlj.elastic.query.statement.formatter;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 
-import org.fpasti.jdbc.esqlj.support.ToDateUtils;
+import org.fpasti.jdbc.esqlj.support.DateUtils;
 
 import net.sf.jsqlparser.expression.Function;
 
@@ -21,12 +23,12 @@ public class ToCharFormatter extends Formatter {
 
 	@Override
 	protected void init() {
-		sdf = ToDateUtils.getFormatter(getStrValueParameter(1));
+		sdf = DateUtils.getFormatter(getStrValueParameter(1));
 	}
 
 	@Override
 	public Object resolveValue(Object value) {
-		return sdf.format(((LocalDateTime)value));
+		return sdf.format(Date.from(((LocalDateTime)value).atZone(ZoneId.systemDefault()).toInstant()));
 	}
 
 }
