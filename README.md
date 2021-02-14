@@ -1,3 +1,8 @@
+---
+layout: jekyll-theme-slate
+title: esqlj JDBC Driver for Elastic
+---
+
 # esqlj-elastic-jdbc
 A JDBC driver for Elastic released under Apache License 2.0
 
