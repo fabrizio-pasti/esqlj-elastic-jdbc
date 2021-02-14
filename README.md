@@ -4,7 +4,7 @@ A JDBC driver for Elastic released under Apache License 2.0
 
 esqlj not use at all SQL Elastic implementation, Elastic integration is built on top of Elastic Rest High Level API (rel. 7.11). See Elastic licenses in folder `licenses/elastic-licenses`
 
-Sql parsing is provided by jsqlparser library (https://github.com/JSQLParser/JSqlParser). See related licenses in folder `licenses/JSqlParser`
+Sql parsing is provided by jsqlparser library [JSQLParser](https://github.com/JSQLParser/JSqlParser). See related licenses in folder `licenses/JSqlParser`
 
 ## Project status
 Not production ready 
@@ -53,10 +53,10 @@ Field and alias containing special characters like '-' must also to be double qu
 Document identifier "_id" is returned like a column of type string in not aggregating query, and mapped on MetaData like primary key. This column is also available on Where condition for matching query (=, !=).  
 Search score "_score" is returned like a colum of type float in not aggregating query.
 
-'Like' SQL filter is implemented by Wildcard Elastic Query (https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-wildcard-query.html)
+'Like' SQL filter is implemented by Wildcard Elastic Query [query-dsl-wildcard-query](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-wildcard-query.html)
 
 SQL filtering syntax is very limited. Esql supports a custom syntax for filtering documents using Elastic API full text queries, geo queries, shape queries...
-Actually is implemented only a limited set of these advanced filtering query, this is an example of Query string full text search (https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html):
+Actually is implemented only a limited set of these advanced filtering query, this is an example of Query string full text search [query-dsl-query-string-query](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html):
 
 `SELECT _id, _score FROM indexName WHERE _elAPI ::query_string('(new york city) OR (big apple) OR name:/joh?n(ath[oa]n)/', 'field1, field2,city.*', 'minimum_should_match:2') `
 
@@ -280,7 +280,7 @@ Currently implemented raw Elastic queries:
 
 | Elastic query | query_type | Parameters | Elastic reference
 |--- |--- |--- |--- 
-| Query string | query_string | 1: query, 2: search on columns (* for all), 3..x: additional query parameters (see Elastic documentation)| https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html
+| Query string | query_string | 1: query, 2: search on columns (* for all), 3..x: additional query parameters (see Elastic documentation)| [query-dsl-query-string-query](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html)
 
 *_elAPI samples*
 | Query type | Sample
@@ -316,6 +316,6 @@ Tested on 7.4.2 and 7.10.0 Elasticsearch release
 
 ## About me
 Fabrizio Pasti  
-[fabrizio.pasti@gmail.com](fabrizio.pasti@gmail.com)  
+[fabrizio.pasti@gmail.com](mailto:fabrizio.pasti@gmail.com)  
 [https://www.linkedin.com/in/fabrizio-pasti-2340a627](https://www.linkedin.com/in/fabrizio-pasti-2340a627)
 
