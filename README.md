@@ -266,7 +266,7 @@ You can use both column name or column alias in expression.
 | `alias`
 | EXTRACT(`period` from `column`)
 
-`value`=column is managed like invalid from esqlj
+`value`=`column` expression is for example considered invalid from esqlj
 
 #### _elAPI
 
