@@ -1,4 +1,4 @@
-	package org.fpasti.jdbc.esqlj.elastic.query.impl.search.where;
+	package org.fpasti.jdbc.esqlj.elastic.query.impl.search.clause.where;
 
 
 import java.sql.SQLException;
@@ -17,7 +17,7 @@ import org.fpasti.jdbc.esqlj.elastic.query.impl.search.model.EvaluateQueryResult
 import org.fpasti.jdbc.esqlj.elastic.query.impl.search.model.TermsQuery;
 import org.fpasti.jdbc.esqlj.elastic.query.statement.SqlStatementSelect;
 import org.fpasti.jdbc.esqlj.elastic.query.statement.model.ExpressionEnum;
-import org.fpasti.jdbc.esqlj.elastic.query.statement.model.Field;
+import org.fpasti.jdbc.esqlj.elastic.query.statement.model.QueryColumn;
 
 import net.sf.jsqlparser.expression.CastExpression;
 import net.sf.jsqlparser.expression.Expression;
@@ -43,7 +43,7 @@ import net.sf.jsqlparser.schema.Column;
 * @author  Fabrizio Pasti - fabrizio.pasti@gmail.com
 */
 
-public class RequestBuilderWhere {
+public class ClauseWhere {
 	
 	public static void manageWhere(SqlStatementSelect select, RequestInstance req) throws SQLException {
 		if(select.getWhereCondition() == null) {
@@ -135,32 +135,32 @@ public class RequestBuilderWhere {
 				if(greaterThan.getLeftExpression() instanceof ExtractExpression) {
 					return resolveExtract(greaterThan.getLeftExpression(), greaterThan.getRightExpression(), ">", select);
 				}
-				return new EvaluateQueryResult(QueryBuilders.rangeQuery(getColumn(greaterThan.getLeftExpression(), select)).gt(ValueExpressionResolver.evaluateValueExpression(greaterThan.getRightExpression())));
+				return new EvaluateQueryResult(QueryBuilders.rangeQuery(getColumn(greaterThan.getLeftExpression(), select)).gt(ExpressionResolverValue.evaluateValueExpression(greaterThan.getRightExpression())));
 			case GREATER_THAN_EQUALS:
 				GreaterThanEquals greaterThanEquals = (GreaterThanEquals)expression;
 				if(greaterThanEquals.getLeftExpression() instanceof ExtractExpression) {
 					return resolveExtract(greaterThanEquals.getLeftExpression(), greaterThanEquals.getRightExpression(), ">=", select);
 				}
-				return new EvaluateQueryResult(QueryBuilders.rangeQuery(getColumn(greaterThanEquals.getLeftExpression(), select)).gte(ValueExpressionResolver.evaluateValueExpression(greaterThanEquals.getRightExpression())));
+				return new EvaluateQueryResult(QueryBuilders.rangeQuery(getColumn(greaterThanEquals.getLeftExpression(), select)).gte(ExpressionResolverValue.evaluateValueExpression(greaterThanEquals.getRightExpression())));
 			case MINOR_THAN:
 				MinorThan minorThan = (MinorThan)expression;
 				if(minorThan.getLeftExpression() instanceof ExtractExpression) {
 					return resolveExtract(minorThan.getLeftExpression(), minorThan.getRightExpression(), "<", select);
 				}
-				return new EvaluateQueryResult(QueryBuilders.rangeQuery(getColumn(minorThan.getLeftExpression(), select)).lt(ValueExpressionResolver.evaluateValueExpression(minorThan.getRightExpression())));
+				return new EvaluateQueryResult(QueryBuilders.rangeQuery(getColumn(minorThan.getLeftExpression(), select)).lt(ExpressionResolverValue.evaluateValueExpression(minorThan.getRightExpression())));
 			case MINOR_THAN_EQUALS:
 				MinorThanEquals minorThanEquals = (MinorThanEquals)expression;
 				if(minorThanEquals.getLeftExpression() instanceof ExtractExpression) {
 					return resolveExtract(minorThanEquals.getLeftExpression(), minorThanEquals.getRightExpression(), "<=", select);
 				}
-				return new EvaluateQueryResult(QueryBuilders.rangeQuery(getColumn(minorThanEquals.getLeftExpression(), select)).lte(ValueExpressionResolver.evaluateValueExpression(minorThanEquals.getRightExpression())));
+				return new EvaluateQueryResult(QueryBuilders.rangeQuery(getColumn(minorThanEquals.getLeftExpression(), select)).lte(ExpressionResolverValue.evaluateValueExpression(minorThanEquals.getRightExpression())));
 			case EQUALS_TO:
 				EqualsTo equalsTo = (EqualsTo)expression;
 				if(equalsTo.getLeftExpression() instanceof ExtractExpression) {
 					return resolveExtract(equalsTo.getLeftExpression(), equalsTo.getRightExpression(), "==", select);
 				}
 				EvaluateQueryResult etQr = new EvaluateQueryResult();
-				etQr.addEqualTerm(getColumn(equalsTo.getLeftExpression(), select), ValueExpressionResolver.evaluateValueExpression(equalsTo.getRightExpression()));
+				etQr.addEqualTerm(getColumn(equalsTo.getLeftExpression(), select), ExpressionResolverValue.evaluateValueExpression(equalsTo.getRightExpression()));
 				return etQr;
 			case NOT_EQUALS_TO:
 				NotEqualsTo notEqualsTo = (NotEqualsTo)expression;
@@ -168,7 +168,7 @@ public class RequestBuilderWhere {
 					return resolveExtract(notEqualsTo.getLeftExpression(), notEqualsTo.getRightExpression(), "!=", select);
 				}
 				EvaluateQueryResult netQr = new EvaluateQueryResult();
-				netQr.addNotEqualTerm(getColumn(notEqualsTo.getLeftExpression(), select), ValueExpressionResolver.evaluateValueExpression(notEqualsTo.getRightExpression()));
+				netQr.addNotEqualTerm(getColumn(notEqualsTo.getLeftExpression(), select), ExpressionResolverValue.evaluateValueExpression(notEqualsTo.getRightExpression()));
 				return netQr;
 			case IS_NULL_EXPRESSION:
  				IsNullExpression isNullExpression = (IsNullExpression)expression;
@@ -193,24 +193,24 @@ public class RequestBuilderWhere {
 				if(between.getLeftExpression() instanceof ExtractExpression) {
 					return resolveExtractBetween(between, select);
 				}
-				return new EvaluateQueryResult(QueryBuilders.rangeQuery(getColumn(between.getLeftExpression(), select)).gte(ValueExpressionResolver.evaluateValueExpression(between.getBetweenExpressionStart())).lte(ValueExpressionResolver.evaluateValueExpression(between.getBetweenExpressionEnd())));
+				return new EvaluateQueryResult(QueryBuilders.rangeQuery(getColumn(between.getLeftExpression(), select)).gte(ExpressionResolverValue.evaluateValueExpression(between.getBetweenExpressionStart())).lte(ExpressionResolverValue.evaluateValueExpression(between.getBetweenExpressionEnd())));
 			case LIKE_EXPRESSION:
 				LikeExpression likeExpression = (LikeExpression)expression;
-				return new EvaluateQueryResult(QueryBuilders.wildcardQuery(getColumn(likeExpression.getLeftExpression(), select), (String)ValueExpressionResolver.evaluateValueExpression(likeExpression.getRightExpression())));
+				return new EvaluateQueryResult(QueryBuilders.wildcardQuery(getColumn(likeExpression.getLeftExpression(), select), (String)ExpressionResolverValue.evaluateValueExpression(likeExpression.getRightExpression())));
 			case IN_EXPRESSION:
 				InExpression inExpression = (InExpression)expression;
 				if(inExpression.getLeftExpression() instanceof ExtractExpression) {
 					return resolveExtract(inExpression.getLeftExpression(), inExpression.getRightItemsList(), "==", select);
 				}
 				EvaluateQueryResult etQrIe = new EvaluateQueryResult();
-				etQrIe.addEqualTerms(getColumn(inExpression.getLeftExpression(), select), (List<Object>)ValueExpressionResolver.evaluateValueExpression(inExpression.getRightItemsList()));
+				etQrIe.addEqualTerms(getColumn(inExpression.getLeftExpression(), select), (List<Object>)ExpressionResolverValue.evaluateValueExpression(inExpression.getRightItemsList()));
 				return etQrIe;
 			case CAST_EXPRESSION:
 				CastExpression castExpression = (CastExpression)expression;
 				if(!(castExpression.getLeftExpression() instanceof Column) || !((Column)castExpression.getLeftExpression()).getColumnName().equalsIgnoreCase("_elAPI")) {
 					throw new SQLException("[::] syntax must to be used only with '_elAPI'");
 				}
-				return ElApiExpressionResolver.manageExpression(castExpression.getType());
+				return ExpressionResolverElApi.manageExpression(castExpression.getType());
 			default:
 				throw new SQLException(String.format("Unmanaged expression: %s", ExpressionEnum.resolveByInstance(expression).name()));
 		}
@@ -231,7 +231,7 @@ public class RequestBuilderWhere {
 			String scriptExpression = "";
 			for(int i = 0; i < expressionList.getExpressions().size(); i++) {
 				Expression expression = expressionList.getExpressions().get(i);
-				params.put(String.format("param%d", i), ValueExpressionResolver.evaluateValueExpression(expression));
+				params.put(String.format("param%d", i), ExpressionResolverValue.evaluateValueExpression(expression));
 				scriptExpression = scriptExpression.concat(scriptExpression.length() == 0 ? "" : " || ").concat(String.format("doc.%s.value.%s %s params.param%d", getColumn(extract.getExpression(), select), scriptDateMethod.getMethod(), operator, i));
 			}
 			Script script = new Script(Script.DEFAULT_SCRIPT_TYPE, Script.DEFAULT_SCRIPT_LANG, scriptExpression, params);
@@ -239,7 +239,7 @@ public class RequestBuilderWhere {
 		}
 		
 		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("param", ValueExpressionResolver.evaluateValueExpression(valueExpression));
+		params.put("param", ExpressionResolverValue.evaluateValueExpression(valueExpression));
 		Script script = new Script(Script.DEFAULT_SCRIPT_TYPE, Script.DEFAULT_SCRIPT_LANG, String.format("doc.%s.value.%s %s params.param", getColumn(extract.getExpression(), select), scriptDateMethod.getMethod(), operator), params);
 		return new EvaluateQueryResult(QueryBuilders.scriptQuery(script));
 	}
@@ -253,8 +253,8 @@ public class RequestBuilderWhere {
 			throw new SQLSyntaxErrorException(String.format("Unsupported extract params '%s'", extract.getName()));
 		}
 		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("param1", ValueExpressionResolver.evaluateValueExpression(between.getBetweenExpressionStart()));
-		params.put("param2", ValueExpressionResolver.evaluateValueExpression(between.getBetweenExpressionEnd()));
+		params.put("param1", ExpressionResolverValue.evaluateValueExpression(between.getBetweenExpressionStart()));
+		params.put("param2", ExpressionResolverValue.evaluateValueExpression(between.getBetweenExpressionEnd()));
 		Script script = new Script(Script.DEFAULT_SCRIPT_TYPE, Script.DEFAULT_SCRIPT_LANG, String.format("doc.%s.value.%s >= params.param1 && doc.%s.value.%s <= params.param2", getColumn(extract.getExpression(), select), scriptDateMethod.getMethod(), getColumn(extract.getExpression(), select), scriptDateMethod.getMethod()), params);
 		return new EvaluateQueryResult(QueryBuilders.scriptQuery(script));
 	}
@@ -334,7 +334,7 @@ public class RequestBuilderWhere {
 		
 		Column column = (Column)expression;
 		String columnName = column.getColumnName().replace("\"", "");
-		Field columnField = select.getFieldByNameOrAlias(columnName);
+		QueryColumn columnField = select.getFieldByNameOrAlias(columnName);
 		return columnField != null ? columnField.getName() : columnName;
 	}
 	

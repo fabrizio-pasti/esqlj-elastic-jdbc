@@ -8,7 +8,9 @@ import org.elasticsearch.search.builder.PointInTimeBuilder;
 import org.fpasti.jdbc.esqlj.Configuration;
 import org.fpasti.jdbc.esqlj.ConfigurationPropertyEnum;
 import org.fpasti.jdbc.esqlj.EsConnection;
-import org.fpasti.jdbc.esqlj.elastic.query.impl.search.where.RequestBuilderWhere;
+import org.fpasti.jdbc.esqlj.elastic.query.impl.search.clause.ClauseSelect;
+import org.fpasti.jdbc.esqlj.elastic.query.impl.search.clause.ClauseSort;
+import org.fpasti.jdbc.esqlj.elastic.query.impl.search.clause.where.ClauseWhere;
 import org.fpasti.jdbc.esqlj.elastic.query.statement.SqlStatementSelect;
 import org.fpasti.jdbc.esqlj.support.ElasticUtils;
 
@@ -21,9 +23,9 @@ public class RequestBuilder {
 	public static RequestInstance buildRequest(EsConnection connection, SqlStatementSelect select, int fetchSize) throws SQLException {
 		RequestInstance req = new RequestInstance(connection, fetchSize, select);
 		
-		RequestBuilderFields.manageFields(select, req);
-		RequestBuilderSort.manageSort(select, req);
-		RequestBuilderWhere.manageWhere(select, req);
+		ClauseSelect.manageFields(select, req);
+		ClauseSort.manageSort(select, req);
+		ClauseWhere.manageWhere(select, req);
 		
 		build(connection, req, select);
 		

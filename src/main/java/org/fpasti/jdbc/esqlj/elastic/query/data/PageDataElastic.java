@@ -16,7 +16,7 @@ import org.fpasti.jdbc.esqlj.elastic.model.EsGeoPoint;
 import org.fpasti.jdbc.esqlj.elastic.query.impl.search.RequestInstance;
 import org.fpasti.jdbc.esqlj.elastic.query.model.DataRow;
 import org.fpasti.jdbc.esqlj.elastic.query.model.PageDataState;
-import org.fpasti.jdbc.esqlj.elastic.query.statement.model.Field;
+import org.fpasti.jdbc.esqlj.elastic.query.statement.model.QueryColumn;
 import org.fpasti.jdbc.esqlj.support.SimpleDateFormatThreadSafe;
 
 /**
@@ -57,7 +57,8 @@ public class PageDataElastic {
 			SearchHit searchHit = searchResponse.getHits().getHits()[i];
 			List<Object> data = new ArrayList<Object>();
 			req.getFields().forEach((name, field) -> {
-				if(field.isDocValue()) {
+				ElasticFieldExt fieldExt = field instanceof ElasticFieldExt ? (ElasticFieldExt)field : null;
+				if(field.isDocValue()) { // && !(fieldExt != null && fieldExt.isFunctionPresent())
 					DocumentField docField = searchHit.field(field.getFullName());
 					if(docField != null) {
 						data.add(resolveField(field, docField.getValue())); // only first field value is managed
@@ -85,9 +86,9 @@ public class PageDataElastic {
 		value = resolveType(field, value);
 		
 		if(field instanceof ElasticFieldExt) {
-			Field selectField = ((ElasticFieldExt)field).getSelectField();
-			if(selectField.getFormatter() != null) {
-				return selectField.getFormatter().resolveValue(value);
+			QueryColumn queryColumn = ((ElasticFieldExt)field).getDeclaredQueryColumn();
+			if(queryColumn.getFormatter() != null) {
+				return queryColumn.getFormatter().resolveValue(value);
 			}
 		}
 		

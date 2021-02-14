@@ -10,20 +10,20 @@ import net.sf.jsqlparser.expression.Function;
 * @author  Fabrizio Pasti - fabrizio.pasti@gmail.com
 */
 
-public class Field {
+public class QueryColumn {
 	private String name;
 	private String alias;
 	private String index;
 	private Function function;
 	private Formatter formatter;
 	
-	public Field(String name, String alias, String index) {
+	public QueryColumn(String name, String alias, String index) {
 		this.name = name.replace("\"", "");
 		this.alias = alias != null ? alias.replace("\"", "") : null;
 		this.index = index;
 	}
 
-	public Field(Function function, String alias) {
+	public QueryColumn(Function function, String alias) {
 		this.name = StatementUtils.resolveFunctionColumn(function);
 		this.function = function;
 		this.formatter = FormatterFactory.getFormatter(function);

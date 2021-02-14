@@ -1,4 +1,4 @@
-package org.fpasti.jdbc.esqlj.elastic.query.impl.search.where;
+package org.fpasti.jdbc.esqlj.elastic.query.impl.search.clause.where;
 
 import java.sql.SQLSyntaxErrorException;
 import java.util.Arrays;
@@ -12,7 +12,7 @@ import org.fpasti.jdbc.esqlj.support.Utils;
 
 import net.sf.jsqlparser.statement.create.table.ColDataType;
 
-public class ElApiExpressionResolver {
+public class ExpressionResolverElApi {
 
 	public static EvaluateQueryResult manageExpression(ColDataType colDataType) throws SQLSyntaxErrorException {
 		String queryType = colDataType.getDataType().toLowerCase();

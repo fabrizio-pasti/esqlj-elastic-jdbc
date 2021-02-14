@@ -11,7 +11,7 @@ import java.util.Date;
 * @author  Fabrizio Pasti - fabrizio.pasti@gmail.com
 */
 
-public class ToDateUtils {
+public class DateUtils {
 	 
 	private enum FormatMapper {
 		YEAR("yyyy"),

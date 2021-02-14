@@ -1,4 +1,4 @@
-package org.fpasti.jdbc.esqlj.elastic.query.impl.search;
+package org.fpasti.jdbc.esqlj.elastic.query.impl.search.clause;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -12,15 +12,16 @@ import org.fpasti.jdbc.esqlj.elastic.model.ElasticField;
 import org.fpasti.jdbc.esqlj.elastic.model.ElasticFieldExt;
 import org.fpasti.jdbc.esqlj.elastic.model.ElasticFieldType;
 import org.fpasti.jdbc.esqlj.elastic.model.IndexMetaData;
+import org.fpasti.jdbc.esqlj.elastic.query.impl.search.RequestInstance;
 import org.fpasti.jdbc.esqlj.elastic.query.statement.SqlStatementSelect;
-import org.fpasti.jdbc.esqlj.elastic.query.statement.model.Field;
+import org.fpasti.jdbc.esqlj.elastic.query.statement.model.QueryColumn;
 import org.fpasti.jdbc.esqlj.support.EsRuntimeException;
 
 /**
 * @author  Fabrizio Pasti - fabrizio.pasti@gmail.com
 */
 
-public class RequestBuilderFields {
+public class ClauseSelect {
 	
 	public static void manageFields(SqlStatementSelect select, RequestInstance req) {
 		getFieldsToRetrieve(select, req);
@@ -55,7 +56,7 @@ public class RequestBuilderFields {
 		}
 	}
 	
-	private static ElasticField resolveField(IndexMetaData indexMetaData, Field f) throws RuntimeException {
+	private static ElasticField resolveField(IndexMetaData indexMetaData, QueryColumn f) throws RuntimeException {
 		if(f.getName().equals(ElasticField.DOC_ID_ALIAS)) {
 			return getDocIdField();
 		}

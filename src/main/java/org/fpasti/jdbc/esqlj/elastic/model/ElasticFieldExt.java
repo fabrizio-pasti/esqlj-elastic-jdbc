@@ -1,6 +1,6 @@
 package org.fpasti.jdbc.esqlj.elastic.model;
 
-import org.fpasti.jdbc.esqlj.elastic.query.statement.model.Field;
+import org.fpasti.jdbc.esqlj.elastic.query.statement.model.QueryColumn;
 
 /**
 * @author  Fabrizio Pasti - fabrizio.pasti@gmail.com
@@ -9,17 +9,17 @@ import org.fpasti.jdbc.esqlj.elastic.query.statement.model.Field;
 public class ElasticFieldExt extends ElasticField {
 
 	private String columnName;
-	private Field selectField;
+	private QueryColumn declaredQueryColumn;
 
 	public ElasticFieldExt(String fullName, ElasticFieldType type, Long size, boolean docValue) {
 		super(fullName, type, size, docValue);
 	}
 
-	public static ElasticFieldExt promoteInstance(ElasticField elasticField, Field selectField) {
+	public static ElasticFieldExt promoteInstance(ElasticField elasticField, QueryColumn queryColumn) {
 		ElasticFieldExt ext = new ElasticFieldExt(elasticField.getFullName(), elasticField.getType(),
 				elasticField.getSize(), elasticField.isDocValue());
-		ext.setColumnName(selectField.getAlias() != null ? selectField.getAlias() : elasticField.getFullName());
-		ext.setSelectField(selectField);
+		ext.setColumnName(queryColumn.getAlias() != null ? queryColumn.getAlias() : elasticField.getFullName());
+		ext.setDeclaredQueryColumn(queryColumn);
 		return ext;
 	}
 
@@ -31,14 +31,16 @@ public class ElasticFieldExt extends ElasticField {
 		this.columnName = columnName;
 	}
 
-	public Field getSelectField() {
-		return selectField;
+	public QueryColumn getDeclaredQueryColumn() {
+		return declaredQueryColumn;
 	}
 
-	public void setSelectField(Field selectField) {
-		this.selectField = selectField;
+	public void setDeclaredQueryColumn(QueryColumn declaredQueryColumn) {
+		this.declaredQueryColumn = declaredQueryColumn;
 	}
-
-
+	
+	public boolean isFunctionPresent() {
+		return declaredQueryColumn.getFunction() != null;
+	}
 	
 }

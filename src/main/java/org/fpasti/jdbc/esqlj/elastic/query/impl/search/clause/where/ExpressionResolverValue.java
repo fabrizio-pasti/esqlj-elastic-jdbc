@@ -1,4 +1,4 @@
-package org.fpasti.jdbc.esqlj.elastic.query.impl.search.where;
+package org.fpasti.jdbc.esqlj.elastic.query.impl.search.clause.where;
 
 import java.sql.SQLException;
 import java.sql.SQLSyntaxErrorException;
@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 import org.fpasti.jdbc.esqlj.elastic.query.statement.model.ExpressionEnum;
 import org.fpasti.jdbc.esqlj.support.EsWrapException;
-import org.fpasti.jdbc.esqlj.support.ToDateUtils;
+import org.fpasti.jdbc.esqlj.support.DateUtils;
 
 import net.sf.jsqlparser.expression.DoubleValue;
 import net.sf.jsqlparser.expression.Expression;
@@ -28,7 +28,7 @@ import net.sf.jsqlparser.schema.Column;
 * @author  Fabrizio Pasti - fabrizio.pasti@gmail.com
 */
 
-public class ValueExpressionResolver {
+public class ExpressionResolverValue {
 
 	public static Object evaluateValueExpression(Object expression) throws EsWrapException {
 		switch(ExpressionEnum.resolveByInstance(expression)) {	
@@ -82,7 +82,7 @@ public class ValueExpressionResolver {
 				if(parameters.getExpressions().size() != 2) {
 					throw new EsWrapException(new SQLSyntaxErrorException("TO_DATE with invalid number of parameters"));
 				}
-				return ToDateUtils.resolveToDate((String)evaluateValueExpression(parameters.getExpressions().get(0)), (String)evaluateValueExpression(parameters.getExpressions().get(1)));
+				return DateUtils.resolveToDate((String)evaluateValueExpression(parameters.getExpressions().get(0)), (String)evaluateValueExpression(parameters.getExpressions().get(1)));
 			case "NOW":
 			case "GETDATE":
 			case "CURDATE":

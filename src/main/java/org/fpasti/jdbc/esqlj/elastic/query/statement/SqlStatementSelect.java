@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.fpasti.jdbc.esqlj.elastic.query.statement.model.Field;
+import org.fpasti.jdbc.esqlj.elastic.query.statement.model.QueryColumn;
 import org.fpasti.jdbc.esqlj.elastic.query.statement.model.Index;
 import org.fpasti.jdbc.esqlj.support.EsRuntimeException;
 
@@ -29,7 +29,7 @@ public class SqlStatementSelect extends SqlStatement {
 
 	private PlainSelect select;
 	private List<Index> indices;
-	private List<Field> fields;
+	private List<QueryColumn> fields;
 	private List<OrderByElement> orderByFields;
 	
 	public SqlStatementSelect(Statement statement) {
@@ -43,7 +43,7 @@ public class SqlStatementSelect extends SqlStatement {
 		return select.getLimit() != null ? ((LongValue)select.getLimit().getRowCount()).getBigIntegerValue().longValue() : null;
 	}
 
-	public List<Field> getFields() {
+	public List<QueryColumn> getFields() {
 		return fields;
 	}
 	
@@ -59,7 +59,7 @@ public class SqlStatementSelect extends SqlStatement {
 		return indices.stream().filter(index -> index.getName().equals(name) || (index.getAlias() != null && index.getAlias().equals(name))).findFirst().orElse(null);
 	}
 
-	public Field getFieldByNameOrAlias(String name) {
+	public QueryColumn getFieldByNameOrAlias(String name) {
 		return fields.stream().filter(field -> field.getName().equals(name) || (field.getAlias() != null && field.getAlias().equals(name))).findFirst().orElse(null);
 	}
 
@@ -75,22 +75,22 @@ public class SqlStatementSelect extends SqlStatement {
 		orderByFields = resolveOrderByFields();
 	}
 
-	private List<Field> resolveFields() {
+	private List<QueryColumn> resolveFields() {
 		String index = "root";
 		return select.getSelectItems().stream().map(item -> {
 			if(item instanceof SelectExpressionItem) {
 				SelectExpressionItem sei = (SelectExpressionItem)item;
 				if(sei.getExpression() instanceof Column) {
 					Column c = (Column)sei.getExpression();
-					return new Field(c.getColumnName(), sei.getAlias() == null ? null : sei.getAlias().getName(), c.getTable() == null ? index : getIndexByNameOrAlias(c.getTable().getName().replace("\"", "")).getName());
+					return new QueryColumn(c.getColumnName(), sei.getAlias() == null ? null : sei.getAlias().getName(), c.getTable() == null ? index : getIndexByNameOrAlias(c.getTable().getName().replace("\"", "")).getName());
 				} else if(sei.getExpression() instanceof Function) {
 					Function f = (Function)sei.getExpression();
-					return new Field(f, sei.getAlias() == null ? null : sei.getAlias().getName());				
+					return new QueryColumn(f, sei.getAlias() == null ? null : sei.getAlias().getName());				
 				}
 			} else if(item instanceof AllColumns) {
-				return new Field("*", null, index);
+				return new QueryColumn("*", null, index);
 			}
-			throw new EsRuntimeException(String.format("Unexpexted expression '%s' in select clause", item.toString()));
+			throw new EsRuntimeException(String.format("Unexpected expression '%s' in select clause", item.toString()));
 		}).collect(Collectors.toList());
 	}
 	
@@ -101,7 +101,7 @@ public class SqlStatementSelect extends SqlStatement {
 		
 		return select.getOrderByElements().stream().map(elem -> {
 			Column c = (Column)elem.getExpression();
-			Field columnOrAlias = getFieldByNameOrAlias(c.getColumnName());
+			QueryColumn columnOrAlias = getFieldByNameOrAlias(c.getColumnName());
 			if(columnOrAlias != null) {
 				c.setColumnName(columnOrAlias.getName());
 			} 
