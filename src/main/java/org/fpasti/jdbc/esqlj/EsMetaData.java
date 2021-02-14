@@ -12,9 +12,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.fpasti.jdbc.esqlj.elastic.metadata.MetaDataService;
-import org.fpasti.jdbc.esqlj.elastic.model.ElasticField;
+import org.fpasti.jdbc.esqlj.elastic.model.ElasticObject;
 import org.fpasti.jdbc.esqlj.elastic.model.ElasticFieldType;
-import org.fpasti.jdbc.esqlj.elastic.model.ElasticObjectType;
+import org.fpasti.jdbc.esqlj.elastic.model.ElasticSearchableType;
 import org.fpasti.jdbc.esqlj.elastic.query.impl.FromArrayQuery;
 import org.fpasti.jdbc.esqlj.elastic.query.impl.IndexFieldsQuery;
 import org.fpasti.jdbc.esqlj.elastic.query.impl.IndicesQuery;
@@ -652,7 +652,7 @@ public class EsMetaData implements DatabaseMetaData {
 	@Override
 	public ResultSet getTables(String catalog, String schemaPattern, String tableNamePattern, String[] types)
 			throws SQLException {
-		return new EsResultSet(new IndicesQuery(connection, ElasticObjectType.INDEX, ElasticObjectType.ALIAS));
+		return new EsResultSet(new IndicesQuery(connection, ElasticSearchableType.INDEX, ElasticSearchableType.ALIAS));
 	}
 
 	@Override
@@ -697,7 +697,7 @@ public class EsMetaData implements DatabaseMetaData {
 			throws SQLException {
 		return new EsResultSet(new FromArrayQuery(table,
 				Arrays.asList(
-						Arrays.asList(2, ElasticField.DOC_ID_ALIAS, Types.VARCHAR, "VARCHAR", 0, 0, 0, 0)), "SCOPE", "COLUMN_NAME", "DATA_TYPE", "TYPE_NAME", "COLUMN_SIZE", "BUFFER_LENGTH", "DECIMAL_DIGITS", "PSEUDO_COLUMN"));
+						Arrays.asList(2, ElasticObject.DOC_ID_ALIAS, Types.VARCHAR, "VARCHAR", 0, 0, 0, 0)), "SCOPE", "COLUMN_NAME", "DATA_TYPE", "TYPE_NAME", "COLUMN_SIZE", "BUFFER_LENGTH", "DECIMAL_DIGITS", "PSEUDO_COLUMN"));
 	}
 
 	@Override
@@ -709,7 +709,7 @@ public class EsMetaData implements DatabaseMetaData {
 	public ResultSet getPrimaryKeys(String catalog, String schema, String table) throws SQLException {
 		return new EsResultSet(new FromArrayQuery(table,
 				Arrays.asList(
-						Arrays.asList(catalog, schema, table, ElasticField.DOC_ID_ALIAS, 1, ElasticField.DOC_ID_ALIAS)), "TABLE_CAT", "TABLE_SCHEM", "TABLE_NAME", "COLUMN_NAME", "KEY_SEQ", "PK_NAME"));
+						Arrays.asList(catalog, schema, table, ElasticObject.DOC_ID_ALIAS, 1, ElasticObject.DOC_ID_ALIAS)), "TABLE_CAT", "TABLE_SCHEM", "TABLE_NAME", "COLUMN_NAME", "KEY_SEQ", "PK_NAME"));
 	}
 
 	@Override

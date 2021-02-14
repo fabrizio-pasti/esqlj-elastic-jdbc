@@ -13,7 +13,7 @@ import net.sf.jsqlparser.schema.Column;
 public class ClauseSort {
 	
 	public static void manageSort(SqlStatementSelect select, RequestInstance req) {
-		select.getOrderByFields().stream().forEach(elem -> {
+		select.getOrderByElements().stream().forEach(elem -> {
 			req.getSearchSourceBuilder().sort(((Column)elem.getExpression()).getColumnName(), elem.isAsc() ? SortOrder.ASC : SortOrder.DESC);
 		});
 	}

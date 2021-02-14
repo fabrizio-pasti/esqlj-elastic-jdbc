@@ -10,13 +10,11 @@ import java.util.TimeZone;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.common.document.DocumentField;
 import org.elasticsearch.search.SearchHit;
-import org.fpasti.jdbc.esqlj.elastic.model.ElasticField;
-import org.fpasti.jdbc.esqlj.elastic.model.ElasticFieldExt;
+import org.fpasti.jdbc.esqlj.elastic.model.ElasticObject;
 import org.fpasti.jdbc.esqlj.elastic.model.EsGeoPoint;
 import org.fpasti.jdbc.esqlj.elastic.query.impl.search.RequestInstance;
 import org.fpasti.jdbc.esqlj.elastic.query.model.DataRow;
 import org.fpasti.jdbc.esqlj.elastic.query.model.PageDataState;
-import org.fpasti.jdbc.esqlj.elastic.query.statement.model.QueryColumn;
 import org.fpasti.jdbc.esqlj.support.SimpleDateFormatThreadSafe;
 
 /**
@@ -82,9 +80,9 @@ public class PageDataElastic {
 					}
 				} else if(field.isSourceField() && req.isSourceFieldsToRetrieve()) {
 					data.add(searchHit.getSourceAsMap().get(field.getFullName()));
-				} else if(field.getFullName().equals(ElasticField.DOC_ID_ALIAS)) {
+				} else if(field.getFullName().equals(ElasticObject.DOC_ID_ALIAS)) {
 					data.add(searchHit.getId());
-				} else if(field.getFullName().equals(ElasticField.DOC_SCORE)) {
+				} else if(field.getFullName().equals(ElasticObject.DOC_SCORE)) {
 					data.add(searchHit.getScore());
 				} else {
 					data.add(null);
@@ -106,21 +104,20 @@ public class PageDataElastic {
 		state = PageDataState.READY_TO_ITERATE;
 	}
 	
-	private Object resolveField(ElasticField field, Object value) {
-		value = resolveType(field, value);
+	private Object resolveField(ElasticObject elObject, Object value) {
+		value = resolveType(elObject, value);
 		
-		if(field instanceof ElasticFieldExt) {
-			QueryColumn queryColumn = ((ElasticFieldExt)field).getDeclaredQueryColumn();
-			if(queryColumn.getFormatter() != null) {
-				return queryColumn.getFormatter().resolveValue(value);
+		if(elObject.getLinkedQueryColumn() != null) {
+			if(elObject.getLinkedQueryColumn().getFormatter() != null) {
+				return elObject.getLinkedQueryColumn().getFormatter().resolveValue(value);
 			}
 		}
 		
 		return value;
 	}
 
-	private Object resolveType(ElasticField field, Object value) {
-		switch(field.getType()) {
+	private Object resolveType(ElasticObject elObject, Object value) {
+		switch(elObject.getType()) {
 			case BOOLEAN:
 				if(value != null) {
 					return value;

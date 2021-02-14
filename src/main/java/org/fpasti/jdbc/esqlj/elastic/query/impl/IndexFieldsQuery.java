@@ -7,7 +7,7 @@ import java.util.Map;
 
 import org.fpasti.jdbc.esqlj.EsConnection;
 import org.fpasti.jdbc.esqlj.EsMetaData;
-import org.fpasti.jdbc.esqlj.elastic.model.ElasticField;
+import org.fpasti.jdbc.esqlj.elastic.model.ElasticObject;
 import org.fpasti.jdbc.esqlj.elastic.model.ElasticFieldType;
 import org.fpasti.jdbc.esqlj.elastic.query.AbstractOneShotQuery;
 
@@ -29,11 +29,11 @@ public class IndexFieldsQuery extends AbstractOneShotQuery {
 		((EsMetaData)getConnection().getMetaData()).getMetaDataService().getIndexFields(index).forEach((name, field) -> {
 			insertRow(index, field);
 		});
-		insertRow(index, new ElasticField(ElasticField.DOC_ID_ALIAS, ElasticFieldType.DOC_ID));
-		insertRow(index, new ElasticField(ElasticField.DOC_SCORE, ElasticFieldType.DOC_SCORE));
+		insertRow(index, new ElasticObject(ElasticObject.DOC_ID_ALIAS, ElasticFieldType.DOC_ID));
+		insertRow(index, new ElasticObject(ElasticObject.DOC_SCORE, ElasticFieldType.DOC_SCORE));
 	}
 
-	private void insertRow(String index, ElasticField field) {
+	private void insertRow(String index, ElasticObject field) {
 		Map<String, Object> data = new HashMap<String, Object>();
 		data.put("TABLE_NAME", index);
 		data.put("COLUMN_NAME", field.getFullName());

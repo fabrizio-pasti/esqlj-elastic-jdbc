@@ -17,7 +17,7 @@ import org.elasticsearch.client.indices.GetFieldMappingsRequest;
 import org.elasticsearch.client.indices.GetFieldMappingsResponse;
 import org.fpasti.jdbc.esqlj.Configuration;
 import org.fpasti.jdbc.esqlj.ConfigurationPropertyEnum;
-import org.fpasti.jdbc.esqlj.elastic.model.ElasticField;
+import org.fpasti.jdbc.esqlj.elastic.model.ElasticObject;
 import org.fpasti.jdbc.esqlj.elastic.model.ElasticFieldType;
 import org.fpasti.jdbc.esqlj.elastic.model.IndexMetaData;
 
@@ -73,7 +73,7 @@ public class MetaDataService {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public Map<String, ElasticField> getIndexFields(String index) throws SQLException {
+	public Map<String, ElasticObject> getIndexFields(String index) throws SQLException {
 		try {
 			GetFieldMappingsRequest request = new GetFieldMappingsRequest();
 			request.indices(index);
@@ -81,7 +81,7 @@ public class MetaDataService {
 			
 			GetFieldMappingsResponse response = client.indices().getFieldMapping(request, RequestOptions.DEFAULT);
 	
-			Map<String, ElasticField> fields = new TreeMap<String, ElasticField>();
+			Map<String, ElasticObject> fields = new TreeMap<String, ElasticObject>();
 			List<String> managedFields = new ArrayList<String>();
 			
 			response.mappings().entrySet().stream().map(entry -> entry.getValue()).forEach(iMap -> {
@@ -91,7 +91,7 @@ public class MetaDataService {
 						Map<String, Object> fieldMap = (Map<String, Object>)metadataMap.get(field.substring(field.lastIndexOf('.') + 1));
 
 						ElasticFieldType fieldType = ElasticFieldType.resolveByElasticType((String)fieldMap.get("type"));
-						fields.put(field, new ElasticField(
+						fields.put(field, new ElasticObject(
 								field, 
 								fieldType,
 								fieldMap.get("ignore_above") != null ? new Long((Integer)fieldMap.get("ignore_above")) : null,

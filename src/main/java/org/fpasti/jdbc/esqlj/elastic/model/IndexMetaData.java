@@ -10,30 +10,30 @@ import java.util.stream.Collectors;
 
 public class IndexMetaData {
 	private String index;
-	private Map<String, ElasticField> fields;
-	private List<String> fieldsName;
+	private Map<String, ElasticObject> elasticObjects;
+	private List<String> columnsName;
  
-	public IndexMetaData(String index, Map<String, ElasticField> fields) {
+	public IndexMetaData(String index, Map<String, ElasticObject> fields) {
 		super();
 		this.index = index;
-		this.fields = fields;
-		resolveFieldNames();
+		this.elasticObjects = fields;
+		resolveColumnNames();
 	}
 
 	public String getIndex() {
 		return index;
 	}
 
-	public Map<String, ElasticField> getFields() {
-		return fields;
+	public Map<String, ElasticObject> getElasticObjects() {
+		return elasticObjects;
 	}
 	
-	public List<String> getFieldsName() {
-		return fieldsName;
+	public List<String> getColumnsName() {
+		return columnsName;
 	}
 	
-	private void resolveFieldNames() {
-		fieldsName = fields.keySet().stream().sorted().collect(Collectors.toList());
+	private void resolveColumnNames() {
+		columnsName = elasticObjects.keySet().stream().sorted().collect(Collectors.toList());
 	}
 
 }

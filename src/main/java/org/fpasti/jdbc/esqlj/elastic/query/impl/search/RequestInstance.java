@@ -18,7 +18,7 @@ import org.fpasti.jdbc.esqlj.EsConnection;
 import org.fpasti.jdbc.esqlj.EsMetaData;
 import org.fpasti.jdbc.esqlj.elastic.metadata.ElasticServerDetails;
 import org.fpasti.jdbc.esqlj.elastic.metadata.MetaDataService;
-import org.fpasti.jdbc.esqlj.elastic.model.ElasticField;
+import org.fpasti.jdbc.esqlj.elastic.model.ElasticObject;
 import org.fpasti.jdbc.esqlj.elastic.model.ElasticFieldType;
 import org.fpasti.jdbc.esqlj.elastic.model.IndexMetaData;
 import org.fpasti.jdbc.esqlj.elastic.query.data.PageDataElastic;
@@ -32,7 +32,7 @@ import org.fpasti.jdbc.esqlj.elastic.query.statement.model.QueryType;
 
 public class RequestInstance {
 
-	private Map<String, ElasticField> fields;
+	private Map<String, ElasticObject> fields;
 	private List<String> columnNames;
 	private SearchRequest searchRequest;
 	private SearchSourceBuilder searchSourceBuilder;
@@ -63,11 +63,11 @@ public class RequestInstance {
 		return indexMetaData;
 	}
 	
-	public Map<String, ElasticField> getFields() {
+	public Map<String, ElasticObject> getFields() {
 		return fields;
 	}
 
-	public void setFields(Map<String, ElasticField> fields) {
+	public void setFields(Map<String, ElasticObject> fields) {
 		this.fields = fields;
 	}
 	
@@ -96,7 +96,7 @@ public class RequestInstance {
 	}
 
 	public boolean isStarSelect() {
-		return select.getFields().size() == 1 && select.getFields().get(0).getName().equals("*");
+		return select.getQueryColumns().size() == 1 && select.getQueryColumns().get(0).getName().equals("*");
 	}
 	
 	public boolean isSourceFieldsToRetrieve() {

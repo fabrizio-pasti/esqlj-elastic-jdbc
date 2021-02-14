@@ -1,10 +1,12 @@
 package org.fpasti.jdbc.esqlj.elastic.model;
 
+import org.fpasti.jdbc.esqlj.elastic.query.statement.model.QueryColumn;
+
 /**
 * @author  Fabrizio Pasti - fabrizio.pasti@gmail.com
 */
 
-public class ElasticField implements Comparable<ElasticField> {
+public class ElasticObject implements Comparable<ElasticObject> {
 		public static String DOC_ID_ALIAS = "_id";
 		public static String DOC_SCORE = "_score";
 		private String fullName;
@@ -12,18 +14,23 @@ public class ElasticField implements Comparable<ElasticField> {
 		private ElasticFieldType type;
 		private Long size;
 		private boolean docValue;
+		private QueryColumn linkedQueryColumn;
 		
-		public ElasticField(String fullName, ElasticFieldType type) {
-			super();
+		public ElasticObject(String fullName, ElasticFieldType type) {
 			this.fullName = fullName;
 			this.name = fullName.substring(fullName.lastIndexOf('.') + 1);
 			this.type = type;
 		}
 		
-		public ElasticField(String fullName, ElasticFieldType type, Long size, boolean docValue) {
+		public ElasticObject(String fullName, ElasticFieldType type, Long size, boolean docValue) {
 			this(fullName, type);
 			this.size = size;
 			this.docValue = docValue;
+		}
+		
+		public ElasticObject(QueryColumn queryColumn) {
+			this(queryColumn.getAlias(), queryColumn.getAggregatingType());
+			this.linkedQueryColumn = queryColumn;
 		}
 
 		public String getFullName() {
@@ -32,6 +39,10 @@ public class ElasticField implements Comparable<ElasticField> {
 		
 		public String getName() {
 			return name;
+		}
+		
+		public String getColumnName() {
+			return linkedQueryColumn != null && linkedQueryColumn.getAlias() != null ? linkedQueryColumn.getAlias() : getFullName();
 		}
 
 		public ElasticFieldType getType() {
@@ -43,7 +54,7 @@ public class ElasticField implements Comparable<ElasticField> {
 		}
 		
 		@Override
-		public int compareTo(ElasticField o) {
+		public int compareTo(ElasticObject o) {
 			return this.fullName.compareTo(o.getFullName());
 		}
 		
@@ -53,6 +64,14 @@ public class ElasticField implements Comparable<ElasticField> {
 
 		public boolean isDocValue() {
 			return docValue;
+		}
+
+		public QueryColumn getLinkedQueryColumn() {
+			return linkedQueryColumn;
+		}
+
+		public void setLinkedQueryColumn(QueryColumn linkedQueryColumn) {
+			this.linkedQueryColumn = linkedQueryColumn;
 		}
 
 	}

@@ -34,8 +34,8 @@ public class AggregationBuilder {
 	}
 	
 	private static void manageCountFieldExpression(SqlStatementSelect select, RequestInstance req) {
-		Column countField = (Column)select.getFields().get(0).getAggregatingFunction().getParameters().getExpressions().get(0);
-		req.getSearchSourceBuilder().aggregation(AggregationBuilders.count(countField.getColumnName()));
+		Column countField = (Column)select.getQueryColumns().get(0).getAggregatingFunction().getParameters().getExpressions().get(0);
+		req.getSearchSourceBuilder().aggregation(AggregationBuilders.count(select.getQueryColumns().get(0).getAlias()).field(countField.getColumnName()));
 	}
 
 	private static void manageGroupedExpression(SqlStatementSelect select, RequestInstance req) {

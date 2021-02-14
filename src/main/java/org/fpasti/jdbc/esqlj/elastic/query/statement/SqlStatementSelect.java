@@ -32,8 +32,8 @@ public class SqlStatementSelect extends SqlStatement {
 
 	private PlainSelect select;
 	private List<Index> indices;
-	private List<QueryColumn> fields;
-	private List<OrderByElement> orderByFields;
+	private List<QueryColumn> queryColumns;
+	private List<OrderByElement> orderByElements;
 	private List<String> groupByFields;
 	private QueryType queryType = QueryType.DOCS;
 	
@@ -48,12 +48,12 @@ public class SqlStatementSelect extends SqlStatement {
 		return select.getLimit() != null ? ((LongValue)select.getLimit().getRowCount()).getBigIntegerValue().longValue() : null;
 	}
 
-	public List<QueryColumn> getFields() {
-		return fields;
+	public List<QueryColumn> getQueryColumns() {
+		return queryColumns;
 	}
 	
-	public List<OrderByElement> getOrderByFields() {
-		return orderByFields;
+	public List<OrderByElement> getOrderByElements() {
+		return orderByElements;
 	}
 
 	public Expression getWhereCondition() {
@@ -65,7 +65,7 @@ public class SqlStatementSelect extends SqlStatement {
 	}
 
 	public QueryColumn getFieldByNameOrAlias(String name) {
-		return fields.stream().filter(field -> field.getName().equals(name) || (field.getAlias() != null && field.getAlias().equals(name))).findFirst().orElse(null);
+		return queryColumns.stream().filter(field -> field.getName().equals(name) || (field.getAlias() != null && field.getAlias().equals(name))).findFirst().orElse(null);
 	}
 	
 	public List<String> getGroupByFields() {
@@ -84,8 +84,8 @@ public class SqlStatementSelect extends SqlStatement {
 			indices.addAll(select.getJoins().stream().map(join -> new Index(((Table)((Join)join).getRightItem()).getName(), ((Table)((Join)join).getRightItem()).getAlias() != null ? ((Table)((Join)join).getRightItem()).getAlias().getName()  : null)).collect(Collectors.toList()));
 		}
 		
-		fields = resolveFields();
-		orderByFields = resolveOrderByFields();
+		queryColumns = resolveFields();
+		orderByElements = resolveOrderByElements();
 		groupByFields = select.getGroupBy() != null ? select.getGroupBy().getGroupByExpressions().stream().map(expression -> ((Column)expression).getColumnName()).collect(Collectors.toList()) : new ArrayList<String>();
 		resolveAggregationType();
 	}
@@ -109,7 +109,7 @@ public class SqlStatementSelect extends SqlStatement {
 		}).collect(Collectors.toList());
 	}
 	
-	private List<OrderByElement> resolveOrderByFields() {
+	private List<OrderByElement> resolveOrderByElements() {
 		if(select.getOrderByElements() == null) {
 			return new ArrayList<OrderByElement>();
 		}
@@ -130,14 +130,14 @@ public class SqlStatementSelect extends SqlStatement {
 			return;
 		}		
 		
-		if(getFields().get(0).getAggregatingFunction() == null) {
+		if(getQueryColumns().get(0).getAggregatingFunction() == null) {
 			return;
 		}
 		
-		if(!getFields().get(0).getAggregatingFunction().getName().equalsIgnoreCase("COUNT")) {
-			throw new EsWrapException(new SQLSyntaxErrorException(String.format("'%s' expressions require 'GROUP BY' expression", getFields().get(0).getAggregatingFunction().getName())));
+		if(!getQueryColumns().get(0).getAggregatingFunction().getName().equalsIgnoreCase("COUNT")) {
+			throw new EsWrapException(new SQLSyntaxErrorException(String.format("'%s' expressions require 'GROUP BY' expression", getQueryColumns().get(0).getAggregatingFunction().getName())));
 		}
 		
-		queryType = getFields().get(0).getAggregatingFunction().isAllColumns() ? QueryType.AGGR_COUNT_ALL : QueryType.AGGR_COUNT_FIELD;  
+		queryType = getQueryColumns().get(0).getAggregatingFunction().isAllColumns() ? QueryType.AGGR_COUNT_ALL : QueryType.AGGR_COUNT_FIELD;  
 	}
 }

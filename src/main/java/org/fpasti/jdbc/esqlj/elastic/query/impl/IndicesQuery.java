@@ -13,7 +13,7 @@ import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.indices.GetIndexRequest;
 import org.elasticsearch.client.indices.GetIndexResponse;
 import org.fpasti.jdbc.esqlj.EsConnection;
-import org.fpasti.jdbc.esqlj.elastic.model.ElasticObjectType;
+import org.fpasti.jdbc.esqlj.elastic.model.ElasticSearchableType;
 import org.fpasti.jdbc.esqlj.elastic.query.AbstractOneShotQuery;
 
 /**
@@ -24,24 +24,24 @@ public class IndicesQuery extends AbstractOneShotQuery {
 			
 	private static String[] COLUMNS =  {"TABLE_CAT", "TABLE_SCHEM", "TABLE_NAME", "TABLE_TYPE", "REMARKS", "TYPE_CAT", "TYPE_SCHEM", "TYPE_NAME", "SELF_REFERENCING_COL_NAME", "REF_GENERATION"};
 	
-	public IndicesQuery(EsConnection connection, ElasticObjectType... types) throws SQLException {
+	public IndicesQuery(EsConnection connection, ElasticSearchableType... types) throws SQLException {
 		super(connection, "system_indices", COLUMNS);
 		
-		if(Arrays.asList(types).contains(ElasticObjectType.INDEX)) {
-			init(ElasticObjectType.INDEX);
+		if(Arrays.asList(types).contains(ElasticSearchableType.INDEX)) {
+			init(ElasticSearchableType.INDEX);
 		}
 		
-		if(Arrays.asList(types).contains(ElasticObjectType.ALIAS)) {
-			init(ElasticObjectType.ALIAS);
+		if(Arrays.asList(types).contains(ElasticSearchableType.ALIAS)) {
+			init(ElasticSearchableType.ALIAS);
 		}
 	}
 
-	public void init(ElasticObjectType type) throws SQLException {
-		List<String> indices = type == ElasticObjectType.INDEX ? retrieveIndices() : retrieveAliases();
+	public void init(ElasticSearchableType type) throws SQLException {
+		List<String> indices = type == ElasticSearchableType.INDEX ? retrieveIndices() : retrieveAliases();
 		indices.forEach(indice -> {
 			Map<String, Object> data = new HashMap<String, Object>();
 			data.put("TABLE_NAME", indice);
-			data.put("TABLE_TYPE", type == ElasticObjectType.INDEX ? "TABLE" : "VIEW");
+			data.put("TABLE_TYPE", type == ElasticSearchableType.INDEX ? "TABLE" : "VIEW");
 			data.put("REMARKS", "");
 			insertRowWithData(data);
 		});
