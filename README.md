@@ -230,6 +230,7 @@ Actually support select element:
 | `*` | All document fields
 | `_id` | document identifier (string)
 | `_score` | document query search score (float)
+| `TO_CHAR(field, mask_date)` | Format date field. Example: `TO_CHAR(timestampField, 'YYYY/MM/DD HH:MI:SS')`. Supported mask: YEAR, YYYY, YY, MM, MONTH, MON, DDD, DD, HH24, HH12, HH, MI, SS, DAY, XFF, FFF, FF, F, PM, TZR, TZH.
 
 Supported query functions:
 
@@ -255,7 +256,7 @@ You can use both column name or column alias in expression.
 | `left expression` IS NOT NULL |
 | `left expression` BETWEEN `a` AND `b` | `a` and `b` could be NUMBER, STRING, date expressed by TO_DATE('date', 'mask_date'), EXTRACT function
 | `left expression` IN (`value1`, `value2`, ...) |
-| _elAPI ::`query type`(`param1`,`param2`,...) | Elastic raw query. See below for reference
+| `_elAPI ::query_type('param1','param2',...)` | Elastic raw query. See below for reference
 
 #### Admitted left expression
 
@@ -269,13 +270,13 @@ You can use both column name or column alias in expression.
 
 #### _elAPI
 
-_elApi expression allows you to invoke specific Elastic query API. 
-Syntax usage is `_elAPI` `query type`(`param1`,`param2`,...), where `query type` map the specific requested query and `param1`,`param2`,... allows you to pass parameters to the query.  
+_elApi expression allows you to invoke specific Elastic query API.  
+Syntax usage is `_elAPI` `query_type`(`param1`,`param2`,...), where `query_type` maps specific Elastic query, and `param1`,`param2`,... allows you to pass parameters to that query.  
 Typically `param1` is the search criteria and `param2` is the column involved in the query. Other parameters are optionals and change according different query types. For example `analyze_wildcard`, `fuzzy_max_expansions` etc. must to be declared in this way:
 `_elAPI query_string('search criteria','field1,field2,object.*','analyze_wildcard:true','fuzzy_max_expansions:15')`
 esqlj will dynamically cast params value type according to expected parameter Elastic query object.
 
-Filtering using raw Elastic API
+Currently implemented raw Elastic queries:
 
 | Elastic query | query_type | Parameters | Elastic reference
 |--- |--- |--- |--- 
@@ -290,13 +291,13 @@ Filtering using raw Elastic API
 
 | Function name | Admitted on | Notes
 |--- |--- |--- 
-| SYSDATE | Right expression | Current date time
-| SYSDATE() | Right expression | Current date time
-| NOW() | Right expression | Current date time
-| GETDATE() | Right expression | Current date time
-| TRUNC(SYSDATE\|SYSDATE()) | Right expression | Current date
-| TO_DATE(`date`, `mask_date`) | Right expression | Supported mask: YEAR, YYYY, YY, MM, MONTH, MON, DDD, DD, HH24, HH12, HH, MI, SS, DAY, XFF, FFF, FF, F, PM, TZR, TZH. Example TO_DATE('2020/01/01', 'YYYY/MM/DD')
-| EXTRACT(`PERIOD` FROM `column`) | Left expression |PERIOD can be valued with `YEAR`, `MONTH`, `DAY`, `HOUR`, `MINUTE`, `SECOND`. Usage example: EXTRACT(YEAR FROM timestamp)!=2020
+| `SYSDATE` | Right expression | Current date time
+| `SYSDATE()` | Right expression | Current date time
+| `NOW()` | Right expression | Current date time
+| `GETDATE()` | Right expression | Current date time
+| `TRUNC(SYSDATE\|SYSDATE())` | Right expression | Current date
+| `TO_DATE(date, mask_date)` | Right expression | Supported mask: YEAR, YYYY, YY, MM, MONTH, MON, DDD, DD, HH24, HH12, HH, MI, SS, DAY, XFF, FFF, FF, F, PM, TZR, TZH. Example TO_DATE('2020/01/01', 'YYYY/MM/DD')
+| `EXTRACT(PERIOD FROM column)` | Left expression |PERIOD can be valued with `YEAR`, `MONTH`, `DAY`, `HOUR`, `MINUTE`, `SECOND`. Usage example: EXTRACT(YEAR FROM timestamp)!=2020
 
 ### Order
 
