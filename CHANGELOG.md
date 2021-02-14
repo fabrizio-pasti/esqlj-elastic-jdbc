@@ -8,6 +8,7 @@ Initial release
 ### Select clause
 
 - Added `_score` column. Available on not aggregated query
+- TO_CHAR(column, mask_date) implemented
 
 ### Where clause
 
