@@ -236,7 +236,7 @@ Supported query functions:
 
 | Function | Description | Example 
 |--- |--- |---
-| `COUNT` | Number of documents | Number of documents in index: `SELECT COUNT(*) FROM index`. Number of documents where `field` is not null: `SELECT COUNT(field) FROM index`, `SELECT COUNT(field), COUNT("object.keywordObjectField") FROM index`. Count with `GROUP BY` will be soon available.
+| `COUNT` | Number of documents | Number of documents in index: `SELECT COUNT(*) FROM index`. Number of documents where `field` is present and not null: `SELECT COUNT(field) FROM index`, `SELECT COUNT(field), COUNT("object.keywordObjectField") FROM index`. Count with `GROUP BY` will be soon available.
 
 
 ### Where condition
