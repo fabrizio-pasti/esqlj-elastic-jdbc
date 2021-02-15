@@ -1,6 +1,7 @@
 package org.fpasti.jdbc.esqlj;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -75,4 +76,16 @@ public class TestLiveQueryAggregation
 		rs.close();
 		stmt.close();
 	}
+
+	@Test
+	public void selectAggregation006() throws SQLException {
+		Statement stmt = TestUtils.getLiveConnection().createStatement();
+		SQLException e = assertThrows(SQLException.class, () -> {
+			stmt.executeQuery(TestUtils.resolveTestIndex("SELECT COUNT(*), COUNT(\"object.keywordObjectField\") from testIndex"));
+		});
+		assertEquals("COUNT(*) cannot be mixed with other selectors", e.getMessage());
+		stmt.close();
+	}
+
+	
 }
