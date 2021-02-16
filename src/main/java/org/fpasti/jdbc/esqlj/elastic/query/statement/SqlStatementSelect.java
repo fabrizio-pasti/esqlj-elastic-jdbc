@@ -140,7 +140,7 @@ public class SqlStatementSelect extends SqlStatement {
 		
 		queryType = getQueryColumns().get(0).getAggregatingFunction().isAllColumns() ? QueryType.AGGR_COUNT_ALL : QueryType.AGGR_COUNT_FIELD;
 		
-		if(queryType.equals(QueryType.AGGR_COUNT_ALL)) {
+		if(queryType.equals(QueryType.AGGR_COUNT_ALL) && getQueryColumns().size() > 1) {
 			throw new EsWrapException(new SQLSyntaxErrorException(String.format("COUNT(*) cannot be mixed with other selectors", getQueryColumns().get(0).getAggregatingFunction().getName())));
 		}
 	}
