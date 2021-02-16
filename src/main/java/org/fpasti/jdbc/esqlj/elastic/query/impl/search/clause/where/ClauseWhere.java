@@ -18,6 +18,7 @@ import org.fpasti.jdbc.esqlj.elastic.query.impl.search.model.TermsQuery;
 import org.fpasti.jdbc.esqlj.elastic.query.statement.SqlStatementSelect;
 import org.fpasti.jdbc.esqlj.elastic.query.statement.model.ExpressionEnum;
 import org.fpasti.jdbc.esqlj.elastic.query.statement.model.QueryColumn;
+import org.fpasti.jdbc.esqlj.support.EsqljConstants;
 
 import net.sf.jsqlparser.expression.CastExpression;
 import net.sf.jsqlparser.expression.Expression;
@@ -207,10 +208,10 @@ public class ClauseWhere {
 				return etQrIe;
 			case CAST_EXPRESSION:
 				CastExpression castExpression = (CastExpression)expression;
-				if(!(castExpression.getLeftExpression() instanceof Column) || !((Column)castExpression.getLeftExpression()).getColumnName().equalsIgnoreCase("_elAPI")) {
-					throw new SQLException("[::] syntax must to be used only with '_elAPI'");
+				if(!(castExpression.getLeftExpression() instanceof Column) || !((Column)castExpression.getLeftExpression()).getColumnName().equalsIgnoreCase(EsqljConstants.ESQLJ_WHERE_CLAUSE)) {
+					throw new SQLException(String.format("[::] syntax must to be used only with '%s'", EsqljConstants.ESQLJ_WHERE_CLAUSE));
 				}
-				return ExpressionResolverElApi.manageExpression(castExpression.getType());
+				return ExpressionResolverEsqlj.manageExpression(castExpression.getType());
 			default:
 				throw new SQLException(String.format("Unmanaged expression: %s", ExpressionEnum.resolveByInstance(expression).name()));
 		}

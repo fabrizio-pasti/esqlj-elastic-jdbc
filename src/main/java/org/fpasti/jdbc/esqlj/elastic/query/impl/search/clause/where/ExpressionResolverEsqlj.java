@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.QueryStringQueryBuilder;
 import org.fpasti.jdbc.esqlj.elastic.query.impl.search.model.EvaluateQueryResult;
+import org.fpasti.jdbc.esqlj.support.EsqljConstants;
 import org.fpasti.jdbc.esqlj.support.Utils;
 
 import net.sf.jsqlparser.statement.create.table.ColDataType;
@@ -16,7 +17,7 @@ import net.sf.jsqlparser.statement.create.table.ColDataType;
 * @author  Fabrizio Pasti - fabrizio.pasti@gmail.com
 */
 
-public class ExpressionResolverElApi {
+public class ExpressionResolverEsqlj {
 
 	public static EvaluateQueryResult manageExpression(ColDataType colDataType) throws SQLSyntaxErrorException {
 		String queryType = colDataType.getDataType().toLowerCase();
@@ -26,7 +27,7 @@ public class ExpressionResolverElApi {
 			case "query_string":
 				return queryString(queryType, arguments);
 			default:
-				throw new SQLSyntaxErrorException(String.format("Unsupported _elAPI query '%s'", colDataType.getDataType()));
+				throw new SQLSyntaxErrorException(String.format("Unsupported '%s' query '%s'", EsqljConstants.ESQLJ_WHERE_CLAUSE, colDataType.getDataType()));
 		}
 	}
 
@@ -57,7 +58,7 @@ public class ExpressionResolverElApi {
 
 	private static void checkMinimumNumberOfParameters(String queryType, List<String> arguments, int numMinNumOfArguments) throws SQLSyntaxErrorException {
 		if(arguments.size() < numMinNumOfArguments) {
-			throw new SQLSyntaxErrorException(String.format("_elAPI ::%s required at least %d parameters", queryType, numMinNumOfArguments));
+			throw new SQLSyntaxErrorException(String.format("%s ::%s required at least %d parameters", EsqljConstants.ESQLJ_WHERE_CLAUSE, queryType, numMinNumOfArguments));
 		}
 	}
 }

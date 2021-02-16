@@ -20,12 +20,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 @ElasticLiveUnit
 @ExtendWith(ElasticLiveEnvironment.class)
-public class TestLiveQueryWhereElApi
+public class TestLiveQueryWhereEsqlj
 {
 	@Test
-	public void selectWhereElApi001() throws SQLException {
+	public void selectWhereEsqlj001() throws SQLException {
 		Statement stmt = TestUtils.getLiveConnection().createStatement();
-		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT _id, _score FROM testIndex WHERE _elAPI ::query_string('01|02', 'textField')"));
+		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT _id, _score FROM testIndex WHERE _esqlj ::query_string('01|02', 'textField')"));
 		while(rs.next()) {
 			assertTrue(StringUtils.containsAny(rs.getString(1), "doc_01", "doc_02"));
 		}
