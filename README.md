@@ -221,7 +221,7 @@ If ESQLJ_TEST_CONFIG isn't declared, all tests depending from live connection wi
 
 ## Support matrix and conventions
 
-### From clause
+### Select clause
 
 Actually supported SELECT [...] element:
 
