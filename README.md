@@ -282,7 +282,7 @@ Currently implemented raw Elastic queries:
 
 | Elastic query | query_type | Parameters | Elastic reference
 |--- |--- |--- |--- 
-| Query string | query_string | (`search query`,`fields`, `param1`, `param2`, ...) where 1: query expression, 2: search on fields (* for all), 3..x: additional query parameters (see Elastic documentation)| [query-dsl-query-string-query](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html)
+| Query string | query_string | 1: query expression, 2: search on fields (* for all), 3..x: additional query parameters (see Elastic documentation)| [query-dsl-query-string-query](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html)
 
 *_esqlj samples*
 
