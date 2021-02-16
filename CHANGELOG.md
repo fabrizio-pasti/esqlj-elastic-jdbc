@@ -9,11 +9,12 @@ Initial release
 
 - Added `_score` column. Available on not aggregated query
 - TO_CHAR(column, mask_date) implemented
+- COUNT implementation
 
 ### Where clause
 
 - IN condition implemented
-- _elAPI for advanced filtering capabilities
+- _esqlj for advanced filtering capabilities
 
 
 
