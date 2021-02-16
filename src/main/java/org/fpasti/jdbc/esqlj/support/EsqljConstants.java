@@ -5,5 +5,7 @@ package org.fpasti.jdbc.esqlj.support;
 */
 
 public class EsqljConstants {
+	
 	public static final String ESQLJ_WHERE_CLAUSE = "_esqlj";
+	
 }
