@@ -4,7 +4,7 @@
 
 esqlj doesn't use at all *SQL* Elastic implementation. Elastic integration is built on top of Elastic Rest High Level API (rel. 7.11). See Elastic licenses in folder `licenses/elastic-licenses`
 
-esqlj introduce a new SQL WHERE condition expression named `_esqlj` able to integrate advanced Elastic query capabilities like full text queries, geo queries, shape queries, joining queries etc.
+esqlj introduce a new WHERE condition expression named `_esqlj` able to extend SQL Syntax with advanced Elastic query capabilities like full text queries, geo queries, shape queries, joining queries etc.
 
 Sql parsing is provided by jsqlparser library [JSQLParser](https://github.com/JSQLParser/JSqlParser). See related licenses in folder `licenses/JSqlParser`
 
