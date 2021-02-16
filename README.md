@@ -1,5 +1,5 @@
 # esqlj-elastic-jdbc
-A JDBC driver for Elastic released under Apache License 2.0
+**A JDBC driver for Elastic released under Apache License 2.0**
 
 
 esqlj doesn't use at all *SQL* Elastic implementation. Elastic integration is built on top of Elastic Rest High Level API (rel. 7.11). See Elastic licenses in folder `licenses/elastic-licenses`
@@ -60,7 +60,7 @@ Search score "_score" is returned like a colum of type float in not aggregating 
 SQL filtering syntax is very limited. Esqlj supports a custom syntax for filtering documents using Elastic API full text queries, geo queries, shape queries...
 Actually are implemented only a limited set of these advanced filtering query. This is an example of Query string full text search [query-dsl-query-string-query](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html):
 
-`SELECT _id, _score FROM indexName WHERE _elAPI ::query_string('(new york city) OR (big apple) OR name:/joh?n(ath[oa]n)/', 'field1, field2,city.*', 'minimum_should_match:2') `
+`SELECT _id, _score FROM indexName WHERE _esqlj ::query_string('(new york city) OR (big apple) OR name:/joh?n(ath[oa]n)/', 'field1, field2,city.*', 'minimum_should_match:2') `
 
 About SQL implementation see below section 'Support matrix and conventions'
 
@@ -258,7 +258,7 @@ You can use both column name or column alias in expression.
 | `left expression` IS NOT NULL |
 | `left expression` BETWEEN `a` AND `b` | `a` and `b` could be NUMBER, STRING, date expressed by TO_DATE('date', 'mask_date'), EXTRACT function
 | `left expression` IN (`value1`, `value2`, ...) |
-| `_elAPI ::query_type('param1','param2',...)` | Elastic raw query. See below for reference
+| `_esqlj ::query_type('param1','param2',...)` | Elastic raw query. See below for reference
 
 #### Admitted left expression
 
@@ -270,12 +270,12 @@ You can use both column name or column alias in expression.
 
 `value`=`column` expression is for example considered invalid from esqlj
 
-#### _elAPI
+#### _esqlj
 
-_elApi expression allows you to invoke specific Elastic query API.  
-Syntax usage is `_elAPI` `query_type`(`param1`,`param2`,...), where `query_type` maps specific Elastic query, and `param1`,`param2`,... allows you to pass parameters to that query.  
+`_esqlj` expression allows you to invoke specific Elastic query API.  
+Syntax usage is `_esqlj` `query_type`(`param1`,`param2`,...), where `query_type` maps specific Elastic query, and `param1`,`param2`,... allows you to pass parameters to that query.  
 Typically `param1` is the search criteria and `param2` is the column involved in the query. Other parameters are optionals and change according different query types. For example `analyze_wildcard`, `fuzzy_max_expansions` etc. These configuration settings must to be declared in this way:
-`_elAPI query_string('search criteria','field1,field2,object.*','analyze_wildcard:true','fuzzy_max_expansions:15')`.
+`_esqlj query_string('search criteria','field1,field2,object.*','analyze_wildcard:true','fuzzy_max_expansions:15')`.
 Esqlj will dynamically cast params value type according to expected parameter Elastic query object.
 
 Currently implemented raw Elastic queries:
@@ -284,11 +284,11 @@ Currently implemented raw Elastic queries:
 |--- |--- |--- |--- 
 | Query string | query_string | 1: query, 2: search on columns (* for all), 3..x: additional query parameters (see Elastic documentation)| [query-dsl-query-string-query](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html)
 
-*_elAPI samples*
+*_esqlj samples*
 
 | Query type | Sample
 |--- |--- 
-| Query string | SELECT _id, _score FROM indexName WHERE _elAPI ::query_string('(new york city) OR (big apple) OR name:/joh?n(ath[oa]n)/', 'field1, field2,city.*', 'minimum_should_match:2') 
+| Query string | SELECT _id, _score FROM indexName WHERE _esqlj ::query_string('(new york city) OR (big apple) OR name:/joh?n(ath[oa]n)/', 'field1, field2,city.*', 'minimum_should_match:2') 
 
 #### Functions
 
