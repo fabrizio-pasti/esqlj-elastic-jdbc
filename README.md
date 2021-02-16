@@ -228,7 +228,7 @@ Actually supported SELECT [...] element:
 | Select element | Notes
 |--- |--- 
 | `column` | Elastic document field
-| `alias` | Alias for field in query result
+| `column alias` `column as alias` | Alias for field in query result
 | `*` | All document fields
 | `_id` | document identifier (string)
 | `_score` | document query search score (float)
