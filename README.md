@@ -288,7 +288,7 @@ Currently implemented raw Elastic queries:
 
 | Query type | Sample
 |--- |--- 
-| Query string | SELECT `_id, _score` FROM `indexName` WHERE _esqlj ::query_string(`'(new york city) OR (big apple) OR name:/joh?n(ath[oa]n)/', 'field1, field2,city.*', 'minimum_should_match:2'`) 
+| Query string | ```SELECT id, _score FROM indexName WHERE _esqlj ::query_string('(new york city) OR (big apple) OR name:/joh?n(ath[oa]n)/', 'field1, field2,city.*', 'minimum_should_match:2')```
 
 #### Functions
 
