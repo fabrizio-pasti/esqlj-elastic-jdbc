@@ -40,7 +40,7 @@ Optional parameters:
 | queryScrollFromRows | Number of rows fetched on first pagination | 500
 | queryScrollFetchSize | Fetched rows on next pagination | 500
 | queryScrollTimeoutMinutes | Timeout between pagination expressed in minutes | 3
-| queryScrollOnlyByScrollApi | If true pagination will be executed by Elastic Scroll API. If false it will be applied the scroll strategy that best fit the query (see Pagination paragraph below) | true
+| queryScrollOnlyByScrollApi | If true, pagination will be executed by Elastic Scroll API. If false, it will be applied the scroll strategy that best fit the query (see Pagination paragraph below) | true
 | sharedConnection | If true rest client will be statically shared between all connection (use it if you don't have the requirement to connect to different Elastic clusters inside same JVM) | true
 
 
@@ -49,16 +49,16 @@ Optional parameters:
 Elastic indices are managed like SQL Tables.  
 Elastic aliases are managed like SQL Views. 
 
-Query on index / alias containing special character like '*', '-', '.' need to be double quoted. For example 'SELECT * FROM ".test-index*"'  
+Query on index / alias containing special characters like '*', '-', '.' need to be double quoted. For example 'SELECT * FROM ".test-index*"'  
 Field and alias containing special characters like '-' must also to be double quoted.
 
 Document identifier "_id" is returned like a column of type string in not aggregating query, and mapped on MetaData like primary key. This column is also available on Where condition for matching query (=, !=).  
 Search score "_score" is returned like a colum of type float in not aggregating query.
 
-'Like' SQL filter is implemented by Wildcard Elastic Query [query-dsl-wildcard-query](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-wildcard-query.html)
+'Like' SQL filter is implemented by Wildcard Elastic Query ([query-dsl-wildcard-query](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-wildcard-query.html))
 
 SQL filtering syntax is very limited. Esqlj supports a custom syntax for filtering documents using Elastic API full text queries, geo queries, shape queries...
-Actually are implemented only a limited set of these advanced filtering query. This is an example of Query string full text search [query-dsl-query-string-query](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html):
+Actually are implemented only a limited set of these advanced filtering query. This is an example of Query string full text search ([query-dsl-query-string-query](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html)):
 
 `SELECT _id, _score FROM indexName WHERE _esqlj ::query_string('(new york city) OR (big apple) OR name:/joh?n(ath[oa]n)/', 'field1, field2,city.*', 'minimum_should_match:2') `
 
