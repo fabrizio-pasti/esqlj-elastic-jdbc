@@ -98,19 +98,16 @@ Boolean fields in where clause: use constants `true` and `false` to express cond
 A sample usage of esqlj in DBeaver:
 
 ![DBeaver navigator panel](docs/img_readme_01.png)  
-**Tables are Elasticsearch index and views are Elasticsearch aliases**
-
+*Tables are Elasticsearch index and views are Elasticsearch aliases*
 
 ![DBeaver navigator panel](docs/img_readme_02.png)  
-**Fields in index**
-
+*Fields in index*
 
 ![DBeaver navigator panel](docs/img_readme_03.png)  
-**Document on index**
-
+*Document on index*
 
 ![DBeaver navigator panel](docs/img_readme_04.png)
-**Sample SQL query**
+*Sample SQL query*
 
 ### How to configure DBeaver to use esqlj driver (without Elastic login)
 - Create a new connection of type Elasticsearch
