@@ -98,7 +98,7 @@ Boolean fields in where clause: use constants `true` and `false` to express cond
 A sample usage of esqlj in DBeaver:
 
 ![DBeaver navigator panel](docs/img_readme_01.png)  
-*Tables are Elasticsearch index and views are Elasticsearch aliases*
+*Tables are Elasticsearch indices. Views are Elasticsearch aliases*
 
 ![DBeaver navigator panel](docs/img_readme_02.png)  
 *Fields in index*
