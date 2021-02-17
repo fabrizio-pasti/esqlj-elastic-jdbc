@@ -1,5 +1,5 @@
 # esqlj-elastic-jdbc
-**A JDBC driver for Elastic released under Apache License 2.0**
+**An open source JDBC driver for Elasticsearch released under Apache License 2.0**
 
 
 esqlj doesn't use at all *SQL* Elastic implementation. Elastic integration is built on top of Elastic Rest High Level API (rel. 7.11). See Elastic licenses in folder `licenses/elastic-licenses`
