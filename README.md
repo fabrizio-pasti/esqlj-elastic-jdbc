@@ -242,7 +242,7 @@ Supported query functions:
 | `AVG` | Average of values | `SELECT AVG(integerField) FROM index`
 | `COUNT` | Number of documents | Number of documents in index: `SELECT COUNT(*) FROM index`. Number of documents where `field` is present and not null: `SELECT COUNT(field) FROM index`, `SELECT COUNT(field), COUNT("object.keywordObjectField") FROM index`. 
 | `MAX` | Max column value | `SELECT MAX(integerField) FROM index`
-| `MAX` | Min column value | `SELECT MIN(integerField) FROM index`
+| `MIN` | Min column value | `SELECT MIN(integerField) FROM index`
 | `SUM` | Sum of values | `SELECT SUM(integerField) FROM index`
 
 #### Select Distinct
