@@ -42,6 +42,7 @@ Optional parameters:
 | queryScrollTimeoutMinutes | Timeout between pagination expressed in minutes | 3
 | queryScrollOnlyByScrollApi | If true, pagination will be executed by Elastic Scroll API. If false, it will be applied the scroll strategy that best fit the query (see Pagination paragraph below) | true
 | sharedConnection | If true rest client will be statically shared between all connection (use it if you don't have the requirement to connect to different Elastic clusters inside same JVM) | true
+| maxGroupByRetrievedElements | Max GROUP BY retrieved elements for selected fields | 500
 
 
 ## Concepts
