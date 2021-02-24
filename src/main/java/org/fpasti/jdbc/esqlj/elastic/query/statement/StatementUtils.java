@@ -28,6 +28,8 @@ public class StatementUtils {
 				return function.getParameters() == null ? function.toString() : function.getParameters().getExpressions().get(0).toString().replace("\"", "");
 			case "AVG":
 			case "SUM":
+			case "MIN":
+			case "MAX":
 				if(function.isAllColumns()) {
 					throw new EsWrapException(new SQLSyntaxErrorException(String.format("Unsupported '*' operator on expression: %s", function.toString())));
 				}
@@ -43,6 +45,8 @@ public class StatementUtils {
 				return ElasticFieldType.LONG;
 			case "AVG":
 			case "SUM":
+			case "MIN":
+			case "MAX":
 				return ElasticFieldType.DOUBLE;
 		}
 		

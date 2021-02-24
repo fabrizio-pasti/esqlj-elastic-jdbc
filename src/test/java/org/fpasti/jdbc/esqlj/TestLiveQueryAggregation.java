@@ -222,4 +222,53 @@ public class TestLiveQueryAggregation
 		stmt.close();
 	}
 	
+	@Test
+	public void selectAggregation017() throws SQLException {
+		Statement stmt = TestUtils.getLiveConnection().createStatement();
+		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT MAX(integerField) from testIndex"));
+		assertEquals(true, rs.next());
+		assertEquals(6, rs.getDouble(1), 0.001);
+		assertEquals(false, rs.next());
+		rs.close();
+		stmt.close();
+	}
+	
+	@Test
+	public void selectAggregation018() throws SQLException {
+		Statement stmt = TestUtils.getLiveConnection().createStatement();
+		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT MIN(integerField) from testIndex"));
+		assertEquals(true, rs.next());
+		assertEquals(1, rs.getDouble(1), 0.001);
+		assertEquals(false, rs.next());
+		rs.close();
+		stmt.close();
+	}
+	
+	@Test
+	public void selectAggregation019() throws SQLException {
+		Statement stmt = TestUtils.getLiveConnection().createStatement();
+		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT MAX(integerField), booleanField from testIndex GROUP BY booleanField ORDER BY booleanField"));
+		assertEquals(true, rs.next());
+		assertEquals(1, rs.getDouble(1), 0.001);
+		assertEquals(false, rs.next());
+		rs.close();
+		stmt.close();
+	}
+	
+	@Test
+	public void selectAggregation020() throws SQLException {
+		Statement stmt = TestUtils.getLiveConnection().createStatement();
+		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT MAX(integerField) alias, booleanField from testIndex GROUP BY booleanField ORDER BY alias ASC"));
+		assertEquals(true, rs.next());
+		assertEquals(5, rs.getDouble(1), 0.001);
+		assertEquals(true, rs.getBoolean(2));
+		assertEquals(true, rs.next());
+		assertEquals(6, rs.getDouble(1), 0.001);
+		assertEquals(false, rs.getBoolean(2));
+		assertEquals(false, rs.next());
+		rs.close();
+		stmt.close();
+	}
+	
+	
 }
