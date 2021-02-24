@@ -1,8 +1,10 @@
 # esqlj-elastic-jdbc
-A JDBC driver for Elastic released under Apache License 2.0
+**An open source JDBC driver for Elasticsearch released under Apache License 2.0**
 
 
 esqlj doesn't use at all *SQL* Elastic implementation. Elastic integration is built on top of Elastic Rest High Level API (rel. 7.11). See Elastic licenses in folder `licenses/elastic-licenses`
+
+esqlj introduce a new WHERE condition expression named `_esqlj` able to extend SQL Syntax with advanced Elastic query capabilities like full text queries, geo queries, shape queries, joining queries etc.
 
 Sql parsing is provided by jsqlparser library [JSQLParser](https://github.com/JSQLParser/JSqlParser). See related licenses in folder `licenses/JSqlParser`
 
@@ -38,7 +40,7 @@ Optional parameters:
 | queryScrollFromRows | Number of rows fetched on first pagination | 500
 | queryScrollFetchSize | Fetched rows on next pagination | 500
 | queryScrollTimeoutMinutes | Timeout between pagination expressed in minutes | 3
-| queryScrollOnlyByScrollApi | If true pagination will be executed by Elastic Scroll API. If false it will be applied the scroll strategy that best fit the query (see Pagination paragraph below) | true
+| queryScrollOnlyByScrollApi | If true, pagination will be executed by Elastic Scroll API. If false, it will be applied the scroll strategy that best fit the query (see Pagination paragraph below) | true
 | sharedConnection | If true rest client will be statically shared between all connection (use it if you don't have the requirement to connect to different Elastic clusters inside same JVM) | true
 
 
@@ -47,18 +49,18 @@ Optional parameters:
 Elastic indices are managed like SQL Tables.  
 Elastic aliases are managed like SQL Views. 
 
-Query on index / alias containing special character like '*', '-', '.' need to be double quoted. For example 'SELECT * FROM ".test-index*"'  
+Query on index / alias containing special characters like '*', '-', '.' need to be double quoted. For example 'SELECT * FROM ".test-index*"'  
 Field and alias containing special characters like '-' must also to be double quoted.
 
 Document identifier "_id" is returned like a column of type string in not aggregating query, and mapped on MetaData like primary key. This column is also available on Where condition for matching query (=, !=).  
 Search score "_score" is returned like a colum of type float in not aggregating query.
 
-'Like' SQL filter is implemented by Wildcard Elastic Query [query-dsl-wildcard-query](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-wildcard-query.html)
+'Like' SQL filter is implemented by Wildcard Elastic Query ([query-dsl-wildcard-query](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-wildcard-query.html))
 
 SQL filtering syntax is very limited. Esqlj supports a custom syntax for filtering documents using Elastic API full text queries, geo queries, shape queries...
-Actually are implemented only a limited set of these advanced filtering query. This is an example of Query string full text search [query-dsl-query-string-query](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html):
+Actually are implemented only a limited set of these advanced filtering query. This is an example of Query string full text search ([query-dsl-query-string-query](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html)):
 
-`SELECT _id, _score FROM indexName WHERE _elAPI ::query_string('(new york city) OR (big apple) OR name:/joh?n(ath[oa]n)/', 'field1, field2,city.*', 'minimum_should_match:2') `
+`SELECT _id, _score FROM indexName WHERE _esqlj ::query_string('(new york city) OR (big apple) OR name:/joh?n(ath[oa]n)/', 'field1, field2,city.*', 'minimum_should_match:2') `
 
 About SQL implementation see below section 'Support matrix and conventions'
 
@@ -96,16 +98,16 @@ Boolean fields in where clause: use constants `true` and `false` to express cond
 A sample usage of esqlj in DBeaver:
 
 ![DBeaver navigator panel](docs/img_readme_01.png)  
-**Tables are Elasticsearch index and views are Elasticsearch aliases**
+*Tables are Elasticsearch indices. Views are Elasticsearch aliases*
 
 ![DBeaver navigator panel](docs/img_readme_02.png)  
-**Fields in index**
+*Fields in index*
 
 ![DBeaver navigator panel](docs/img_readme_03.png)  
-**Document on index**
+*Document on index*
 
 ![DBeaver navigator panel](docs/img_readme_04.png)
-**Sample SQL query**
+*Sample SQL query*
 
 ### How to configure DBeaver to use esqlj driver (without Elastic login)
 - Create a new connection of type Elasticsearch
@@ -194,7 +196,7 @@ Mapping of supported Elastic types to SQL types:
 
 By default esqlj implements a scrolling strategy on query through Elastic Scroll API. Optionally it's possibile to activate the less expensive scroll by order, but if you want to activate this functionality pay attention to include in every query a sorting on at least one tiebreaker field (in future it's no longer possible to query by doc id, it could be a best practice to store identifier also in document field).  It's in discussion an RFC on Elastic product about the introduction of an automatic tiebreaker in query result. But for now if you enable this feature and miss to add a sorting on a tiebreaker fields some rows could be skipped between paginations of data.
 
-Still on the subject of scrolling by order, the driver doesn't use Point in Time API (it seems missing Point in Time support in Elastic Rest High level API). 
+Still on the subject of scrolling by order, the driver doesn't use Point in Time API (it seems missing the support in Elastic Rest High level API). 
 
 Pay attention: Scroll API consume resources on server. It's a best practice to fetch all required data as soon as possible. The scroll link will be automatically released from esql at the end of data retrieve.
 
@@ -219,14 +221,14 @@ If ESQLJ_TEST_CONFIG isn't declared, all tests depending from live connection wi
 
 ## Support matrix and conventions
 
-### From clause
+### Select clause
 
-Actually support select element:
+Actually supported SELECT [...] element:
 
 | Select element | Notes
 |--- |--- 
 | `column` | Elastic document field
-| `alias` | Alias for field in query result
+| `column alias` or `column AS alias` | Alias for field in query result
 | `*` | All document fields
 | `_id` | document identifier (string)
 | `_score` | document query search score (float)
@@ -256,7 +258,7 @@ You can use both column name or column alias in expression.
 | `left expression` IS NOT NULL |
 | `left expression` BETWEEN `a` AND `b` | `a` and `b` could be NUMBER, STRING, date expressed by TO_DATE('date', 'mask_date'), EXTRACT function
 | `left expression` IN (`value1`, `value2`, ...) |
-| `_elAPI ::query_type('param1','param2',...)` | Elastic raw query. See below for reference
+| `_esqlj ::query_type('param1','param2',...)` | Elastic raw query. See below for reference
 
 #### Admitted left expression
 
@@ -268,25 +270,25 @@ You can use both column name or column alias in expression.
 
 `value`=`column` expression is for example considered invalid from esqlj
 
-#### _elAPI
+#### _esqlj
 
-_elApi expression allows you to invoke specific Elastic query API.  
-Syntax usage is `_elAPI` `query_type`(`param1`,`param2`,...), where `query_type` maps specific Elastic query, and `param1`,`param2`,... allows you to pass parameters to that query.  
+`_esqlj` expression allows you to invoke specific Elastic query API.  
+Syntax usage is `_esqlj` `query_type`(`param1`,`param2`,...), where `query_type` maps specific Elastic query, and `param1`,`param2`,... allows you to pass parameters to that query.  
 Typically `param1` is the search criteria and `param2` is the column involved in the query. Other parameters are optionals and change according different query types. For example `analyze_wildcard`, `fuzzy_max_expansions` etc. These configuration settings must to be declared in this way:
-`_elAPI query_string('search criteria','field1,field2,object.*','analyze_wildcard:true','fuzzy_max_expansions:15')`.
+`_esqlj query_string('search criteria','field1,field2,object.*','analyze_wildcard:true','fuzzy_max_expansions:15')`.
 Esqlj will dynamically cast params value type according to expected parameter Elastic query object.
 
 Currently implemented raw Elastic queries:
 
 | Elastic query | query_type | Parameters | Elastic reference
 |--- |--- |--- |--- 
-| Query string | query_string | 1: query, 2: search on columns (* for all), 3..x: additional query parameters (see Elastic documentation)| [query-dsl-query-string-query](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html)
+| Query string | query_string | 1: query expression, 2: search on fields (* for all), 3..x: additional query parameters (see Elastic documentation)| [query-dsl-query-string-query](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html)
 
-*_elAPI samples*
+*_esqlj samples*
 
 | Query type | Sample
 |--- |--- 
-| Query string | SELECT _id, _score FROM indexName WHERE _elAPI ::query_string('(new york city) OR (big apple) OR name:/joh?n(ath[oa]n)/', 'field1, field2,city.*', 'minimum_should_match:2') 
+| Query string | ```SELECT id, _score FROM indexName WHERE _esqlj ::query_string('(new york city) OR (big apple) OR name:/joh?n(ath[oa]n)/', 'field1, field2,city.*', 'minimum_should_match:2')```
 
 #### Functions
 
