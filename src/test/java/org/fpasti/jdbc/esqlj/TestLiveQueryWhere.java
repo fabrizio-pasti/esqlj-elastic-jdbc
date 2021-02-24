@@ -433,9 +433,9 @@ public class TestLiveQueryWhere
 		Statement stmt = TestUtils.getLiveConnection().createStatement();
 		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT _id from testIndex WHERE EXTRACT(HOUR FROM timestampField)=20 OR EXTRACT(HOUR FROM timestampField)=5"));
 		while(rs.next()) {
-			assertTrue(StringUtils.containsAny(rs.getString(1), "doc_01", "doc_06"));
+			assertTrue(StringUtils.containsAny(rs.getString(1), "doc_01", "doc_06", "doc_07"));
 		}
-		assertEquals(2, rs.getRow());
+		assertEquals(3, rs.getRow());
 		rs.close();
 		stmt.close();
 	}
@@ -445,9 +445,9 @@ public class TestLiveQueryWhere
 		Statement stmt = TestUtils.getLiveConnection().createStatement();
 		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT _id from testIndex WHERE EXTRACT(MINUTE FROM timestampField)=10"));
 		while(rs.next()) {
-			assertTrue(StringUtils.containsAny(rs.getString(1), "doc_01", "doc_05", "doc_06"));
+			assertTrue(StringUtils.containsAny(rs.getString(1), "doc_01", "doc_05", "doc_06", "doc_07"));
 		}
-		assertEquals(3, rs.getRow());
+		assertEquals(4, rs.getRow());
 		rs.close();
 		stmt.close();
 	}
@@ -480,7 +480,9 @@ public class TestLiveQueryWhere
 		Statement stmt = TestUtils.getLiveConnection().createStatement();
 		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT _id from testIndex  WHERE integerField<=6 ORDER BY keywordField DESC"));
 		rs.next();
-		assertEquals("doc_06", rs.getString(1));
+		assertTrue(StringUtils.containsAny(rs.getString(1), "doc_06", "doc_07"));
+		rs.next();
+		assertTrue(StringUtils.containsAny(rs.getString(1), "doc_06", "doc_07"));
 		rs.next();
 		assertEquals("doc_05", rs.getString(1));
 		rs.next();
@@ -517,7 +519,7 @@ public class TestLiveQueryWhere
 	@Test
 	public void selectWhere044() throws SQLException {
 		Statement stmt = TestUtils.getLiveConnection().createStatement();
-		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT _id from \"esqlj-test-static-010\" WHERE keywordField IN ('keyword01', 'keyword02', 'keyboardXX')"));
+		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT _id from testIndex WHERE keywordField IN ('keyword01', 'keyword02', 'keyboardXX')"));
 		while(rs.next()) {
 			assertTrue(StringUtils.containsAny(rs.getString(1), "doc_01", "doc_02"));
 		}
@@ -529,11 +531,11 @@ public class TestLiveQueryWhere
 	@Test
 	public void selectWhere045() throws SQLException {
 		Statement stmt = TestUtils.getLiveConnection().createStatement();
-		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT _id from \"esqlj-test-static-010\" WHERE EXTRACT(MINUTE FROM timestampField) IN (10, 11)"));
+		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT _id from testIndex WHERE EXTRACT(MINUTE FROM timestampField) IN (10, 11)"));
 		while(rs.next()) {
-			assertTrue(StringUtils.containsAny(rs.getString(1), "doc_01", "doc_02", "doc_05", "doc_06"));
+			assertTrue(StringUtils.containsAny(rs.getString(1), "doc_01", "doc_02", "doc_05", "doc_06", "doc_07"));
 		}
-		assertEquals(4, rs.getRow());
+		assertEquals(5, rs.getRow());
 		rs.close();
 		stmt.close();
 	}
@@ -541,7 +543,7 @@ public class TestLiveQueryWhere
 	@Test
 	public void selectWhere046() throws SQLException {
 		Statement stmt = TestUtils.getLiveConnection().createStatement();
-		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT _id, _score from \"esqlj-test-static-010\" WHERE keywordField LIKE 'keyword*'"));
+		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT _id, _score from testIndex WHERE keywordField LIKE 'keyword*'"));
 		while(rs.next()) {
 			assertTrue(rs.getFloat(2) > 0);
 		}

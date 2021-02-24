@@ -26,6 +26,12 @@ public class StatementUtils {
 				return ((Column)function.getParameters().getExpressions().get(0)).getColumnName();
 			case "COUNT":
 				return function.getParameters() == null ? function.toString() : function.getParameters().getExpressions().get(0).toString().replace("\"", "");
+			case "AVG":
+			case "SUM":
+				if(function.isAllColumns()) {
+					throw new EsWrapException(new SQLSyntaxErrorException(String.format("Unsupported '*' operator on expression: %s", function.toString())));
+				}
+				return function.getParameters().getExpressions().get(0).toString().replace("\"", "");
 			default:
 				throw new EsRuntimeException(String.format("Unsupported select function '%s'", function.getName()));
 		}
@@ -35,6 +41,9 @@ public class StatementUtils {
 		switch(function.getMultipartName().get(0)) {
 			case "COUNT":
 				return ElasticFieldType.LONG;
+			case "AVG":
+			case "SUM":
+				return ElasticFieldType.DOUBLE;
 		}
 		
 		throw new EsWrapException(new SQLSyntaxErrorException(String.format("Unsupported aggregating function '%s'", function.getName())));

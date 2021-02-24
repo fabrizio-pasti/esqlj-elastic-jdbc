@@ -3,6 +3,8 @@ package org.fpasti.jdbc.esqlj.elastic.query.model;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
 * @author  Fabrizio Pasti - fabrizio.pasti@gmail.com
@@ -13,6 +15,12 @@ public class DataRow {
 
 	public DataRow(Object... values) {
 		putAll(values);
+	}
+
+	public DataRow(int size) {
+		data = Stream.generate(Object::new)
+                .limit(size)
+                .collect(Collectors.toList());
 	}
 
 	public DataRow(List<Object> values) {

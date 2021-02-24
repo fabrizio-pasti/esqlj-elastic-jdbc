@@ -15,7 +15,6 @@ import org.fpasti.jdbc.esqlj.elastic.model.IndexMetaData;
 import org.fpasti.jdbc.esqlj.elastic.query.impl.search.RequestInstance;
 import org.fpasti.jdbc.esqlj.elastic.query.statement.SqlStatementSelect;
 import org.fpasti.jdbc.esqlj.elastic.query.statement.model.QueryColumn;
-import org.fpasti.jdbc.esqlj.elastic.query.statement.model.QueryType;
 import org.fpasti.jdbc.esqlj.support.EsRuntimeException;
 
 /**
@@ -26,10 +25,14 @@ public class ClauseSelect {
 	
 	public static void manageFields(SqlStatementSelect select, RequestInstance req) throws SQLSyntaxErrorException {
 		getFieldsToRetrieve(select, req);
-		if(select.getQueryType().equals(QueryType.DOCS)) {
-			addFieldsToRequest(select, req);
-		} else {
-			AggregationBuilder.doAggregation(select, req);
+		
+		switch(select.getQueryType()) {
+			case DOCS:
+				addFieldsToRequest(select, req);
+				break;
+			default:
+				AggregationBuilder.doAggregation(req);
+				break;
 		}
 	}
 

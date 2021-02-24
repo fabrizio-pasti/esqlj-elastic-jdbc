@@ -60,12 +60,20 @@ public class SqlStatementSelect extends SqlStatement {
 		return select.getWhere();
 	}
 	
+	public Expression getHavingCondition() {
+		return select.getHaving();
+	}
+	
 	public Index getIndexByNameOrAlias(String name) {
-		return indices.stream().filter(index -> index.getName().equals(name) || (index.getAlias() != null && index.getAlias().equals(name))).findFirst().orElse(null);
+		return indices.stream().filter(index -> name.equalsIgnoreCase(index.getName()) || name.equalsIgnoreCase(index.getAlias())).findFirst().orElse(null);
 	}
 
 	public QueryColumn getColumnsByNameOrAlias(String name) {
-		return queryColumns.stream().filter(field -> field.getName().equals(name) || (field.getAlias() != null && field.getAlias().equals(name))).findFirst().orElse(null);
+		return queryColumns.stream().filter(field -> name.equalsIgnoreCase(field.getName()) || name.equalsIgnoreCase(field.getAlias())).findFirst().orElse(null);
+	}
+	
+	public QueryColumn getColumnsByNameOrAliasOrAggregatingFunction(String name) {
+		return queryColumns.stream().filter(field -> name.equalsIgnoreCase(field.getName()) || name.equalsIgnoreCase(field.getAlias()) || name.equalsIgnoreCase(field.getAggregatingColumnName())).findFirst().orElse(null);
 	}
 	
 	public List<String> getGroupByColumns() {
@@ -75,7 +83,7 @@ public class SqlStatementSelect extends SqlStatement {
 	public QueryType getQueryType() {
 		return queryType;
 	}
-
+	
 	private void init() {
 		index = new Index(select.getFromItem().toString().replaceAll("\"", ""), select.getFromItem().getAlias() != null ? select.getFromItem().getAlias().getName().replaceAll("\"", "") : null);
 		indices = new ArrayList<Index>(); 
@@ -87,9 +95,10 @@ public class SqlStatementSelect extends SqlStatement {
 		queryColumns = resolveColumns();
 		orderByElements = resolveOrderByElements();
 		groupByColumns = select.getGroupBy() != null ? select.getGroupBy().getGroupByExpressions().stream().map(expression -> ((Column)expression).getColumnName()).collect(Collectors.toList()) : new ArrayList<String>();
+		checkForDistinct();
 		resolveAggregationType();
 	}
-
+	
 	private List<QueryColumn> resolveColumns() {
 		String index = "root";
 		return select.getSelectItems().stream().map(item -> {
@@ -126,22 +135,23 @@ public class SqlStatementSelect extends SqlStatement {
 		
 	private void resolveAggregationType() {
 		if(getGroupByColumns().size() > 0) {
-			queryType = QueryType.AGGR_GROUPED;
+			queryType = QueryType.AGGR_GROUP_BY;
 			return;
 		}		
 		
-		if(getQueryColumns().get(0).getAggregatingFunction() == null) {
+		if(!getQueryColumns().stream().filter(column -> column.getAggregatingFunction() != null).findAny().isPresent()) {
 			return;
 		}
 		
-		if(!getQueryColumns().get(0).getAggregatingFunction().getName().equalsIgnoreCase("COUNT")) {
-			throw new EsWrapException(new SQLSyntaxErrorException(String.format("'%s' expressions require 'GROUP BY' expression", getQueryColumns().get(0).getAggregatingFunction().getName())));
-		}
-		
-		queryType = getQueryColumns().get(0).getAggregatingFunction().isAllColumns() ? QueryType.AGGR_COUNT_ALL : QueryType.AGGR_COUNT_FIELD;
-		
-		if(queryType.equals(QueryType.AGGR_COUNT_ALL) && getQueryColumns().size() > 1) {
-			throw new EsWrapException(new SQLSyntaxErrorException(String.format("COUNT(*) cannot be mixed with other selectors", getQueryColumns().get(0).getAggregatingFunction().getName())));
+		getQueryColumns().stream().filter(column -> column.getAggregatingFunction() == null).findAny().ifPresent(column -> {throw new EsWrapException(new SQLSyntaxErrorException("Cannot be mixed Expression and Column in SELECT clause without GROUP BY aggregations"));});		
+		queryType = getQueryColumns().size() == 1 && getQueryColumns().get(0).getAggregatingFunction().isAllColumns() ? QueryType.AGGR_COUNT_ALL : QueryType.AGGR_UNGROUPED_EXPRESSIONS;
+	}
+
+	private void checkForDistinct() {
+		if(select.getDistinct() != null) {
+			getQueryColumns().stream().filter(column -> column.getAggregatingFunction() != null).findAny().ifPresent(column -> {throw new EsWrapException(new SQLSyntaxErrorException("DISTINCT clause shall apply only to columns, not expressions"));});
+			queryType = QueryType.DISTINCT_DOCS;
 		}
 	}
+
 }

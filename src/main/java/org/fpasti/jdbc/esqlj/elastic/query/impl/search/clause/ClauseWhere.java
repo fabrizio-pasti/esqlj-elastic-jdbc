@@ -1,7 +1,6 @@
-	package org.fpasti.jdbc.esqlj.elastic.query.impl.search.clause.where;
+	package org.fpasti.jdbc.esqlj.elastic.query.impl.search.clause;
 
 
-import java.sql.SQLException;
 import java.sql.SQLSyntaxErrorException;
 import java.util.HashMap;
 import java.util.List;
@@ -12,6 +11,8 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.script.Script;
 import org.fpasti.jdbc.esqlj.elastic.query.impl.search.RequestInstance;
+import org.fpasti.jdbc.esqlj.elastic.query.impl.search.clause.utils.ExpressionResolverEsqlj;
+import org.fpasti.jdbc.esqlj.elastic.query.impl.search.clause.utils.ExpressionResolverValue;
 import org.fpasti.jdbc.esqlj.elastic.query.impl.search.model.ElasticScriptMethodEnum;
 import org.fpasti.jdbc.esqlj.elastic.query.impl.search.model.EvaluateQueryResult;
 import org.fpasti.jdbc.esqlj.elastic.query.impl.search.model.TermsQuery;
@@ -46,12 +47,12 @@ import net.sf.jsqlparser.schema.Column;
 
 public class ClauseWhere {
 	
-	public static void manageWhere(SqlStatementSelect select, RequestInstance req) throws SQLException {
+	public static void manageWhere(SqlStatementSelect select, RequestInstance req) throws SQLSyntaxErrorException {
 		if(select.getWhereCondition() == null) {
 			return;
 		}
 		
-		EvaluateQueryResult result = evaluateQueryExpression(select.getWhereCondition(), select);
+		EvaluateQueryResult result = evaluateWhereExpression(select.getWhereCondition(), select);
 		
 		QueryBuilder qb = null;
 		
@@ -84,12 +85,12 @@ public class ClauseWhere {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private static EvaluateQueryResult evaluateQueryExpression(Expression expression, SqlStatementSelect select) throws SQLException {
+	private static EvaluateQueryResult evaluateWhereExpression(Expression expression, SqlStatementSelect select) throws SQLSyntaxErrorException {
 		switch(ExpressionEnum.resolveByInstance(expression)) {
 			case AND_EXPRESSION:
 				AndExpression andExpression = (AndExpression)expression;
-				EvaluateQueryResult resAndLeft = evaluateQueryExpression(andExpression.getLeftExpression(), select);
-				EvaluateQueryResult resAndRight = evaluateQueryExpression(andExpression.getRightExpression(), select);
+				EvaluateQueryResult resAndLeft = evaluateWhereExpression(andExpression.getLeftExpression(), select);
+				EvaluateQueryResult resAndRight = evaluateWhereExpression(andExpression.getRightExpression(), select);
 				resAndLeft.merge(true, resAndRight);
 				return resAndLeft;
 			case OR_EXPRESSION:
@@ -97,8 +98,8 @@ public class ClauseWhere {
 				BoolQueryBuilder leftBoolQueryBuilder = null;
 				BoolQueryBuilder rightBoolQueryBuilder = null;
 
-				EvaluateQueryResult resOrLeft = evaluateQueryExpression(orExpression.getLeftExpression(), select);
-				EvaluateQueryResult resOrRight = evaluateQueryExpression(orExpression.getRightExpression(), select);
+				EvaluateQueryResult resOrLeft = evaluateWhereExpression(orExpression.getLeftExpression(), select);
+				EvaluateQueryResult resOrRight = evaluateWhereExpression(orExpression.getRightExpression(), select);
 				
 				if(ExpressionEnum.isInstanceOf(orExpression.getLeftExpression(), ExpressionEnum.AND_EXPRESSION) 
 						|| ExpressionEnum.isInstanceOf(orExpression.getLeftExpression(), ExpressionEnum.PARENTHESIS)
@@ -130,7 +131,7 @@ public class ClauseWhere {
 				return resOrLeft.merge(false, resOrRight);
 			case PARENTHESIS:
 				Parenthesis parenthesis = (Parenthesis)expression;
-				return evaluateQueryExpression(parenthesis.getExpression(), select);
+				return evaluateWhereExpression(parenthesis.getExpression(), select);
 			case GREATER_THAN:
 				GreaterThan greaterThan = (GreaterThan)expression;
 				if(greaterThan.getLeftExpression() instanceof ExtractExpression) {
@@ -183,7 +184,7 @@ public class ClauseWhere {
 				return eqrIne;
 			case NOT_EXPRESSION:
 				NotExpression notExpression = (NotExpression)expression;
-				EvaluateQueryResult res = evaluateQueryExpression(notExpression.getExpression(), select);
+				EvaluateQueryResult res = evaluateWhereExpression(notExpression.getExpression(), select);
 				BoolQueryBuilder qbNot = QueryBuilders.boolQuery();
 				getQueryBuilderFromResult(notExpression.getExpression(), res, qbNot);
 				BoolQueryBuilder qb = QueryBuilders.boolQuery();
@@ -209,15 +210,15 @@ public class ClauseWhere {
 			case CAST_EXPRESSION:
 				CastExpression castExpression = (CastExpression)expression;
 				if(!(castExpression.getLeftExpression() instanceof Column) || !((Column)castExpression.getLeftExpression()).getColumnName().equalsIgnoreCase(EsqljConstants.ESQLJ_WHERE_CLAUSE)) {
-					throw new SQLException(String.format("[::] syntax must to be used only with '%s'", EsqljConstants.ESQLJ_WHERE_CLAUSE));
+					throw new SQLSyntaxErrorException(String.format("[::] syntax must to be used only with '%s'", EsqljConstants.ESQLJ_WHERE_CLAUSE));
 				}
 				return ExpressionResolverEsqlj.manageExpression(castExpression.getType());
 			default:
-				throw new SQLException(String.format("Unmanaged expression: %s", ExpressionEnum.resolveByInstance(expression).name()));
+				throw new SQLSyntaxErrorException(String.format("Unmanaged expression: %s", ExpressionEnum.resolveByInstance(expression).name()));
 		}
 	}
 
-	private static EvaluateQueryResult resolveExtract(Expression extractExpression, Object valueExpression, String operator, SqlStatementSelect select) throws SQLException {
+	private static EvaluateQueryResult resolveExtract(Expression extractExpression, Object valueExpression, String operator, SqlStatementSelect select) throws SQLSyntaxErrorException {
 		ExtractExpression extract = (ExtractExpression)extractExpression;
 		ElasticScriptMethodEnum scriptDateMethod = null;
 		try {
@@ -245,7 +246,7 @@ public class ClauseWhere {
 		return new EvaluateQueryResult(QueryBuilders.scriptQuery(script));
 	}
 	
-	private static EvaluateQueryResult resolveExtractBetween(Between between, SqlStatementSelect select) throws SQLException {
+	private static EvaluateQueryResult resolveExtractBetween(Between between, SqlStatementSelect select) throws SQLSyntaxErrorException {
 		ExtractExpression extract = (ExtractExpression)between.getLeftExpression();
 		ElasticScriptMethodEnum scriptDateMethod = null;
 		try {
@@ -328,9 +329,9 @@ public class ClauseWhere {
 		}
 	}
 	
-	private static String getColumn(Expression expression, SqlStatementSelect select) throws SQLException {
+	private static String getColumn(Expression expression, SqlStatementSelect select) throws SQLSyntaxErrorException {
 		if(!(expression instanceof Column)) {
-			throw new SQLException(String.format("Not Column expression: %s", ExpressionEnum.resolveByInstance(expression).name()));
+			throw new SQLSyntaxErrorException(String.format("Not Column expression: %s", ExpressionEnum.resolveByInstance(expression).name()));
 		}
 		
 		Column column = (Column)expression;

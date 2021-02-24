@@ -12,7 +12,8 @@ public enum ConfigurationPropertyEnum {
 		CFG_QUERY_SCROLL_TIMEOUT_MINUTES("queryScrollTimeoutMinutes", Long.class, 3L, null, false, "Query scroll timeout expressed in minutes"),
 		CFG_QUERY_SCROLL_FROM_ROWS("queryScrollFromRows", Long.class, 500L, null, false, "Number of rows before scroll"),
 		CFG_QUERY_SCROLL_ONLY_BY_SCROLL_API("queryScrollOnlyByScrollApi", Boolean.class, true, null, false, "Scroll using Elastic Scroll API"),
-		CFG_SHARED_CONNECTION("sharedConnection", Boolean.class, true, null, false, "Native Elastic connection shared between JDBC connection");
+		CFG_SHARED_CONNECTION("sharedConnection", Boolean.class, true, null, false, "Native Elastic connection shared between JDBC connection"),
+		CFG_MAX_GROUP_BY_RETRIEVED_ELEMENTS("maxGroupByRetrievedElements", Integer.class, 500, null, false, "Max GROUP BY retrieved elements");
 		
 		public String name;
 		public Class<?> clazz;

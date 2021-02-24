@@ -1,4 +1,4 @@
-package org.fpasti.jdbc.esqlj.elastic.query.impl.search.clause.where;
+package org.fpasti.jdbc.esqlj.elastic.query.impl.search.clause.utils;
 
 import java.sql.SQLSyntaxErrorException;
 import java.util.Arrays;

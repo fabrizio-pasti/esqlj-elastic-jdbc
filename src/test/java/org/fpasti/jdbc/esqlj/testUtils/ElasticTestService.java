@@ -40,6 +40,7 @@ public class ElasticTestService {
 			addIndexTemplate(connection.getElasticClient());
 			postDocuments(connection.getElasticClient(), createAndDestroy);
 			flushIndex(connection.getElasticClient());
+			awaitForIndexReady();
 		}
 		
 	}
@@ -119,4 +120,14 @@ public class ElasticTestService {
 			throw new Exception("Failed to flush test index on Elastic");
 		}		
 	}
+	
+	private static void awaitForIndexReady() throws InterruptedException {
+		boolean indexNotReady = true;
+		int numberOfDocsOnFs = TestUtils.listFiles(RESOURCES_DOCUMENTS).length;
+		while(indexNotReady) {
+			Thread.sleep(1000);
+			indexNotReady = getNumberOfDocs() != numberOfDocsOnFs;
+		}
+	}
+
 }

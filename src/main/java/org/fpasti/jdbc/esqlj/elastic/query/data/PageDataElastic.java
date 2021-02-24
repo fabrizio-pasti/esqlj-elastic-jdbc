@@ -4,18 +4,27 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.TimeZone;
 
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.common.document.DocumentField;
 import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.aggregations.metrics.ParsedValueCount;
+import org.elasticsearch.search.aggregations.Aggregation;
+import org.elasticsearch.search.aggregations.Aggregations;
+import org.elasticsearch.search.aggregations.bucket.terms.ParsedTerms;
+import org.elasticsearch.search.aggregations.bucket.terms.Terms.Bucket;
+import org.elasticsearch.search.aggregations.metrics.ParsedCardinality;
+import org.elasticsearch.search.aggregations.metrics.ParsedSingleValueNumericMetricsAggregation;
+import org.elasticsearch.search.aggregations.metrics.ValueCount;
 import org.fpasti.jdbc.esqlj.elastic.model.ElasticObject;
 import org.fpasti.jdbc.esqlj.elastic.model.EsGeoPoint;
 import org.fpasti.jdbc.esqlj.elastic.query.impl.search.RequestInstance;
 import org.fpasti.jdbc.esqlj.elastic.query.model.DataRow;
 import org.fpasti.jdbc.esqlj.elastic.query.model.PageDataState;
+import org.fpasti.jdbc.esqlj.elastic.query.statement.model.QueryColumn;
 import org.fpasti.jdbc.esqlj.support.SimpleDateFormatThreadSafe;
 
 /**
@@ -48,10 +57,12 @@ public class PageDataElastic {
 			case AGGR_COUNT_ALL:
 				manageCountAll(searchResponse);
 				break;
-			case AGGR_COUNT_FIELD:
-				manageCountField(searchResponse);
+			case AGGR_UNGROUPED_EXPRESSIONS:
+				manageUngroupedExpression(searchResponse);
 				break;
-			case AGGR_GROUPED:
+			case DISTINCT_DOCS:
+			case AGGR_GROUP_BY:
+				manageGroupBy(searchResponse);
 				break;
 		}
 	}
@@ -106,7 +117,7 @@ public class PageDataElastic {
 		state = PageDataState.READY_TO_ITERATE;
 	}
 	
-	private void manageCountField(SearchResponse res) {
+	/*private void manageCountField(SearchResponse res) {
 		dataRows = new ArrayList<DataRow>();
 		List<Object> data = new ArrayList<Object>();
 		
@@ -118,8 +129,141 @@ public class PageDataElastic {
 		dataRows.add(new DataRow(data));
 		fetchedRows = new Long(dataRows.size());
 		state = PageDataState.READY_TO_ITERATE;
+	}*/
+	
+	private void manageUngroupedExpression(SearchResponse searchResponse) {
+		dataRows = new ArrayList<DataRow>();
+		
+		DataRow dataRow = new DataRow(req.getSelect().getQueryColumns().size());
+		
+		searchResponse.getAggregations().asList().forEach(aggregation -> {
+			dataRow.put(Integer.parseInt(aggregation.getName()), resolveAggregationValue(aggregation));
+		});
+		dataRows.add(dataRow);
+		
+		fetchedRows = new Long(dataRows.size());
+		state = PageDataState.READY_TO_ITERATE;
 	}
 	
+	/*private void exploreUngroupedResult(Aggregations aggregations) {
+		DataRow dataRow = new DataRow();
+		
+		aggregations.asList().forEach(aggregation -> {
+			dataRow.put(Integer.parseInt(aggregation.getName()), resolveAggregationValue(aggregation));
+		});
+		
+		ParsedTerms aggregation = (ParsedTerms)aggregations.asList().get(0);	
+
+		for(Bucket bucket : aggregation.getBuckets()) {			
+			if(isStringAnInteger(aggregation.getName())) {
+				rowValues.put(Integer.parseInt(aggregation.getName()), bucket.getKey());
+			}
+			
+			if(bucket.getAggregations() != null && bucket.getAggregations().asList().get(0) instanceof ParsedTerms) {
+				exploreGroupByResult(bucket.getAggregations(), rowValues);
+				continue;
+			} 
+			
+			DataRow dataRow = new DataRow(req.getSelect().getQueryColumns().size());
+			rowValues.forEach((idx, value) -> dataRow.put(idx, parseValue(idx, value)));
+			
+			if(bucket.getAggregations() != null) {
+				bucket.getAggregations().forEach(nestedAggregation -> {
+					dataRow.put(Integer.parseInt(nestedAggregation.getName()), resolveAggregationValue(nestedAggregation));
+				});
+			}
+			
+			for(int idx = 0; idx < req.getSelect().getQueryColumns().size(); idx++) {
+				QueryColumn column = req.getSelect().getQueryColumns().get(idx);
+				if(column.getAggregatingFunction() != null && column.getAggregatingFunction().isAllColumns()) {
+					dataRow.put(idx, bucket.getDocCount());
+				}
+			}
+			dataRows.add(dataRow);
+		}
+	}*/
+	
+	private void manageGroupBy(SearchResponse searchResponse) {
+		dataRows = new ArrayList<DataRow>();
+		
+		Aggregations aggregations = searchResponse.getAggregations();
+		Map<Integer, Object> rowValues = new HashMap<Integer, Object>();
+		
+		exploreGroupByResult(aggregations, rowValues);
+		/*req.getSelect().getGroupByColumns().forEach(groupByColumn -> {
+			ParsedTerms aggregation = (ParsedTerms)aggregations.asList().get(0);
+			aggregation.getBuckets().forEach(bucket -> {
+				if(isStringAnInteger(aggregation.getName())) {
+					rowValues.put(Integer.parseInt(aggregation.getName()), bucket.getKey());
+				}
+			});
+		});
+		*/
+		fetchedRows = new Long(dataRows.size());
+		state = PageDataState.READY_TO_ITERATE;
+	}
+	
+	private boolean isStringAnInteger(String str) {
+		try {
+			Integer.parseInt(str);
+			return true;
+		} catch(Exception e) {
+			return false;
+		}
+	}
+	
+	private void exploreGroupByResult(Aggregations aggregations, Map<Integer, Object> rowValues) {
+		ParsedTerms aggregation = (ParsedTerms)aggregations.asList().get(0);	
+
+		for(Bucket bucket : aggregation.getBuckets()) {			
+			if(isStringAnInteger(aggregation.getName())) {
+				rowValues.put(Integer.parseInt(aggregation.getName()), bucket.getKey());
+			}
+			
+			if(bucket.getAggregations() != null && bucket.getAggregations().asList().size() > 0 && bucket.getAggregations().asList().get(0) instanceof ParsedTerms) {
+				exploreGroupByResult(bucket.getAggregations(), rowValues);
+				continue;
+			} 
+			
+			DataRow dataRow = new DataRow(req.getSelect().getQueryColumns().size());
+			rowValues.forEach((idx, value) -> dataRow.put(idx, parseValue(idx, value)));
+			
+			if(bucket.getAggregations() != null) {
+				bucket.getAggregations().forEach(nestedAggregation -> {
+					dataRow.put(Integer.parseInt(nestedAggregation.getName()), resolveAggregationValue(nestedAggregation));
+				});
+			}
+			
+			for(int idx = 0; idx < req.getSelect().getQueryColumns().size(); idx++) {
+				QueryColumn column = req.getSelect().getQueryColumns().get(idx);
+				if(column.getAggregatingFunction() != null && column.getAggregatingFunction().isAllColumns()) {
+					dataRow.put(idx, bucket.getDocCount());
+				}
+			}
+			dataRows.add(dataRow);
+		}
+	}
+	
+	@SuppressWarnings("incomplete-switch")
+	private Object parseValue(Integer idx, Object value) {
+		switch(req.getFieldTypes().get(idx)) {
+			case BOOLEAN:
+				return (Long)value == 0 ? false: true;
+		}
+		return value;
+	}
+
+	private Object resolveAggregationValue(Aggregation aggregation) {
+		if(aggregation instanceof ParsedSingleValueNumericMetricsAggregation) {
+			return ((ParsedSingleValueNumericMetricsAggregation)aggregation).value();
+		} else if(aggregation instanceof ValueCount) {
+			return new Double(((ValueCount)aggregation).value()).longValue();
+		} else if(aggregation instanceof ParsedCardinality) {
+			return new Double(((ParsedCardinality)aggregation).value()).longValue();
+		}
+		return null;
+	}
+
 	private Object resolveField(ElasticObject elObject, Object value) {
 		value = resolveType(elObject, value);
 		
