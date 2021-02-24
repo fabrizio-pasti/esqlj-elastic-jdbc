@@ -37,12 +37,12 @@ Optional parameters:
 | password | Credential password | -
 | includeTextFieldsByDefault | Include text typed fields by default on select * | false
 | indexMetaDataCache | Cache retrieved index structure. Select execution engine requires to know index / alias structure; retrieving these information it could be an heavy operation especially for alias or starred index query. Best choice to enable it on unmutable index | true
+| maxGroupByRetrievedElements | Max GROUP BY retrieved elements for selected fields | 500
 | queryScrollFromRows | Number of rows fetched on first pagination | 500
 | queryScrollFetchSize | Fetched rows on next pagination | 500
 | queryScrollTimeoutMinutes | Timeout between pagination expressed in minutes | 3
 | queryScrollOnlyByScrollApi | If true, pagination will be executed by Elastic Scroll API. If false, it will be applied the scroll strategy that best fit the query (see Pagination paragraph below) | true
 | sharedConnection | If true rest client will be statically shared between all connection (use it if you don't have the requirement to connect to different Elastic clusters inside same JVM) | true
-| maxGroupByRetrievedElements | Max GROUP BY retrieved elements for selected fields | 500
 
 
 ## Concepts
