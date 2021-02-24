@@ -245,7 +245,8 @@ Supported query functions:
 
 #### Select Distinct
 
-Is it possibile to query distinct values using `DISTINCT` clause.
+Is it possibile to query distinct values using `DISTINCT` clause.  
+
 Example:`SELECT DISTINCT keywordField, booleanField FROM index ORDER BY keywordField, booleanField DESC`
 
 ### Where condition
@@ -311,12 +312,14 @@ Currently implemented raw Elastic queries:
 
 ### Group by
 
-Is it possible to aggregate values using GROUP BY clause. 
+Is it possible to aggregate values using GROUP BY clause.  
+
 Example: `SELECT booleanField, AVG(integerField) test, SUM(longField), COUNT(doubleField), COUNT(*) from testIndex GROUP BY booleanField`
 
 ### Having
 
-Is it possible to apply filtering on Group by function.
+Is it possible to apply filtering on Group by function.  
+
 Example: `SELECT booleanField, AVG(integerField) test, SUM(longField), COUNT(*) from testIndex GROUP BY booleanField HAVING AVG(integerField)>=4 OR SUM(longField)>=19`
 
 ### Order
