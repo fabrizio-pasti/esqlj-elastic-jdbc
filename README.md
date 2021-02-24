@@ -37,6 +37,7 @@ Optional parameters:
 | password | Credential password | -
 | includeTextFieldsByDefault | Include text typed fields by default on select * | false
 | indexMetaDataCache | Cache retrieved index structure. Select execution engine requires to know index / alias structure; retrieving these information it could be an heavy operation especially for alias or starred index query. Best choice to enable it on unmutable index | true
+| maxGroupByRetrievedElements | Max GROUP BY retrieved elements for selected fields | 500
 | queryScrollFromRows | Number of rows fetched on first pagination | 500
 | queryScrollFetchSize | Fetched rows on next pagination | 500
 | queryScrollTimeoutMinutes | Timeout between pagination expressed in minutes | 3
@@ -238,8 +239,17 @@ Supported query functions:
 
 | Function | Description | Example 
 |--- |--- |---
+| `AVG` | Average of values | `SELECT AVG(integerField) FROM index`
 | `COUNT` | Number of documents | Number of documents in index: `SELECT COUNT(*) FROM index`. Number of documents where `field` is present and not null: `SELECT COUNT(field) FROM index`, `SELECT COUNT(field), COUNT("object.keywordObjectField") FROM index`. 
+| `MAX` | Max column value | `SELECT MAX(integerField) FROM index`
+| `MIN` | Min column value | `SELECT MIN(integerField) FROM index`
+| `SUM` | Sum of values | `SELECT SUM(integerField) FROM index`
 
+#### Select Distinct
+
+Is it possibile to query distinct values using `DISTINCT` clause.  
+
+Example:`SELECT DISTINCT keywordField, booleanField FROM index ORDER BY keywordField, booleanField DESC`
 
 ### Where condition
 
@@ -301,6 +311,18 @@ Currently implemented raw Elastic queries:
 | `TRUNC(SYSDATE\|SYSDATE())` | Right expression | Current date
 | `TO_DATE(date, mask_date)` | Right expression | Supported mask: YEAR, YYYY, YY, MM, MONTH, MON, DDD, DD, HH24, HH12, HH, MI, SS, DAY, XFF, FFF, FF, F, PM, TZR, TZH. Example TO_DATE('2020/01/01', 'YYYY/MM/DD')
 | `EXTRACT(PERIOD FROM column)` | Left expression |PERIOD can be valued with `YEAR`, `MONTH`, `DAY`, `HOUR`, `MINUTE`, `SECOND`. Usage example: EXTRACT(YEAR FROM timestamp)!=2020
+
+### Group by
+
+Is it possible to aggregate values using GROUP BY clause.  
+
+Example: `SELECT booleanField, AVG(integerField) test, SUM(longField), COUNT(doubleField), COUNT(*) from testIndex GROUP BY booleanField`
+
+### Having
+
+Is it possible to apply filtering on Group by function.  
+
+Example: `SELECT booleanField, AVG(integerField) test, SUM(longField), COUNT(*) from testIndex GROUP BY booleanField HAVING AVG(integerField)>=4 OR SUM(longField)>=19`
 
 ### Order
 
