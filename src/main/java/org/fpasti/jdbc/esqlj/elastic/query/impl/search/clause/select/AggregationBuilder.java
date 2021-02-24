@@ -110,9 +110,6 @@ public class AggregationBuilder {
 			case "AVG":
 				aggregationBuilder = AggregationBuilders.avg(columnPosition).field(stripDoubleQuotes(column.getAggregatingFunction().getParameters().getExpressions().get(0).toString()));
 				break;
-			case "SUM":
-				aggregationBuilder = AggregationBuilders.sum(columnPosition).field(stripDoubleQuotes(column.getAggregatingFunction().getParameters().getExpressions().get(0).toString()));
-				break;
 			case "COUNT":
 				if(column.getAggregatingFunction().isAllColumns()) {
 					aggregationBuilder = AggregationBuilders.count(columnPosition).script(new Script("1"));
@@ -121,6 +118,15 @@ public class AggregationBuilder {
 				} else {
 					aggregationBuilder = AggregationBuilders.count(columnPosition).field(stripDoubleQuotes(column.getAggregatingFunction().getParameters().getExpressions().get(0).toString()));
 				}
+				break;
+			case "MAX":
+				aggregationBuilder = AggregationBuilders.max(columnPosition).field(stripDoubleQuotes(column.getAggregatingFunction().getParameters().getExpressions().get(0).toString()));
+				break;
+			case "MIN":
+				aggregationBuilder = AggregationBuilders.min(columnPosition).field(stripDoubleQuotes(column.getAggregatingFunction().getParameters().getExpressions().get(0).toString()));
+				break;
+			case "SUM":
+				aggregationBuilder = AggregationBuilders.sum(columnPosition).field(stripDoubleQuotes(column.getAggregatingFunction().getParameters().getExpressions().get(0).toString()));
 				break;
 			default:
 				throw new SQLSyntaxErrorException(String.format("Expression %s unsupported", column.getAggregatingFunction().getName()));
