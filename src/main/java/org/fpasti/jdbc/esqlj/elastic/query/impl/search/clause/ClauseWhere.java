@@ -11,7 +11,7 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.script.Script;
 import org.fpasti.jdbc.esqlj.elastic.query.impl.search.RequestInstance;
-import org.fpasti.jdbc.esqlj.elastic.query.impl.search.clause.utils.ExpressionResolverEsqlj;
+import org.fpasti.jdbc.esqlj.elastic.query.impl.search.clause.utils.ExpressionResolverElasticFunction;
 import org.fpasti.jdbc.esqlj.elastic.query.impl.search.clause.utils.ExpressionResolverValue;
 import org.fpasti.jdbc.esqlj.elastic.query.impl.search.model.ElasticScriptMethodEnum;
 import org.fpasti.jdbc.esqlj.elastic.query.impl.search.model.EvaluateQueryResult;
@@ -208,7 +208,7 @@ public class ClauseWhere {
 				return etQrIe;
 			case FUNCTION:
 				Function function = (Function)expression;
-				return ExpressionResolverEsqlj.manageExpression(function);
+				return ExpressionResolverElasticFunction.manageExpression(function);
 			default:
 				throw new SQLSyntaxErrorException(String.format("Unmanaged expression: %s", ExpressionEnum.resolveByInstance(expression).name()));
 		}

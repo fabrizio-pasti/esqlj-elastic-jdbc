@@ -19,7 +19,7 @@ import net.sf.jsqlparser.expression.Function;
 * @author  Fabrizio Pasti - fabrizio.pasti@gmail.com
 */
 
-public class ExpressionResolverEsqlj {
+public class ExpressionResolverElasticFunction {
 
 	public static EvaluateQueryResult manageExpression(Function function) throws SQLSyntaxErrorException {
 		String queryType = function.getName().toUpperCase();
