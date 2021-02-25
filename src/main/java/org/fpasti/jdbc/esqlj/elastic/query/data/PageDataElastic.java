@@ -17,7 +17,6 @@ import org.elasticsearch.search.aggregations.Aggregations;
 import org.elasticsearch.search.aggregations.bucket.terms.ParsedTerms;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms.Bucket;
 import org.elasticsearch.search.aggregations.metrics.ParsedCardinality;
-import org.elasticsearch.search.aggregations.metrics.ParsedGeoBounds;
 import org.elasticsearch.search.aggregations.metrics.ParsedSingleValueNumericMetricsAggregation;
 import org.elasticsearch.search.aggregations.metrics.ValueCount;
 import org.fpasti.jdbc.esqlj.elastic.model.ElasticObject;

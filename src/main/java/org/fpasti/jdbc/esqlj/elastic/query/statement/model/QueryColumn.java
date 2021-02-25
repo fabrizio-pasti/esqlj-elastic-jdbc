@@ -4,7 +4,6 @@ import org.fpasti.jdbc.esqlj.elastic.model.ElasticFieldType;
 import org.fpasti.jdbc.esqlj.elastic.query.statement.StatementUtils;
 import org.fpasti.jdbc.esqlj.elastic.query.statement.formatter.Formatter;
 import org.fpasti.jdbc.esqlj.elastic.query.statement.formatter.FormatterFactory;
-import org.fpasti.jdbc.esqlj.support.EsRuntimeException;
 
 import net.sf.jsqlparser.expression.Function;
 
@@ -30,7 +29,7 @@ public class QueryColumn {
 		this.functionType = StatementUtils.resolveFunctionType(functionExpression);
 		this.name = StatementUtils.resolveFunctionColumnName(functionType, functionExpression);
 
-		this.formatter = FormatterFactory.getFormatter(functionExpression);
+		this.formatter = FormatterFactory.getFormatter(functionType, functionExpression);
 		if(functionExpression != null && formatter == null) {
 			this.aggregatingFunctionExpression = functionExpression;
 		}

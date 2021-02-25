@@ -331,7 +331,7 @@ public class ClauseWhere {
 	
 	private static String getColumn(Expression expression, SqlStatementSelect select) throws SQLSyntaxErrorException {
 		if(!(expression instanceof Column)) {
-			throw new SQLSyntaxErrorException(String.format("Not Column expression: %s", ExpressionEnum.resolveByInstance(expression).name()));
+			throw new SQLSyntaxErrorException(String.format("Unsupported WHERE expression: %s", expression.toString()));
 		}
 		
 		Column column = (Column)expression;

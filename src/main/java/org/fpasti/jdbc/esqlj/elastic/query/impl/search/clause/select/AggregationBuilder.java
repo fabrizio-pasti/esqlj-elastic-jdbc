@@ -12,7 +12,6 @@ import org.fpasti.jdbc.esqlj.ConfigurationPropertyEnum;
 import org.fpasti.jdbc.esqlj.elastic.query.impl.search.RequestInstance;
 import org.fpasti.jdbc.esqlj.elastic.query.impl.search.clause.ClauseHaving;
 import org.fpasti.jdbc.esqlj.elastic.query.statement.SqlStatementSelect;
-import org.fpasti.jdbc.esqlj.elastic.query.statement.model.FunctionEnum;
 import org.fpasti.jdbc.esqlj.elastic.query.statement.model.QueryColumn;
 
 import net.sf.jsqlparser.schema.Column;

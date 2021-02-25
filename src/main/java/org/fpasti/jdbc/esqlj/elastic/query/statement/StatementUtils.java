@@ -2,7 +2,6 @@ package org.fpasti.jdbc.esqlj.elastic.query.statement;
 
 import java.sql.SQLSyntaxErrorException;
 
-import org.fpasti.jdbc.esqlj.elastic.model.ElasticFieldType;
 import org.fpasti.jdbc.esqlj.elastic.query.statement.model.ExpressionEnum;
 import org.fpasti.jdbc.esqlj.elastic.query.statement.model.FunctionEnum;
 import org.fpasti.jdbc.esqlj.support.EsRuntimeException;
@@ -47,14 +46,6 @@ public class StatementUtils {
 				return functionExpression.getParameters().getExpressions().get(0).toString().replace("\"", "");
 			default:
 				throw new EsRuntimeException(String.format("Unsupported select function '%s'", functionExpression.getName()));
-		}
-	}
-	
-	public static ElasticFieldType resolveAggregationType(Function function) {
-		try {
-			return FunctionEnum.valueOf(function.getMultipartName().get(0).toUpperCase()).getType();
-		} catch(IllegalArgumentException e) {
-			throw new EsWrapException(new SQLSyntaxErrorException(String.format("Unsupported aggregating function '%s'", function.getName())));
 		}
 	}
 	

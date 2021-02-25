@@ -28,6 +28,10 @@ public class ToCharFormatter extends Formatter {
 
 	@Override
 	public Object resolveValue(Object value) {
+		if(value == null) {
+			return null;
+		}
+		
 		return sdf.format(Date.from(((LocalDateTime)value).atZone(ZoneId.systemDefault()).toInstant()));
 	}
 
