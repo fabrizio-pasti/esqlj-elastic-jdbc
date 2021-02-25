@@ -13,7 +13,7 @@ Initial release
   - TO_CHAR(dateColumn, mask_date)
   - LATITUDE(geoPointColumn)
   - LONGITUDE(geoPointColumn)
-- Aggregating expression
+- Aggregating expressions
   - AVG(numberColumn)
   - MIN(numberColumn)
   - MAX(numberColumn)
