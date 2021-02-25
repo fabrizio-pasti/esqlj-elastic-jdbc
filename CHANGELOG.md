@@ -8,11 +8,19 @@ Initial release
 ### Select clause
 
 - Added `_score` column. Available on not aggregated query
-- TO_CHAR(column, mask_date) implemented
-- COUNT implementation
-- COUNT(DISTINCT ...) implementation
 - DISTINCT implementation
-- GROUP BY expression implementation
+- Functions
+  - TO_CHAR(dateColumn, mask_date)
+  - LATITUDE(geoPointColumn)
+  - LONGITUDE(geoPointColumn)
+- Aggregating expressions
+  - AVG(numberColumn)
+  - MIN(numberColumn)
+  - MAX(numberColumn)
+  - SUM(numberColumn)
+  - COUNT(*)
+  - COUNT(column)
+  - COUNT(DISTINCT column) 
 
 ### Where clause
 
@@ -23,7 +31,7 @@ Initial release
 - implemented GROUP BY
 - implemented group ordering
 
-### HAVING
+### Having clause
 - implemented HAVING
 
 
