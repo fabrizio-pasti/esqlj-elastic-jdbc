@@ -8,17 +8,16 @@ Initial release
 ### Select clause
 
 - Added `_score` column. Available on not aggregated query
-- TO_CHAR(column, mask_date) implemented
 - DISTINCT implementation
 - Functions
-  - TO_CHAR
-  - LATITUDE
-  - LONGITUDE
+  - TO_CHAR(dateColumn, mask_date)
+  - LATITUDE(geoPointColumn)
+  - LONGITUDE(geoPointColumn)
 - Aggregating expression
-  - AVG
-  - MIN
-  - MAX
-  - SUM
+  - AVG(numberColumn)
+  - MIN(numberColumn)
+  - MAX(numberColumn)
+  - SUM(numberColumn)
   - COUNT(*)
   - COUNT(column)
   - COUNT(DISTINCT column) 
