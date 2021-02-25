@@ -19,11 +19,10 @@ import org.fpasti.jdbc.esqlj.elastic.query.impl.search.model.TermsQuery;
 import org.fpasti.jdbc.esqlj.elastic.query.statement.SqlStatementSelect;
 import org.fpasti.jdbc.esqlj.elastic.query.statement.model.ExpressionEnum;
 import org.fpasti.jdbc.esqlj.elastic.query.statement.model.QueryColumn;
-import org.fpasti.jdbc.esqlj.support.EsqljConstants;
 
-import net.sf.jsqlparser.expression.CastExpression;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.ExtractExpression;
+import net.sf.jsqlparser.expression.Function;
 import net.sf.jsqlparser.expression.NotExpression;
 import net.sf.jsqlparser.expression.Parenthesis;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
@@ -207,12 +206,9 @@ public class ClauseWhere {
 				EvaluateQueryResult etQrIe = new EvaluateQueryResult();
 				etQrIe.addEqualTerms(getColumn(inExpression.getLeftExpression(), select), (List<Object>)ExpressionResolverValue.evaluateValueExpression(inExpression.getRightItemsList()));
 				return etQrIe;
-			case CAST_EXPRESSION:
-				CastExpression castExpression = (CastExpression)expression;
-				if(!(castExpression.getLeftExpression() instanceof Column) || !((Column)castExpression.getLeftExpression()).getColumnName().equalsIgnoreCase(EsqljConstants.ESQLJ_WHERE_CLAUSE)) {
-					throw new SQLSyntaxErrorException(String.format("[::] syntax must to be used only with '%s'", EsqljConstants.ESQLJ_WHERE_CLAUSE));
-				}
-				return ExpressionResolverEsqlj.manageExpression(castExpression.getType());
+			case FUNCTION:
+				Function function = (Function)expression;
+				return ExpressionResolverEsqlj.manageExpression(function);
 			default:
 				throw new SQLSyntaxErrorException(String.format("Unmanaged expression: %s", ExpressionEnum.resolveByInstance(expression).name()));
 		}
