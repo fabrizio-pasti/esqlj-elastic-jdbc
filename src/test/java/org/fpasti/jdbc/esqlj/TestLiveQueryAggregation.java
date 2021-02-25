@@ -249,7 +249,11 @@ public class TestLiveQueryAggregation
 		Statement stmt = TestUtils.getLiveConnection().createStatement();
 		ResultSet rs = stmt.executeQuery(TestUtils.resolveTestIndex("SELECT MAX(integerField), booleanField from testIndex GROUP BY booleanField ORDER BY booleanField"));
 		assertEquals(true, rs.next());
-		assertEquals(1, rs.getDouble(1), 0.001);
+		assertEquals(6.0, rs.getDouble(1), 0.001);
+		assertEquals(false, rs.getBoolean(2));
+		assertEquals(true, rs.next());
+		assertEquals(5.0, rs.getDouble(1), 0.001);
+		assertEquals(true, rs.getBoolean(2));
 		assertEquals(false, rs.next());
 		rs.close();
 		stmt.close();
