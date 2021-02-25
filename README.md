@@ -234,6 +234,8 @@ Actually supported SELECT [...] element:
 | `_id` | document identifier (string)
 | `_score` | document query search score (float)
 | `TO_CHAR(field, mask_date)` | Format date field. Example: `TO_CHAR(timestampField, 'YYYY/MM/DD HH:MI:SS')`. Supported mask: YEAR, YYYY, YY, MM, MONTH, MON, DDD, DD, HH24, HH12, HH, MI, SS, DAY, XFF, FFF, FF, F, PM, TZR, TZH.
+| `LATITUDE` | Extract latitude from EsGeoPoint field (not orderable)
+| `LONGITUDE` | Extract longitude from EsGeoPoint field (not orderable)
 
 Supported query functions:
 
