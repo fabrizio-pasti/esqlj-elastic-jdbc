@@ -139,17 +139,17 @@ public class SqlStatementSelect extends SqlStatement {
 			return;
 		}		
 		
-		if(!getQueryColumns().stream().filter(column -> column.getAggregatingFunction() != null).findAny().isPresent()) {
+		if(!getQueryColumns().stream().filter(column -> column.getAggregatingFunctionExpression() != null).findAny().isPresent()) {
 			return;
 		}
 		
-		getQueryColumns().stream().filter(column -> column.getAggregatingFunction() == null).findAny().ifPresent(column -> {throw new EsWrapException(new SQLSyntaxErrorException("Cannot be mixed Expression and Column in SELECT clause without GROUP BY aggregations"));});		
-		queryType = getQueryColumns().size() == 1 && getQueryColumns().get(0).getAggregatingFunction().isAllColumns() ? QueryType.AGGR_COUNT_ALL : QueryType.AGGR_UNGROUPED_EXPRESSIONS;
+		getQueryColumns().stream().filter(column -> column.getAggregatingFunctionExpression() == null).findAny().ifPresent(column -> {throw new EsWrapException(new SQLSyntaxErrorException("Cannot be mixed Expression and Column in SELECT clause without GROUP BY aggregations"));});		
+		queryType = getQueryColumns().size() == 1 && getQueryColumns().get(0).getAggregatingFunctionExpression().isAllColumns() ? QueryType.AGGR_COUNT_ALL : QueryType.AGGR_UNGROUPED_EXPRESSIONS;
 	}
 
 	private void checkForDistinct() {
 		if(select.getDistinct() != null) {
-			getQueryColumns().stream().filter(column -> column.getAggregatingFunction() != null).findAny().ifPresent(column -> {throw new EsWrapException(new SQLSyntaxErrorException("DISTINCT clause shall apply only to columns, not expressions"));});
+			getQueryColumns().stream().filter(column -> column.getAggregatingFunctionExpression() != null).findAny().ifPresent(column -> {throw new EsWrapException(new SQLSyntaxErrorException("DISTINCT clause shall apply only to columns, not expressions"));});
 			queryType = QueryType.DISTINCT_DOCS;
 		}
 	}

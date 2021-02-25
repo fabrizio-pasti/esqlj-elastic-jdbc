@@ -71,7 +71,7 @@ public class ClauseSelect {
 		if(queryColumn.getName().equals(ElasticObject.DOC_SCORE)) {
 			return getDocScoreField();
 		}
-		if(queryColumn.getAggregatingFunction() != null) {
+		if(queryColumn.getAggregatingFunctionExpression() != null) {
 			return getFunctionField(queryColumn);
 		}
 		if(!indexMetaData.getElasticObjects().containsKey(queryColumn.getName()) && queryColumn.getFormatter() == null) {

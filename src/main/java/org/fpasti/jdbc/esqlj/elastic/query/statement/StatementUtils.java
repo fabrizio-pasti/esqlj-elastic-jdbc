@@ -4,6 +4,7 @@ import java.sql.SQLSyntaxErrorException;
 
 import org.fpasti.jdbc.esqlj.elastic.model.ElasticFieldType;
 import org.fpasti.jdbc.esqlj.elastic.query.statement.model.ExpressionEnum;
+import org.fpasti.jdbc.esqlj.elastic.query.statement.model.FunctionEnum;
 import org.fpasti.jdbc.esqlj.support.EsRuntimeException;
 import org.fpasti.jdbc.esqlj.support.EsWrapException;
 
@@ -20,37 +21,41 @@ public class StatementUtils {
 		return ExpressionEnum.resolveByInstance(epxressionInstance).equals(expressionEnum);
 	}
 	
-	public static String resolveFunctionColumnName(Function function) {
-		switch(function.getName().toUpperCase()) {
-			case "TO_CHAR":
-				return ((Column)function.getParameters().getExpressions().get(0)).getColumnName();
-			case "COUNT":
-				return function.getParameters() == null ? function.toString() : function.getParameters().getExpressions().get(0).toString().replace("\"", "");
-			case "AVG":
-			case "SUM":
-			case "MIN":
-			case "MAX":
-				if(function.isAllColumns()) {
-					throw new EsWrapException(new SQLSyntaxErrorException(String.format("Unsupported '*' operator on expression: %s", function.toString())));
+	public static FunctionEnum resolveFunctionType(Function function) {
+		try {
+			return FunctionEnum.valueOf(function.getName().toUpperCase());
+		} catch(IllegalArgumentException e) {
+			throw new EsRuntimeException(String.format("Unsupported select function '%s'", function.getName()));
+		}
+	}
+	
+	public static String resolveFunctionColumnName(FunctionEnum functionType, Function functionExpression) {
+		switch(functionType) {
+			case LONGITUDE:
+			case LATITUDE:
+			case TO_CHAR:
+				return ((Column)functionExpression.getParameters().getExpressions().get(0)).getColumnName().replace("\"", "");
+			case COUNT:
+				return functionExpression.getParameters() == null ? functionExpression.toString() : functionExpression.getParameters().getExpressions().get(0).toString().replace("\"", "");
+			case AVG:
+			case SUM:
+			case MIN:
+			case MAX:
+				if(functionExpression.isAllColumns()) {
+					throw new EsWrapException(new SQLSyntaxErrorException(String.format("Unsupported '*' operator on expression: %s", functionExpression.toString())));
 				}
-				return function.getParameters().getExpressions().get(0).toString().replace("\"", "");
+				return functionExpression.getParameters().getExpressions().get(0).toString().replace("\"", "");
 			default:
-				throw new EsRuntimeException(String.format("Unsupported select function '%s'", function.getName()));
+				throw new EsRuntimeException(String.format("Unsupported select function '%s'", functionExpression.getName()));
 		}
 	}
 	
 	public static ElasticFieldType resolveAggregationType(Function function) {
-		switch(function.getMultipartName().get(0)) {
-			case "COUNT":
-				return ElasticFieldType.LONG;
-			case "AVG":
-			case "SUM":
-			case "MIN":
-			case "MAX":
-				return ElasticFieldType.DOUBLE;
+		try {
+			return FunctionEnum.valueOf(function.getMultipartName().get(0).toUpperCase()).getType();
+		} catch(IllegalArgumentException e) {
+			throw new EsWrapException(new SQLSyntaxErrorException(String.format("Unsupported aggregating function '%s'", function.getName())));
 		}
-		
-		throw new EsWrapException(new SQLSyntaxErrorException(String.format("Unsupported aggregating function '%s'", function.getName())));
 	}
 	
 }

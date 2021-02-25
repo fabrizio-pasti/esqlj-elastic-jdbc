@@ -12,6 +12,7 @@ import org.fpasti.jdbc.esqlj.ConfigurationPropertyEnum;
 import org.fpasti.jdbc.esqlj.elastic.query.impl.search.RequestInstance;
 import org.fpasti.jdbc.esqlj.elastic.query.impl.search.clause.ClauseHaving;
 import org.fpasti.jdbc.esqlj.elastic.query.statement.SqlStatementSelect;
+import org.fpasti.jdbc.esqlj.elastic.query.statement.model.FunctionEnum;
 import org.fpasti.jdbc.esqlj.elastic.query.statement.model.QueryColumn;
 
 import net.sf.jsqlparser.schema.Column;
@@ -68,7 +69,7 @@ public class AggregationBuilder {
 	
 		for(Integer i = 0; i < req.getSelect().getQueryColumns().size(); i++) {
 			QueryColumn column = req.getSelect().getQueryColumns().get(i);
-			if(column.getAggregatingFunction() != null) {
+			if(column.getAggregatingFunctionExpression() != null) {
 				addGroupingFunction(column, i.toString(), req.getSelect(), deeperTermsAggregationBuilder, null);
 			}
 		}
@@ -106,30 +107,30 @@ public class AggregationBuilder {
 	private static void addGroupingFunction(QueryColumn column, String columnPosition, SqlStatementSelect select, TermsAggregationBuilder termsAggregation, SearchSourceBuilder builder) throws SQLSyntaxErrorException {
 		org.elasticsearch.search.aggregations.AggregationBuilder aggregationBuilder = null;
 		
-		switch(column.getAggregatingFunction().getName().toUpperCase()) {
-			case "AVG":
-				aggregationBuilder = AggregationBuilders.avg(columnPosition).field(stripDoubleQuotes(column.getAggregatingFunction().getParameters().getExpressions().get(0).toString()));
+		switch(column.getFunctionType()) {
+			case AVG:
+				aggregationBuilder = AggregationBuilders.avg(columnPosition).field(stripDoubleQuotes(column.getAggregatingFunctionExpression().getParameters().getExpressions().get(0).toString()));
 				break;
-			case "COUNT":
-				if(column.getAggregatingFunction().isAllColumns()) {
+			case COUNT:
+				if(column.getAggregatingFunctionExpression().isAllColumns()) {
 					aggregationBuilder = AggregationBuilders.count(columnPosition).script(new Script("1"));
-				} else if(column.getAggregatingFunction().isDistinct()) {
-					aggregationBuilder = AggregationBuilders.cardinality(columnPosition).field(stripDoubleQuotes(column.getAggregatingFunction().getParameters().getExpressions().get(0).toString()));
+				} else if(column.getAggregatingFunctionExpression().isDistinct()) {
+					aggregationBuilder = AggregationBuilders.cardinality(columnPosition).field(stripDoubleQuotes(column.getAggregatingFunctionExpression().getParameters().getExpressions().get(0).toString()));
 				} else {
-					aggregationBuilder = AggregationBuilders.count(columnPosition).field(stripDoubleQuotes(column.getAggregatingFunction().getParameters().getExpressions().get(0).toString()));
+					aggregationBuilder = AggregationBuilders.count(columnPosition).field(stripDoubleQuotes(column.getAggregatingFunctionExpression().getParameters().getExpressions().get(0).toString()));
 				}
 				break;
-			case "MAX":
-				aggregationBuilder = AggregationBuilders.max(columnPosition).field(stripDoubleQuotes(column.getAggregatingFunction().getParameters().getExpressions().get(0).toString()));
+			case MAX:
+				aggregationBuilder = AggregationBuilders.max(columnPosition).field(stripDoubleQuotes(column.getAggregatingFunctionExpression().getParameters().getExpressions().get(0).toString()));
 				break;
-			case "MIN":
-				aggregationBuilder = AggregationBuilders.min(columnPosition).field(stripDoubleQuotes(column.getAggregatingFunction().getParameters().getExpressions().get(0).toString()));
+			case MIN:
+				aggregationBuilder = AggregationBuilders.min(columnPosition).field(stripDoubleQuotes(column.getAggregatingFunctionExpression().getParameters().getExpressions().get(0).toString()));
 				break;
-			case "SUM":
-				aggregationBuilder = AggregationBuilders.sum(columnPosition).field(stripDoubleQuotes(column.getAggregatingFunction().getParameters().getExpressions().get(0).toString()));
+			case SUM:
+				aggregationBuilder = AggregationBuilders.sum(columnPosition).field(stripDoubleQuotes(column.getAggregatingFunctionExpression().getParameters().getExpressions().get(0).toString()));
 				break;
 			default:
-				throw new SQLSyntaxErrorException(String.format("Expression %s unsupported", column.getAggregatingFunction().getName()));
+				throw new SQLSyntaxErrorException(String.format("Expression %s unsupported", column.getAggregatingFunctionExpression().getName()));
 		}
 		
 		if(aggregationBuilder != null) {

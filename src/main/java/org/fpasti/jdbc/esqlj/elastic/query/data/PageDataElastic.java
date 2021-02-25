@@ -177,7 +177,7 @@ public class PageDataElastic {
 			
 			for(int idx = 0; idx < req.getSelect().getQueryColumns().size(); idx++) {
 				QueryColumn column = req.getSelect().getQueryColumns().get(idx);
-				if(column.getAggregatingFunction() != null && column.getAggregatingFunction().isAllColumns()) {
+				if(column.getAggregatingFunctionExpression() != null && column.getAggregatingFunctionExpression().isAllColumns()) {
 					dataRow.put(idx, bucket.getDocCount());
 				}
 			}

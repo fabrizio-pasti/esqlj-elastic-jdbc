@@ -37,7 +37,7 @@ public class ClauseHaving {
 		Map<String, String> params = new HashMap<String, String>();
 		
 		for(Integer idx = 0; idx < select.getQueryColumns().size(); idx++) {
-			if(select.getQueryColumns().get(idx).getAggregatingFunction() != null) {
+			if(select.getQueryColumns().get(idx).getAggregatingFunctionExpression() != null) {
 				params.put(idx.toString(), idx.toString());
 			}
 		}

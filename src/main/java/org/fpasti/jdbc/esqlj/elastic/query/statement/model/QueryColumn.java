@@ -4,6 +4,7 @@ import org.fpasti.jdbc.esqlj.elastic.model.ElasticFieldType;
 import org.fpasti.jdbc.esqlj.elastic.query.statement.StatementUtils;
 import org.fpasti.jdbc.esqlj.elastic.query.statement.formatter.Formatter;
 import org.fpasti.jdbc.esqlj.elastic.query.statement.formatter.FormatterFactory;
+import org.fpasti.jdbc.esqlj.support.EsRuntimeException;
 
 import net.sf.jsqlparser.expression.Function;
 
@@ -15,10 +16,9 @@ public class QueryColumn {
 	private String name;
 	private String alias;
 	private String index;
-	private Function aggregatingFunction;
+	private Function aggregatingFunctionExpression;
 	private Formatter formatter;
-	private ElasticFieldType aggregatingType;
-	private String aggregatingColumnName;
+	private FunctionEnum functionType;
 	
 	public QueryColumn(String name, String alias, String index) {
 		this.name = name.replace("\"", "");
@@ -26,16 +26,15 @@ public class QueryColumn {
 		this.index = index;
 	}
 
-	public QueryColumn(Function function, String alias) {
-		this.name = StatementUtils.resolveFunctionColumnName(function);
-		
-		this.formatter = FormatterFactory.getFormatter(function);
-		if(function != null && formatter == null) {
-			this.aggregatingFunction = function;
-			this.aggregatingType = StatementUtils.resolveAggregationType(function);
-			this.aggregatingColumnName = function.toString(); // transform invalid characters if required
+	public QueryColumn(Function functionExpression, String alias) {
+		this.functionType = StatementUtils.resolveFunctionType(functionExpression);
+		this.name = StatementUtils.resolveFunctionColumnName(functionType, functionExpression);
+
+		this.formatter = FormatterFactory.getFormatter(functionExpression);
+		if(functionExpression != null && formatter == null) {
+			this.aggregatingFunctionExpression = functionExpression;
 		}
-		this.alias = alias != null ? alias : function.toString().replaceAll(" ", "");
+		this.alias = alias != null ? alias : functionExpression.toString().replaceAll(" ", "");
 	}
 
 	public String getName() {
@@ -50,8 +49,8 @@ public class QueryColumn {
 		return index;
 	}
 
-	public Function getAggregatingFunction() {
-		return aggregatingFunction;
+	public Function getAggregatingFunctionExpression() {
+		return aggregatingFunctionExpression;
 	}
 
 	public Formatter getFormatter() {
@@ -59,11 +58,15 @@ public class QueryColumn {
 	}
 
 	public ElasticFieldType getAggregatingType() {
-		return aggregatingType;
+		return functionType != null ? functionType.getType() : null;
 	}
 
 	public String getAggregatingColumnName() {
-		return aggregatingColumnName;
+		return aggregatingFunctionExpression != null ? aggregatingFunctionExpression.toString() : null;
+	}
+	
+	public FunctionEnum getFunctionType() {
+		return functionType;
 	}
 
 }
