@@ -4,7 +4,7 @@
 
 esqlj doesn't use at all *SQL* Elastic implementation. Elastic integration is built on top of Elastic Rest High Level API (rel. 7.11). See Elastic licenses in folder `licenses/elastic-licenses`
 
-esqlj introduce a new WHERE condition expression named `_esqlj` able to extend SQL Syntax with advanced Elastic query capabilities like full text queries, geo queries, shape queries, joining queries etc.
+esqlj extend SQL syntax with advanced Elastic query capabilities like full text queries, geo queries, shape queries, joining queries etc.
 
 Sql parsing is provided by jsqlparser library [JSQLParser](https://github.com/JSQLParser/JSqlParser). See related licenses in folder `licenses/JSqlParser`
 
@@ -61,7 +61,7 @@ Search score "_score" is returned like a colum of type float in not aggregating 
 SQL filtering syntax is very limited. Esqlj supports a custom syntax for filtering documents using Elastic API full text queries, geo queries, shape queries...
 Actually are implemented only a limited set of these advanced filtering query. This is an example of Query string full text search ([query-dsl-query-string-query](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html)):
 
-`SELECT _id, _score FROM indexName WHERE _esqlj ::query_string('(new york city) OR (big apple) OR name:/joh?n(ath[oa]n)/', 'field1, field2,city.*', 'minimum_should_match:2') `
+`SELECT _id, _score FROM indexName WHERE query_string('(new york city) OR (big apple) OR name:/joh?n(ath[oa]n)/', 'field1, field2,city.*', 'minimum_should_match:2') `
 
 About SQL implementation see below section 'Support matrix and conventions'
 
@@ -270,7 +270,8 @@ You can use both column name or column alias in expression.
 | `left expression` IS NOT NULL |
 | `left expression` BETWEEN `a` AND `b` | `a` and `b` could be NUMBER, STRING, date expressed by TO_DATE('date', 'mask_date'), EXTRACT function
 | `left expression` IN (`value1`, `value2`, ...) |
-| `_esqlj ::query_type('param1','param2',...)` | Elastic raw query. See below for reference
+| `query_type(...)` | Elastic raw query. See below for reference
+| `geo_bounding_box(...)` | Elastic raw query. See below for reference
 
 #### Admitted left expression
 
@@ -282,25 +283,27 @@ You can use both column name or column alias in expression.
 
 `value`=`column` expression is for example considered invalid from esqlj
 
-#### _esqlj
+#### Specific Elastic query functions
 
-`_esqlj` expression allows you to invoke specific Elastic query API.  
-Syntax usage is `_esqlj` `query_type`(`param1`,`param2`,...), where `query_type` maps specific Elastic query, and `param1`,`param2`,... allows you to pass parameters to that query.  
-Typically `param1` is the search criteria and `param2` is the column involved in the query. Other parameters are optionals and change according different query types. For example `analyze_wildcard`, `fuzzy_max_expansions` etc. These configuration settings must to be declared in this way:
-`_esqlj query_string('search criteria','field1,field2,object.*','analyze_wildcard:true','fuzzy_max_expansions:15')`.
+esqlj allow you to use specific Elastic query API.  
+Syntax usage is `query_type`(`param1`,`param2`,...), where `query_type` maps specific Elastic query; and `param1`,`param2`,... allows you to pass parameters to that query.  
+There are a set of mandatory parameters for every implemented custom query. Is it possible also to set optional parameters for changing low level configuration query behaviour, like for example `analyze_wildcard`, `fuzzy_max_expansions` etc. These configuration settings must to be declared in this way:
+`query_string('search criteria','field1,field2,object.*','analyze_wildcard:true','fuzzy_max_expansions:15')`.
 Esqlj will dynamically cast params value type according to expected parameter Elastic query object.
 
 Currently implemented raw Elastic queries:
 
 | Elastic query | query_type | Parameters | Elastic reference
 |--- |--- |--- |--- 
-| Query string | query_string | 1: query expression, 2: search on fields (* for all), 3..x: additional query parameters (see Elastic documentation)| [query-dsl-query-string-query](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html)
+| Query string | query_string | 1: query expression, 2: search on fields (* for all), 3..x: additional query parameters (see Elastic documentation)| [string_query](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html)
+| Geo bounding box | geo_bounding_box | 1: geopoint field, 2: top left latitude, 3: top left: longitude, 4: bottom right latitude, 5: bottom right longitude, 6..x extra params | [geo_bounding_box](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-geo-bounding-box-query.html)
 
-*_esqlj samples*
+*Specific Elastic query functions samples*
 
 | Query type | Sample
 |--- |--- 
-| Query string | ```SELECT id, _score FROM indexName WHERE _esqlj ::query_string('(new york city) OR (big apple) OR name:/joh?n(ath[oa]n)/', 'field1, field2,city.*', 'minimum_should_match:2')```
+| query_string | ```SELECT id, _score FROM indexName WHERE query_string('(new york city) OR (big apple) OR name:/joh?n(ath[oa]n)/', 'field1, field2,city.*', 'minimum_should_match:2')```
+| geo_bounding_box | ```SELECT _id, _score FROM indexName WHERE geo_bounding_box('geoPointField', 50, 8, 40.1, 10.2)```
 
 #### Functions
 
