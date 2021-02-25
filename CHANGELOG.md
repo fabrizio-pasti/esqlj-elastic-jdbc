@@ -10,6 +10,10 @@ Initial release
 - Added `_score` column. Available on not aggregated query
 - TO_CHAR(column, mask_date) implemented
 - DISTINCT implementation
+- Functions
+  - TO_CHAR
+  - LATITUDE
+  - LONGITUDE
 - Aggregating expression
   - AVG
   - MIN
@@ -18,8 +22,6 @@ Initial release
   - COUNT(*)
   - COUNT(column)
   - COUNT(DISTINCT column) 
-- LATITUDE implementation
-- LONGITUDE implementation
 
 ### Where clause
 
