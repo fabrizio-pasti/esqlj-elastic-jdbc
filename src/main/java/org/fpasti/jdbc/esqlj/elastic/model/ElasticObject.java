@@ -16,6 +16,9 @@ public class ElasticObject implements Comparable<ElasticObject> {
 		private boolean docValue;
 		private QueryColumn linkedQueryColumn;
 		
+		public ElasticObject() {
+		}
+		
 		public ElasticObject(String fullName, ElasticFieldType type) {
 			this.fullName = fullName;
 			this.name = fullName.substring(fullName.lastIndexOf('.') + 1);
@@ -72,6 +75,37 @@ public class ElasticObject implements Comparable<ElasticObject> {
 
 		public void setLinkedQueryColumn(QueryColumn linkedQueryColumn) {
 			this.linkedQueryColumn = linkedQueryColumn;
+		}
+		
+		public void setFullName(String fullName) {
+			this.fullName = fullName;
+		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
+
+		public void setType(ElasticFieldType type) {
+			this.type = type;
+		}
+
+		public void setSize(Long size) {
+			this.size = size;
+		}
+
+		public void setDocValue(boolean docValue) {
+			this.docValue = docValue;
+		}
+
+		public ElasticObject clone() {
+			ElasticObject cloned = new ElasticObject();
+			cloned.setDocValue(docValue);
+			cloned.setFullName(fullName);
+			cloned.setLinkedQueryColumn(linkedQueryColumn);
+			cloned.setName(name);
+			cloned.setSize(size);
+			cloned.setType(type);
+			return cloned;
 		}
 
 	}

@@ -31,7 +31,7 @@ public class LongitudeFormatter extends Formatter {
 			throw new EsWrapException(new SQLDataException("LATITUDE function expects a EsGeoPoint instance"));
 		}
 		
-		return ((EsGeoPoint)value).getLatitude();
+		return ((EsGeoPoint)value).getLongitude();
 	}
 
 }

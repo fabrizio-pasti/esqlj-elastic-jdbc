@@ -78,7 +78,7 @@ public class ClauseSelect {
 			throw new EsRuntimeException(String.format("Unrecognized field %s", queryColumn.getName()));
 		}
 		
-		ElasticObject elObj = indexMetaData.getElasticObjects().get(queryColumn.getName());
+		ElasticObject elObj = indexMetaData.getElasticObjects().get(queryColumn.getName()).clone();
 		elObj.setLinkedQueryColumn(queryColumn);
 		return elObj;
 	}

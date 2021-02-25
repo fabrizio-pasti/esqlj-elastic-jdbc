@@ -39,6 +39,8 @@ public class TestLiveQuerySelect
 		assertNotNull(rs.getObject(8));
 		assertNotNull(rs.getObject(9));
 		assertNotNull(rs.getObject(10));
+		rs.close();
+		stmt.close();
 	}
 	
 	@Test
@@ -57,6 +59,8 @@ public class TestLiveQuerySelect
 		assertNotNull(rs.getObject(8));
 		assertNotNull(rs.getObject(9));
 		assertNotNull(rs.getObject(10));
+		rs.close();
+		stmt.close();
 	}
 	
 	@Test
@@ -69,6 +73,8 @@ public class TestLiveQuerySelect
 		assertThrows(IndexOutOfBoundsException.class,() -> rs.getObject(3));
 		assertEquals(LocalDateTime.class, rs.getObject(1).getClass());
 		assertEquals(String.class, rs.getObject(2).getClass());
+		rs.close();
+		stmt.close();
 	}
 	
 	@Test
