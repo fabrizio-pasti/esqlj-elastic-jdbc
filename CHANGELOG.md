@@ -25,7 +25,9 @@ Initial release
 ### Where clause
 
 - IN condition implemented
-- _esqlj for advanced filtering capabilities
+- custome Elastic functions for advanced filtering capabilities
+  - query_string
+  - geo_bounding_box
 
 ### Group by clause
 - implemented GROUP BY
