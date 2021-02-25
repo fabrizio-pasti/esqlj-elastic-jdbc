@@ -9,10 +9,17 @@ Initial release
 
 - Added `_score` column. Available on not aggregated query
 - TO_CHAR(column, mask_date) implemented
-- COUNT implementation
-- COUNT(DISTINCT ...) implementation
 - DISTINCT implementation
-- GROUP BY expression implementation
+- Aggregating expression
+  - AVG
+  - MIN
+  - MAX
+  - SUM
+  - COUNT(*)
+  - COUNT(column)
+  - COUNT(DISTINCT column) 
+- LATITUDE implementation
+- LONGITUDE implementation
 
 ### Where clause
 
@@ -23,7 +30,7 @@ Initial release
 - implemented GROUP BY
 - implemented group ordering
 
-### HAVING
+### Having clause
 - implemented HAVING
 
 
