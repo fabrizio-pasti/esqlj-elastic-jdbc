@@ -321,7 +321,7 @@ Example: `SELECT booleanField, AVG(integerField) test, SUM(longField), COUNT(dou
 
 ### Having
 
-Is it possible to apply filtering on Group by function.  
+Is it possible to apply filtering on Group by expressions.  
 
 Example: `SELECT booleanField, AVG(integerField) test, SUM(longField), COUNT(*) from testIndex GROUP BY booleanField HAVING AVG(integerField)>=4 OR SUM(longField)>=19`
 
