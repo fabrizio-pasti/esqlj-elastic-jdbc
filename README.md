@@ -2,23 +2,23 @@
 **An open source JDBC driver for Elasticsearch released under Apache License 2.0**
 
 
-esqlj doesn't use at all *SQL* Elastic implementation. Elastic integration is built on top of Elastic Rest High Level API (rel. 7.11). See Elastic licenses in folder `licenses/elastic-licenses`
+esqlj is a JDBC driver for Elastic built on top of Elastic Rest High Level API (rel. 7.11). See Elastic licenses in folder `licenses/elastic-licenses`
 
 esqlj extend SQL syntax with advanced Elastic query capabilities like full text queries, geo queries, shape queries, joining queries etc.
 
 Sql parsing is provided by jsqlparser library [JSQLParser](https://github.com/JSQLParser/JSqlParser). See related licenses in folder `licenses/JSqlParser`
 
+About SQL implementation see below section 'Support matrix and conventions'
+
 ## Project status
 Not production ready 
 
-SQL Layers: partially implemented DQL.  
-DDL and DML not implemented
+DQL implemented
+DDL and DML not implemented (actually not in scope)
 
 ## Driver class
 
 ### org.fpasti.jdbc.esqlj.EsDriver
-
-JDBC Driver artifact isn't published on any public Maven repository
 
 ## JDBC Connections string
 
@@ -27,7 +27,7 @@ JDBC url must to follow this syntax:
 ```
 jdbc:esqlj:http<s>://<elastic_address_1>:<elastic_port_1>,http://<elastic_address_2>:<elastic_port_2>,...;param1=paramValue1;...
 ```
-It's possible to declare a pool of connections listing the url of Elastic instances separated by a comma.
+It's possible to declare a pool of connections listing the urls separated by a comma.
 
 Optional parameters:
 
@@ -35,14 +35,14 @@ Optional parameters:
 |--- |--- |---
 | userName | Credential user name | -
 | password | Credential password | -
-| includeTextFieldsByDefault | Include text typed fields by default on select * | false
-| indexMetaDataCache | Cache retrieved index structure. Select execution engine requires to know index / alias structure; retrieving these information it could be an heavy operation especially for alias or starred index query. Best choice to enable it on unmutable index | true
+| includeTextFieldsByDefault | Include Elastic `text` typed fields by default on `select *` | false
+| indexMetaDataCache | Cache retrieved indices structure (it's suggested to keep enabled this feature because retrieving these information it could be an heavy operation, especially for alias or starred index queries). Best choice to enable it on unmutable index | true
 | maxGroupByRetrievedElements | Max GROUP BY retrieved elements for selected fields | 500
 | queryScrollFromRows | Number of rows fetched on first pagination | 500
 | queryScrollFetchSize | Fetched rows on next pagination | 500
 | queryScrollTimeoutMinutes | Timeout between pagination expressed in minutes | 3
 | queryScrollOnlyByScrollApi | If true, pagination will be executed by Elastic Scroll API. If false, it will be applied the scroll strategy that best fit the query (see Pagination paragraph below) | true
-| sharedConnection | If true rest client will be statically shared between all connection (use it if you don't have the requirement to connect to different Elastic clusters inside same JVM) | true
+| sharedConnection | If true rest client will be statically shared between all connections (use it if you don't have the requirement to connect to different Elastic clusters inside same JVM) | true
 
 
 ## Concepts
@@ -50,20 +50,16 @@ Optional parameters:
 Elastic indices are managed like SQL Tables.  
 Elastic aliases are managed like SQL Views. 
 
-Query on index / alias containing special characters like '*', '-', '.' need to be double quoted. For example 'SELECT * FROM ".test-index*"'  
-Field and alias containing special characters like '-' must also to be double quoted.
+Query on indices containing special characters like '*', '-', '.' need to be double quoted. Example: 'SELECT * FROM ".test-index*"'  
+Fields and aliases containing special characters like '-' must also to be double quoted.
 
-Document identifier "_id" is returned like a column of type string in not aggregating query, and mapped on MetaData like primary key. This column is also available on Where condition for matching query (=, !=).  
+Elastic document identifier "_id" can be fetched in not aggregating query. It's of type `string` and mapped on MetaData like the index primary key. This column is also available on Where condition for matching query (=, !=).  
 Search score "_score" is returned like a colum of type float in not aggregating query.
 
-'Like' SQL filter is implemented by Wildcard Elastic Query ([query-dsl-wildcard-query](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-wildcard-query.html))
-
-SQL filtering syntax is very limited. Esqlj supports a custom syntax for filtering documents using Elastic API full text queries, geo queries, shape queries...
-Actually are implemented only a limited set of these advanced filtering query. This is an example of Query string full text search ([query-dsl-query-string-query](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html)):
+Standard SQL filtering syntax is very limited. Esqlj supports a custom syntax for filtering documents using Elastic API full text queries, geo queries, shape queries...  
+Actually are implemented only a limited set of these advanced filtering techniques. This is an example that uses `Query string` ELastic API ([query-dsl-query-string-query](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html)):
 
 `SELECT _id, _score FROM indexName WHERE query_string('(new york city) OR (big apple) OR name:/joh?n(ath[oa]n)/', 'field1, field2,city.*', 'minimum_should_match:2') `
-
-About SQL implementation see below section 'Support matrix and conventions'
 
 By default the maximum number of document fields / columns that can be retrieved is set to 100.  
 This explains - for example - because by default .kibana_* index containing almost 500 fields return an error on 'select *'.  
@@ -91,7 +87,7 @@ PUT /*/_settings
 
 In the future there will no longer be possible query system indices.
 
-Boolean fields in where clause: use constants `true` and `false` to express conditions on boolean typed columns.  For example:
+Elastic boolean fields are typed BOOLEAN on resultset. Use constants `true` and `false` to express conditions on these fields.  Example:
 ``` SELECT * from \"esqlj-test-static-010\" WHERE booleanField=true ``` 
 
 ## DBeaver
@@ -265,7 +261,7 @@ You can use both column name or column alias in expression.
 | `left expression` >= `numeric_value` | 
 | `left expression` < `numeric_value` | 
 | `left expression` <= `numeric_value` | 
-| `left expression` LIKE `expression` | Implemented by Wildcard Elasticsearch filter. See Elasticsearch documentation about its usage
+| `left expression` LIKE `expression` | Implemented by Wildcard Elasticsearch filter. See Elasticsearch documentation about its usage ([query-dsl-wildcard-query](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-wildcard-query.html))
 | `left expression` IS NULL |
 | `left expression` IS NOT NULL |
 | `left expression` BETWEEN `a` AND `b` | `a` and `b` could be NUMBER, STRING, date expressed by TO_DATE('date', 'mask_date'), EXTRACT function
