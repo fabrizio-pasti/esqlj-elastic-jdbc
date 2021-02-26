@@ -27,7 +27,7 @@ JDBC url must to follow this syntax:
 ```
 jdbc:esqlj:http<s>://<elastic_address_1>:<elastic_port_1>,http://<elastic_address_2>:<elastic_port_2>,...;param1=paramValue1;...
 ```
-It's possible to declare a pool of connections listing the urls separated by a comma.
+It's possible to declare a pool of connections by comma delimited URLs list.
 
 Optional parameters:
 
