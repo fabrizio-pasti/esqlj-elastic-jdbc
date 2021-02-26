@@ -203,7 +203,7 @@ The activation of these units is commanded by a system variable named "ESQLJ_TES
 The environment variabile must concatenate a valid esqlj JDBC url connection string and the load strategy of the documents requested by query inside units:
 
 ```
-ESQLJ_TEST_CONFIG="jdbc:esqlj:http://<elastic_address>:<elastic_port>|<createAndDestroy or createOnly>
+ESQLJ_TEST_CONFIG=jdbc:esqlj:http://<elastic_address>:<elastic_port>|<createAndDestroy or createOnly>
 ```
 
 | Parameters | Actions | Scope
