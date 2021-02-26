@@ -195,7 +195,7 @@ By default esqlj implements a scrolling strategy on query through Elastic Scroll
 
 Still on the subject of scrolling by order, the driver doesn't use Point in Time API (it seems missing the support in Elastic Rest High level API). 
 
-Pay attention: Scroll API consume resources on server. It's a best practice to fetch all required data as soon as possible. The scroll link will be automatically released from esql at the end of data retrieve.
+Pay attention: Scroll API consume resources on server. It's a best practice to fetch all required data as soon as possible. The scroll link will be automatically released from esqlj at the end of data retrieve.
 
 ## Testing
 Most of test units require a live Elastic instance.  
