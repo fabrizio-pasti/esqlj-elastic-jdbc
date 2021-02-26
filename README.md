@@ -13,7 +13,7 @@ About SQL implementation see below section 'Support matrix and conventions'
 ## Project status
 Not production ready 
 
-DQL implemented
+DQL implemented  
 DDL and DML not implemented (actually not in scope)
 
 ## Driver class
