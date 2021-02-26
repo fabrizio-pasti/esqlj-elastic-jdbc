@@ -98,10 +98,10 @@ A sample usage of esqlj in DBeaver:
 *Tables are Elasticsearch indices. Views are Elasticsearch aliases*
 
 ![DBeaver navigator panel](docs/img_readme_02.png)  
-*Fields in index*
+*Index fields*
 
 ![DBeaver navigator panel](docs/img_readme_03.png)  
-*Document on index*
+*Index documents*
 
 ![DBeaver navigator panel](docs/img_readme_04.png)
 *Sample SQL query*
