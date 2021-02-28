@@ -232,13 +232,14 @@ Actually supported SELECT [...] element:
 | `TO_CHAR(field, mask_date)` | Format date field. Example: `TO_CHAR(timestampField, 'YYYY/MM/DD HH:MI:SS')`. Supported mask: YEAR, YYYY, YY, MM, MONTH, MON, DDD, DD, HH24, HH12, HH, MI, SS, DAY, XFF, FFF, FF, F, PM, TZR, TZH.
 | `LATITUDE` | Extract latitude from EsGeoPoint field (not orderable)
 | `LONGITUDE` | Extract longitude from EsGeoPoint field (not orderable)
+| `COUNT(*), COUNT(field), COUNT(DISTINCT field)` | Number of documents in index: `SELECT COUNT(*) FROM index`. Number of documents where `field` is present and not null: `SELECT COUNT("object.keywordObjectField") FROM index`. Number of distinct values of specified field: `SELECT COUNT(DISTINCT keywordField) FROM index` 
 
-Supported query functions:
+Supported GROUP BY query functions:
 
 | Function | Description | Example 
 |--- |--- |---
 | `AVG` | Average of values | `SELECT AVG(integerField) FROM index`
-| `COUNT` | Number of documents | Number of documents in index: `SELECT COUNT(*) FROM index`. Number of documents where `field` is present and not null: `SELECT COUNT(field) FROM index`, `SELECT COUNT(field), COUNT("object.keywordObjectField") FROM index`. 
+| `COUNT(*), COUNT(field), COUNT(DISTINCT field)` | Number of documents | Number of documents in group: `SELECT COUNT(*) FROM index`. Number of documents where `field` is present and not null: `SELECT COUNT("object.keywordObjectField") FROM index`. Number of distinct values of specified field: `SELECT COUNT(DISTINCT keywordField) FROM index` 
 | `MAX` | Max column value | `SELECT MAX(integerField) FROM index`
 | `MIN` | Min column value | `SELECT MIN(integerField) FROM index`
 | `SUM` | Sum of values | `SELECT SUM(integerField) FROM index`
