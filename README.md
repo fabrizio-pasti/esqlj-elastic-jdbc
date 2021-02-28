@@ -220,7 +220,7 @@ If ESQLJ_TEST_CONFIG isn't declared, all tests depending from live connection wi
 
 ### Select clause
 
-Actually supported SELECT [...] element:
+Actually supported SELECT [...] elements:
 
 | Select element | Notes
 |--- |--- 
