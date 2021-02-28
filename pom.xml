@@ -91,6 +91,7 @@
 				<artifactId>maven-shade-plugin</artifactId>
 				<version>3.2.4</version>
 				<configuration>
+					<finalName>esqlj-elastic-jdbc</finalName>
 				</configuration>
 				<executions>
 					<execution>
