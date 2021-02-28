@@ -112,7 +112,7 @@ A sample usage of esqlj in DBeaver:
 - Change:
   - Class Name: `org.fpasti.jdbc.esqlj.EsDriver`
   - URL Template: `jdbc:esqlj:http://{host}:{port}`
-  - Remove all jars and add `esqlj-<rel>.jar`
+  - Remove all jars and add `esqlj-<rel>-shaded.jar` (available from project build)
   - Click "OK" to confirm
 - Change if required host and port and Test Connection
 - OK
