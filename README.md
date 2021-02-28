@@ -232,7 +232,7 @@ Actually supported SELECT [...] elements:
 | `TO_CHAR(field, mask_date)` | Format date field. Example: `TO_CHAR(timestampField, 'YYYY/MM/DD HH:MI:SS')`. Supported mask: YEAR, YYYY, YY, MM, MONTH, MON, DDD, DD, HH24, HH12, HH, MI, SS, DAY, XFF, FFF, FF, F, PM, TZR, TZH.
 | `LATITUDE` | Extract latitude from EsGeoPoint field (not orderable)
 | `LONGITUDE` | Extract longitude from EsGeoPoint field (not orderable)
-| `COUNT(*)` | | Number of documents in index: `SELECT COUNT(*) FROM index`
+| `COUNT(*)` | Number of documents in index: `SELECT COUNT(*) FROM index`
 |`COUNT(field)` | Number of documents in index where specified field is present and not null: `SELECT COUNT("object.keywordObjectField") FROM index`
 | `COUNT(DISTINCT field)` | Number of distinct values of specified field in index: `SELECT COUNT(DISTINCT keywordField) FROM index` 
 
