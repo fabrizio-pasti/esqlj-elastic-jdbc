@@ -91,7 +91,8 @@
 				<artifactId>maven-shade-plugin</artifactId>
 				<version>3.2.4</version>
 				<configuration>
-					<finalName>esqlj-elastic-jdbc</finalName>
+					<shadedArtifactAttached>true</shadedArtifactAttached>
+					<shadedClassifierName>shaded</shadedClassifierName>
 				</configuration>
 				<executions>
 					<execution>
