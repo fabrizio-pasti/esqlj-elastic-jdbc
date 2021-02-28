@@ -42,7 +42,7 @@ Optional parameters:
 | queryScrollFetchSize | Fetched rows on next pagination | 500
 | queryScrollTimeoutMinutes | Timeout between pagination expressed in minutes | 3
 | queryScrollOnlyByScrollApi | If true, pagination will be executed by Elastic Scroll API. If false, it will be applied the scroll strategy that best fit the query (see Pagination paragraph below) | true
-| sharedConnection | If true rest client will be statically shared between all connections (use it if you don't have the requirement to connect to different Elastic clusters inside same JVM) | true
+| sharedConnection | If valued `true` Elastic client internally used by esqlj will be statically shared between all connections (use it if you don't have the requirement to connect to different Elastic clusters inside same JVM) | true
 
 
 ## Concepts
