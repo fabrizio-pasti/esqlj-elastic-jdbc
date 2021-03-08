@@ -50,8 +50,8 @@ Optional parameters:
 Elastic indices are managed like SQL Tables.  
 Elastic aliases are managed like SQL Views. 
 
-Query on indices containing special characters like '*', '-', '.' need to be double quoted. Example: 'SELECT * FROM ".test-index*"'  
-Fields and aliases containing special characters like '-' must also to be double quoted.
+Query on indices containing special characters like `*`, `-`, `.` need to be double quoted. Example: 'SELECT * FROM ".test-index*"'  
+Fields and aliases containing special characters like `-` must also to be double quoted.
 
 Elastic document identifier "_id" can be fetched in not aggregating query. It's of type `string` and mapped on MetaData like the index primary key. This column is also available on Where condition for matching query (=, !=).  
 Search score "_score" is returned like a colum of type float in not aggregating query.
