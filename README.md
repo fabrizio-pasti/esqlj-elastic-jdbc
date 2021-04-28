@@ -271,7 +271,7 @@ You can use both column name or column alias in expression.
 | `left expression` IS NOT NULL |
 | `left expression` BETWEEN `a` AND `b` | `a` and `b` could be NUMBER, STRING, date expressed by TO_DATE('date', 'mask_date'), EXTRACT function
 | `left expression` IN (`value1`, `value2`, ...) |
-| `query_type(...)` | Elastic raw query. See below for reference
+| `query_string(...)` | Elastic raw query. See below for reference
 | `geo_bounding_box(...)` | Elastic raw query. See below for reference
 
 #### Admitted left expression
