@@ -288,7 +288,7 @@ You can use both column name or column alias in expression.
 
 esqlj allow you to use specific Elastic query API.  
 Syntax usage is `query_type`(`param1`,`param2`,...), where `query_type` maps specific Elastic query; and `param1`,`param2`,... allows you to pass parameters to that query.  
-There are a set of mandatory parameters for every implemented custom query. Is it possible also to set optional parameters for changing low level configuration query behaviour, like for example `analyze_wildcard`, `fuzzy_max_expansions` etc. These configuration settings must to be declared in this way:
+There are a set of mandatory parameters for every implemented custom query. It's possible also to set optional parameters for changing low level configuration query behaviour, like for example `analyze_wildcard`, `fuzzy_max_expansions` etc. These configuration settings must to be declared in this way:
 `query_string('search criteria','field1,field2,object.*','analyze_wildcard:true','fuzzy_max_expansions:15')`.
 Esqlj will dynamically cast params value type according to expected parameter Elastic query object.
 
@@ -320,13 +320,13 @@ Currently implemented raw Elastic queries:
 
 ### Group by
 
-Is it possible to aggregate values using GROUP BY clause.  
+It's possible to aggregate values using GROUP BY clause.  
 
 Example: `SELECT booleanField, AVG(integerField) test, SUM(longField), COUNT(doubleField), COUNT(*) from testIndex GROUP BY booleanField`
 
 ### Having
 
-Is it possible to apply filtering on Group by expressions.  
+It's possible to apply filtering on Group by expressions.  
 
 Example:  
 `SELECT booleanField, AVG(integerField) test, SUM(longField), COUNT(*) from testIndex GROUP BY booleanField HAVING AVG(integerField)>=4 OR SUM(longField)>=19`
