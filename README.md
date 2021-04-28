@@ -250,7 +250,7 @@ Supported GROUP BY query functions:
 
 #### Select Distinct
 
-Is it possibile to query distinct values using `DISTINCT` clause.  
+It's possibile to query distinct values using `DISTINCT` clause.  
 
 Example:`SELECT DISTINCT keywordField, booleanField FROM index ORDER BY keywordField, booleanField DESC`
 
