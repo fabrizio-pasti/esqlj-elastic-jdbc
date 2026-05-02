@@ -1,14 +1,19 @@
 # esqlj-elastic-jdbc
 **An open source JDBC driver for Elasticsearch released under Apache License 2.0**
 
-*Five years ago, I designed and released a JDBC driver enabling SQL-based integration with Elasticsearch.
+<div style="border:1px solid #ccc; padding:12px; border-radius:8px;">
+<i><b>
+May 2026
+
+Five years ago, I designed and released this JDBC driver enabling SQL-based integration with Elasticsearch.
 
 With the rapid evolution of NLP-to-SQL solutions, this library can now be positioned as a zero-cost integration layer, providing streamlined access to Elasticsearch’s advanced indexing and search capabilities.
 
 The current implementation is aligned with Elastic Stack version 7 and does not yet include support for advanced aggregation frameworks and vector search capabilities, as introduced in more recent Elastic platform developments.
 
-Should there be interest in evolving the project—such as upgrading compatibility to Elastic version 9, removing the JDBC driver layer in favor of a more lightweight and flexible architecture, or adapting the codebase to Python—please feel free to reach out at fabrizio.pasti@gmail.com.*
-
+Should there be interest in evolving the project—such as upgrading compatibility to Elastic version 9, removing the JDBC driver layer in favor of a more lightweight and flexible architecture, or adapting the codebase to Python—please feel free to reach out at fabrizio.pasti@gmail.com.
+</b></i>
+</div>
 
 esqlj is a JDBC driver for Elastic built on top of Elastic Rest High Level API (rel. 7.11). See Elastic licenses in folder `licenses/elastic-licenses`
 
