@@ -12,6 +12,7 @@ With the rapid evolution of NLP-to-SQL solutions, this library can now be positi
 The current implementation is aligned with Elastic Stack version 7 and does not yet include support for advanced aggregation frameworks and vector search capabilities, as introduced in more recent Elastic platform developments.
 
 Should there be interest in evolving the project—such as upgrading compatibility to Elastic version 9, removing the JDBC driver layer in favor of a more lightweight and flexible architecture, or adapting the codebase to Python—please feel free to reach out at fabrizio.pasti@gmail.com.
+I am open also to offering commercial licenses for the use of this library.
 </b></i>
 </div>
 
