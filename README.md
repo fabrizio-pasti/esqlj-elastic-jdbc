@@ -1,5 +1,5 @@
 # esqlj-elastic-jdbc
-**An open source JDBC driver for Elasticsearch released under Apache License 2.0**
+**An open source JDBC driver for Elasticsearch released under AGPL**
 
 <div style="border:1px solid #ccc; padding:12px; border-radius:8px;">
 <i><b>
